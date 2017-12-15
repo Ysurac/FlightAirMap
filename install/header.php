@@ -183,7 +183,7 @@ if ($facebook_meta_image != "")
 	    <a class="navbar-brand" href="../"><img src="<?php print '../'.$logoURL; ?>" height="30px" /></a>
 	</div>
 <?php
-	if ($globalInstalled === FALSE) {
+    if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 ?>
 	<div class="collapse navbar-collapse">
 	    <ul class="nav navbar-nav">
@@ -213,7 +213,7 @@ if ($facebook_meta_image != "")
 	     </ul>
 	</div>
 <?php
-	}
+    }
 ?>
     </div>
 </div>
