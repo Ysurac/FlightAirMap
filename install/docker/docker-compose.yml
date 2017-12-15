@@ -1,0 +1,46 @@
+version: '2'
+services:
+    flightairmap:
+        image: richarvey/nginx-php-fpm
+        volumes:
+            - "./conf:/var/www/html/conf"
+            - "./scripts:/var/www/html/scripts"
+            - "../../:/var/www/flightairmap"
+        ports:
+            - "8000:80"
+            - "3000:443"
+        env_file:
+            - ".env"
+        environment:
+            - PHP_MEM_LIMIT=256
+            - RUN_SCRIPTS=1
+            - MYSQL_HOST=${MYSQL_HOST}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        restart: always
+        depends_on:
+            - mysqldb
+        networks:
+            - code-network
+    mysqldb:
+        image: mysql
+        container_name: ${MYSQL_HOST}
+        restart: always
+        env_file:
+            - ".env"
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        ports:
+            - "8989:3306"
+        volumes:
+            - "./data/db/mysql:/var/lib/mysql"
+        networks:
+            - code-network
+
+networks:
+    code-network:
+        driver: bridge
