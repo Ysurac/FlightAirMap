@@ -9,6 +9,7 @@ require_once('../require/class.Language.php');
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+"use strict";
 <?php
 if (isset($globalVM) && $globalVM) {
 ?>

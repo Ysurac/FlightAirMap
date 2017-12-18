@@ -10,6 +10,7 @@ setcookie("MapFormat",'2d');
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+"use strict";
 <?php
 
 if (!isset($globalOpenWeatherMapKey)) $globalOpenWeatherMapKey = '';
@@ -74,7 +75,7 @@ var weatherclouds;
 var weathercloudsrefresh;
 
 var weatherradar;
-waypoints = '';
+var waypoints = '';
 var weatherradarrefresh;
 var weathersatellite;
 var weathersatelliterefresh; 
@@ -82,6 +83,7 @@ var noTimeout = true;
 var locationsLayer;
 var genLayer;
 var archiveplayback;
+var santaLayer;
 <?php
 	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
 ?>
@@ -187,11 +189,11 @@ $( document ).ready(function() {
 	}
 ?>
 	//initialize the layer group for the aircrft markers
-	layer_data = L.layerGroup();
+	//var layer_data = L.layerGroup();
 
 	var southWest = L.latLng(-90,-180),
 	    northEast = L.latLng(90,180);
-	bounds = L.latLngBounds(southWest,northEast);
+	var bounds = L.latLngBounds(southWest,northEast);
 	//a few title layers
 <?php
 	if (isset($_COOKIE['MapType'])) $MapType = $_COOKIE['MapType'];
@@ -494,6 +496,13 @@ new OSMBuildings(map).load();
 		update_locationsLayer();
 		setInterval(function(){if (noTimeout) { map.removeLayer(locationsLayer); update_locationsLayer();} },<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000*2; else print '60000'; ?>);
 	}
+	var currentdate = new Date();
+	var currentyear = new Date().getFullYear();
+	var begindate = new Date(Date.UTC(currentyear,11,24,2,0,0,0));
+	var enddate = new Date(Date.UTC(currentyear,11,25,2,0,0,0));
+	if (currentdate.getTime() > begindate.getTime() && currentdate.getTime() < enddate.getTime()) {
+		update_santaLayer(false);
+	}
 <?php
     // Add support for custom json via $globalMapJson
     if (isset($globalMapJson) && is_array($globalMapJson)) {
@@ -655,7 +664,7 @@ function capture_orientation (event) {
     //non iOS
     else {
       alpha = event.alpha;
-      webkitAlpha = alpha;
+      var webkitAlpha = alpha;
       if(!window.chrome) {
         //Assume Android stock and apply offset
         webkitAlpha = alpha-270;
@@ -1019,5 +1028,43 @@ function loadTrueLight(val) {
 		    truelightLayer.setLatLngs(t.getLatLngs());
 		    truelightLayer.redraw();
 		},500);
+	}
+}
+function update_santaLayer(nows) {
+	if (nows) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
+	else var url = "<?php print $globalURL; ?>/live-santa-geojson.php";
+	var santageoJSONQuery = $.getJSON(url, function(data) {
+	    var santageoJSON = L.geoJson(data, {
+		onEachFeature: function(feature,layer) {
+		    var playbackOptions = {
+			orientIcons: true,
+			clickCallback: function() { 
+			    $("#pointident").attr('class','');
+			    $(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat=santaclaus"); 
+			},
+			marker: function(){
+			    return {
+				icon: L.icon({
+				    iconUrl: '<?php print $globalURL; ?>/images/santa.png',
+				    iconSize: [60, 60],
+				    iconAnchor: [30, 30]
+				})
+			    }
+			}
+		    };
+		    var santaplayback = new L.Playback(map,feature,null,playbackOptions);
+		    santaplayback.start();
+		    var now = new Date(); 
+		    if (nows == false) santaplayback.setCursor(now.getTime());
+		}
+	    });
+	});
+};
+function clickSanta(cb) {
+	if (cb.checked) {
+		update_santaLayer(true);
+	} else {
+		// FIXME : Need to use leafletplayback stop() for example
+		window.location.reload();
 	}
 }

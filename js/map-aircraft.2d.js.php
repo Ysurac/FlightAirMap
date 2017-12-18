@@ -9,6 +9,7 @@ require_once('../require/class.Language.php');
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+"use strict";
 <?php
 
 // Compressed GeoJson is used if true
@@ -41,14 +42,13 @@ var user = new L.FeatureGroup();
 var geojsonLayer;
 var atcLayer;
 var polarLayer;
-var santaLayer;
 var notamLayer;
 var airspaceLayer;
 //var archiveplayback;
 waypoints = '';
 
 //initialize the layer group for the aircrft markers
-layer_data = L.layerGroup();
+var layer_data = L.layerGroup();
 
 // Show airports on map
 function airportPopup (feature, layer) {
@@ -268,7 +268,7 @@ if (MapTrack != '') {
 function getLiveData(click)
 {
 	var bbox = map.getBounds().toBBoxString();
-	layer_data_p = L.layerGroup();
+	//var layer_data_p = L.layerGroup();
 	var now = new Date();
 <?php
 	if (isset($ident)) {
@@ -1000,14 +1000,7 @@ function update_archiveLayer(click) {
 		update_archiveLayer(0);
 	} else {
 		//then load it again every 30 seconds
-		reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
-		var currentdate = new Date();
-		var currentyear = new Date().getFullYear();
-		var begindate = new Date(Date.UTC(currentyear,11,24,2,0,0,0));
-		var enddate = new Date(Date.UTC(currentyear,11,25,2,0,0,0));
-		if (currentdate.getTime() > begindate.getTime() && currentdate.getTime() < enddate.getTime()) {
-			update_santaLayer(false);
-		}
+		var reloadPage = setInterval(function(){if (noTimeout) getLiveData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 <?php
 		if (!((isset($globalIVAO) && $globalIVAO) || (isset($globalVATSIM) && $globalVATSIM) || (isset($globalphpVMS) && $globalphpVMS)) && (isset($_COOKIE['polar']) && $_COOKIE['polar'] == 'true')) {
 ?>
@@ -1132,37 +1125,6 @@ function update_polarLayer() {
 	});
 };
 
-function update_santaLayer(nows) {
-	if (nows) var url = "<?php print $globalURL; ?>/live-santa-geojson.php?now";
-	else var url = "<?php print $globalURL; ?>/live-santa-geojson.php";
-	var santageoJSONQuery = $.getJSON(url, function(data) {
-		santageoJSON = L.geoJson(data, {
-			onEachFeature: function(feature,layer) {
-				var playbackOptions = {
-					orientIcons: true,
-					clickCallback: function() { 
-						$("#pointident").attr('class','');
-						$(".showdetails").load("<?php print $globalURL; ?>/space-data.php?"+Math.random()+"&sat=santaclaus"); 
-					},
-					marker: function(){
-						return {
-							icon: L.icon({
-								iconUrl: '<?php print $globalURL; ?>/images/santa.png',
-								iconSize: [60, 60],
-								iconAnchor: [30, 30]
-							})
-						}
-					}
-				};
-				var santaplayback = new L.Playback(map,feature,null,playbackOptions);
-				santaplayback.start();
-				var now = new Date(); 
-				if (nows == false) santaplayback.setCursor(now.getTime());
-			}
-		});
-	});
-};
-
 function showNotam(cb) {
 	createCookie('notam',cb.checked,9999);
 	if (cb.checked == true) {
@@ -1215,14 +1177,6 @@ function clickFlightRemainingRoute(cb) {
 function clickFlightEstimation(cb) {
 	createCookie('flightestimation',cb.checked,9999);
 	window.location.reload();
-}
-function clickSanta(cb) {
-    if (cb.checked) {
-	update_santaLayer(true);
-    } else {
-	// FIXME : Need to use leafletplayback stop() for example
-	window.location.reload();
-    }
 }
 
 function notamPopup (feature, layer) {

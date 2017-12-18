@@ -7,31 +7,16 @@
     https://github.com/FCOO
 
 ****************************************************************************/
+/** global: L */
 (function (L/*, window, document, undefined*/) {
     "use strict";
 
     /* Terminator.js -- Overlay day/night region on a Leaflet map */
-
-    /* Extending prototype of native object - don't do it
-    Date.prototype.getJulian = function() {
-    // Calculate the present UTC Julian Date. Function is valid after the beginning of the UNIX epoch 1970-01-01 and ignores leap seconds.
-        return (this / 86400000) + 2440587.5;
-    };
-    */
     function getJulian( date ){
     // Calculate the present UTC Julian Date. Function is valid after the beginning of the UNIX epoch 1970-01-01 and ignores leap seconds.
         return (date / 86400000) + 2440587.5;
     }
 
-    /* Extending prototype of native object - don't do it
-    Date.prototype.getGMST = function() {
-    // Calculate Greenwich Mean Sidereal Time according to http://aa.usno.navy.mil/faq/docs/GAST.php /
-    var julianDay = this.getJulian();
-    var d = julianDay - 2451545.0;
-    // Low precision equation is good enough for our purposes.
-    return (18.697374558 + 24.06570982441908 * d) % 24;
-    };
-    */
     function getGMST( date ){
     // Calculate Greenwich Mean Sidereal Time according to http://aa.usno.navy.mil/faq/docs/GAST.php /
     var julianDay = getJulian( date );
@@ -169,7 +154,3 @@
     };
 
 }(L, this, document));
-
-
-
-

@@ -9,7 +9,7 @@
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
-
+"use strict";
 
 function update_polarLayer() {
 	var polarnb;
@@ -611,7 +611,7 @@ handler_aircraft.setInputAction(function(click) {
 		//console.log(type);
 //		if (typeof pickedObject.id.lastupdate != 'undefined') {
 		if (type == 'flight') {
-			flightaware_id = pickedObject.id.id;
+			var flightaware_id = pickedObject.id.id;
 			if (singlemodel == false) {
 				delCookie('MapTrack');
 				createCookie('MapTrack',flightaware_id,1);

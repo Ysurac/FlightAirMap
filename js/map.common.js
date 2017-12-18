@@ -5,6 +5,7 @@
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+"use strict";
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -232,11 +233,16 @@ function clickDisplayISS(cb) {
 }
 function clickDisplayMinimap(cb) {
     createCookie('displayminimap',cb.checked,9999);
-    window.location.reload();
+    if (cb.checked == true) {
+	displayMiniMap();
+    } else {
+	window.location.reload();
+    }
 }
 function clickShadows(cb) {
     createCookie('map3dnoshadows',cb.checked,9999);
-    window.location.reload();
+    viewer.shadows = cb.checked;
+    //window.location.reload();
 }
 function clickSingleModel(cb) {
     createCookie('singlemodel',cb.checked,9999);

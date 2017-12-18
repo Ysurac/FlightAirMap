@@ -1,6 +1,7 @@
 <?php
 require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
+setcookie("MapFormat",'2d');
 ?>
 /**
  * This javascript is part of FlightAirmap.
@@ -10,7 +11,6 @@ require_once('../require/class.Language.php');
  * For more information see: https://www.flightairmap.com/
 */
 <?php
-setcookie("MapFormat",'2d');
 
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
@@ -22,7 +22,7 @@ $compress = false;
 //var map;
 var geojsonSatelliteLayer;
 var noTimeout = true;
-layer_satellite_data = L.layerGroup();
+var layer_satellite_data = L.layerGroup();
 
 <?php
 	if (isset($_GET['famsatid'])) {
@@ -379,7 +379,7 @@ function updateSat(click)
 				"opacity": 1
 			    };
 			    layer.setStyle(style);
-			    layer_data.addLayer(layer);
+			    layer_satellite_data.addLayer(layer);
 			} else {
 			    var style = {
 				"color": "#1a3151",
@@ -457,12 +457,12 @@ updateSat(0);
 ?>
 //then load it again every 30 seconds
 //  var reload = setInterval(function(){if (noTimeout) updateSat(0)},<?php if (isset($globalMapRefresh)) print ($globalMapRefresh*1000)/2; else print '15000'; ?>);
-reloadSatellitePage = setInterval(function(){if (noTimeout) updateSat(0)},<?php print $archiveupdatetime*1000; ?>);
+var reloadSatellitePage = setInterval(function(){if (noTimeout) updateSat(0)},<?php print $archiveupdatetime*1000; ?>);
 <?php
 	} else {
 ?>
 //then load it again every 30 seconds
-reloadSatellitePage = setInterval(
+var reloadSatellitePage = setInterval(
     function(){if (noTimeout) updateSat(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 <?php
 	}

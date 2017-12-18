@@ -1,6 +1,7 @@
 <?php
 require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
+setcookie("MapFormat",'2d');
 ?>
 /**
  * This javascript is part of FlightAirmap.
@@ -10,7 +11,6 @@ require_once('../require/class.Language.php');
  * For more information see: https://www.flightairmap.com/
 */
 <?php
-setcookie("MapFormat",'2d');
 
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
@@ -93,7 +93,7 @@ function getLiveTrackerData(click)
 	var enddate = begindate+parseInt(getCookie("archive_update"));
 	if (enddate > getCookie("archive_end")) {
 		enddate = parseInt(getCookie("archive_end"));
-		clearInterval(reloadPage);
+		clearInterval(reloadTrackerPage);
 	} else {
 		if (click != 1) {
 			document.cookie =  'archive_begin='+enddate+'; expires=Thu, 2 Aug 2100 20:47:11 UTC; path=/';
@@ -563,7 +563,7 @@ function getLiveTrackerData(click)
 				"opacity": 1
 			    };
 			    layer.setStyle(style);
-			    layer_data.addLayer(layer);
+			    layer_tracker_data.addLayer(layer);
 			} else {
 			    var style = {
 				"color": "#1a3151",
@@ -779,7 +779,7 @@ $( document ).ready(function() {
  //load the function on startup
 getLiveTrackerData(0);
 //then load it again every 30 seconds
-reloadTrackerPage = setInterval(
+var reloadTrackerPage = setInterval(
     function(){if (noTimeout) getLiveTrackerData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 <?php
 	}

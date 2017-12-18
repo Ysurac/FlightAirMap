@@ -1,6 +1,7 @@
 <?php
 require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
+setcookie("MapFormat",'2d');
 ?>
 /**
  * This javascript is part of FlightAirmap.
@@ -9,8 +10,8 @@ require_once('../require/class.Language.php');
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+"use strict";
 <?php
-setcookie("MapFormat",'2d');
 
 // Compressed GeoJson is used if true
 if (!isset($globalJsonCompress)) $compress = true;
@@ -33,7 +34,7 @@ var globalVM = false;
 //var map;
 var geojsonMarineLayer;
 var openseamap;
-layer_marine_data = L.layerGroup();
+var layer_marine_data = L.layerGroup();
 
 <?php
 	if (isset($_GET['fammarine_id'])) {
@@ -555,7 +556,7 @@ function getLiveMarineData(click)
 				"opacity": 1
 			    };
 			    layer.setStyle(style);
-			    layer_data.addLayer(layer);
+			    layer_marine_data.addLayer(layer);
 			} else {
 			    var style = {
 				"color": "#529dff",
@@ -744,7 +745,7 @@ if (archive === true) {
 	update_archiveMarineLayer(0);
 } else {
 	//then load it again every 30 seconds
-	reloadMarinePage = setInterval(
+	var reloadMarinePage = setInterval(
 	function(){if (noTimeout) getLiveMarineData(0)},<?php if (isset($globalMapRefresh)) print $globalMapRefresh*1000; else print '30000'; ?>);
 }
 

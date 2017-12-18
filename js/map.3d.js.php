@@ -9,6 +9,7 @@
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+"use strict";
 <?php
 	if (isset($globalCORSproxy)) {
 ?>
@@ -546,6 +547,11 @@ function vrtheworldterrain() {
 	});
 	viewer.terrainProvider = vrTheWorldProvider;
 }
+function displayMiniMap() {
+	CesiumMiniMap(viewer, {osm: true});
+	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'));
+}
+
 if (MapTerrain == 'stk' || MapTerrain == '') {
 	stkterrain();
 } else if (MapTerrain == 'articdem') {
@@ -599,9 +605,10 @@ viewer.scene.skyAtmosphere.brightnessShift = 0.4;
 
 
 if (getCookie('displayminimap') == '' || getCookie('displayminimap') == 'true') {
-	CesiumMiniMap(viewer, {osm: true});
-	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'));
+	displayMiniMap();
 }
+
+
 
 <?php
 	if (isset($globalTSK) && $globalTSK && isset($_GET['tsk'])) {

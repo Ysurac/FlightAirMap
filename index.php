@@ -220,7 +220,7 @@ require_once('header.php');
 		</form>
 <?php
 	}
-	if (isset($globalNOTAM) && $globalNOTAM) {
+	if (isset($globalNOTAM) && $globalNOTAM && (!isset($globalAircraft) || $globalAircraft === TRUE)) {
 ?>
 		<h1>NOTAM</h1>
 		<form>
@@ -479,8 +479,12 @@ require_once('header.php');
 <?php
 	}
     }
+    if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayairports" value="1" onclick="clickDisplayAirports(this)" <?php if (isset($_COOKIE['displayairports']) && $_COOKIE['displayairports'] == 'true' || !isset($_COOKIE['displayairports'])) print 'checked'; ?> ><?php echo _("Display airports on map"); ?></label></div></li>
+<?php
+    }
+?>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displaygroundstation" value="1" onclick="clickDisplayGroundStation(this)" <?php if ((isset($_COOKIE['show_GroundStation']) && $_COOKIE['show_GroundStation'] == 'true') || (!isset($_COOKIE['show_GroundStation']) && (isset($globalMapGroundStation) && $globalMapGroundStation === TRUE))) print 'checked'; ?> ><?php echo _("Display ground station on map"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displayweatherstation" value="1" onclick="clickDisplayWeatherStation(this)" <?php if ((isset($_COOKIE['show_WeatherStation']) && $_COOKIE['show_WeatherStation'] == 'true') || (!isset($_COOKIE['show_WeatherStation']) && (isset($globalMapWeatherStation) && $globalMapWeatherStation === TRUE))) print 'checked'; ?> ><?php echo _("Display weather station on map"); ?></label></div></li>
 		    <li><div class="checkbox"><label><input type="checkbox" name="displaylightning" value="1" onclick="clickDisplayLightning(this)" <?php if ((isset($_COOKIE['show_Lightning']) && $_COOKIE['show_Lightning'] == 'true') || (!isset($_COOKIE['show_Lightning']) && (isset($globalMapLightning) && $globalMapLightning === TRUE))) print 'checked'; ?> ><?php echo _("Display lightning on map"); ?></label></div></li>
