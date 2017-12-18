@@ -29,6 +29,15 @@ if (!empty($spotter_array))
 	} elseif(isset($spotter_array[0]['longitude'])) {
 		$longitude = $spotter_array[0]['longitude'];
 	}
+	
+	if (isset($flightaware_id) && ((!isset($latitude) && !isset($longitude)) || ($latitude == 0 && $longitude == 0))) {
+		require_once('require/class.SpotterLive.php');
+		$SpotterLive = new SpotterLive();
+		$live_data = $SpotterLive->getLastLiveSpotterDataById($flightaware_id);
+		$latitude = $live_data[0]['latitude'];
+		$longitude = $live_data[0]['longitude'];
+	}
+	
 	$title = '';
 	if(isset($spotter_array[0]['ident'])) {
 		$title .= $spotter_array[0]['ident'];
