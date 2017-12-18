@@ -1,7 +1,8 @@
 <?php
 require_once('require/class.Connection.php');
-require_once('require/class.Spotter.php');
 require_once('require/class.Language.php');
+require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 $Spotter=new Spotter();
 if (isset($_GET['start_date'])) {
 	//for the date manipulation into the query
@@ -127,23 +128,26 @@ if (!empty($spotter_array)) {
 		$output .= '"arrival_airport_latitude": "'.$spotter_item['arrival_airport_latitude'].'",';
 		$output .= '"arrival_airport_longitude": "'.$spotter_item['arrival_airport_longitude'].'",';
 		$output .= '"arrival_airport_altitude": "'.$spotter_item['arrival_airport_altitude'].'",';
-		$output .= '"latitude": "'.$spotter_item['latitude'].'",';
-		$output .= '"longitude": "'.$spotter_item['longitude'].'",';
-		$output .= '"altitude": "'.$spotter_item['altitude'].'",';
-		$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
-		$output .= '"heading": "'.$spotter_item['heading'].'",';
-		$output .= '"heading_name": "'.$spotter_item['heading_name'].'",';
+		if ($spotter_item['latitude'] != 0 && $spotter_item['latitude'] != 0) {
+			$output .= '"latitude": "'.$spotter_item['latitude'].'",';
+			$output .= '"longitude": "'.$spotter_item['longitude'].'",';
+			$output .= '"altitude": "'.$spotter_item['altitude'].'",';
+			$output .= '"ground_speed": "'.$spotter_item['ground_speed'].'",';
+			$output .= '"heading": "'.$spotter_item['heading'].'",';
+			$output .= '"heading_name": "'.$spotter_item['heading_name'].'",';
+		}
 		$output .= '"date": "'.date("c", strtotime($spotter_item['date_iso_8601'])).'"';
 		$output .= '}';
+		/*
 		if ($spotter_item['waypoints'] != '') {
+			$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
+			$waypoint_pieces = array_chunk($waypoint_pieces, 2);
 			$output .= ',"geometry": {';
 			$output .= '"type": "LineString",';
 			$output .= '"coordinates": [';
-			$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
-			$waypoint_pieces = array_chunk($waypoint_pieces, 2);
 			foreach ($waypoint_pieces as $waypoint_coordinate) {
 				$output .= '[';
-				$output .=  $waypoint_coordinate[1].', ';	
+				$output .=  $waypoint_coordinate[1].', ';
 				$output .=  $waypoint_coordinate[0];
 				$output .= '],';
 			}
@@ -151,8 +155,26 @@ if (!empty($spotter_array)) {
 			$output .= ']';
 			$output .= '}';
 		}
+		*/
+		$SpotterArchive = new SpotterArchive();
+		$archive_data = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+		if (!empty($archive_data)) {
+			$output .= ',"geometry": {';
+			$output .= '"type": "LineString",';
+			$output .= '"coordinates": [';
+			foreach ($archive_data as $coord_data) {
+				$output .= '[';
+				$output .=  $coord_data['longitude'].', ';
+				$output .=  $coord_data['latitude'];
+				$output .= '],';
+			}
+			$output = substr($output, 0, -1);
+			$output .= ']';
+			$output .= '}';
+		}
+		
 		$output .= '},';
-		//location of aircraft
+/*		//location of aircraft
 		$output .= '{';  
 		$output .= '"type": "Feature",';
 		$output .= '"properties": {';
@@ -198,6 +220,7 @@ if (!empty($spotter_array)) {
 		$output .= ']';
 		$output .= '}';
 		$output .= '},';
+*/
 	}
 }
 $output  = substr($output, 0, -1);

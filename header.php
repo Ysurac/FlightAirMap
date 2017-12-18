@@ -312,7 +312,7 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <?php
 }
 
-if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) && $globalArchive && isset($flightaware_id))
+if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) && $globalArchive && isset($flightaware_id) && (!isset($latitude) || $latitude != 0) && (!isset($longitude) || $longitude != 0))
 {
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />

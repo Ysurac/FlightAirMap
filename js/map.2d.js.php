@@ -84,6 +84,7 @@ var locationsLayer;
 var genLayer;
 var archiveplayback;
 var santaLayer;
+var airportsLayer;
 <?php
 	if (isset($globalMapIdleTimeout) && $globalMapIdleTimeout > 0) {
 ?>
@@ -537,7 +538,7 @@ function genLayerPopup (feature, layer) {
 if (getCookie('weather_wind') == 'true') loadWind(getCookie('weather_wind'));
 if (getCookie('weather_wave') == 'true') loadWave(getCookie('weather_wave'));
 if (getCookie('weather_fire') == 'true') loadFire(getCookie('weather_fire'));
-if (getCookie('truelight') == 'true') loadTrueLight(getCookie('truelight'));
+if (getCookie('truelight') == 'true' && typeof L.terminator != "undefined") loadTrueLight(getCookie('truelight'));
 
 });
 

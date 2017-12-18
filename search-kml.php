@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 if (isset($_GET['start_date'])) {
@@ -118,6 +119,24 @@ $output .= '</Style>';
 if (!empty($spotter_array)) {
 	foreach($spotter_array as $spotter_item) {
 		$altitude = $spotter_item['altitude'].'00';
+		$SpotterArchive = new SpotterArchive();
+		$archive_data = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+		if (!empty($archive_data)) {
+			//waypoint plotting
+			$output .= '<Placemark>'; 
+			$output .= '<styleUrl>#route</styleUrl>';
+			$output .= '<LineString>';
+			$output .= '<coordinates>';
+			foreach ($archive_data as $coord_data) {
+				$output .=  $coord_data['longitude'].','.$coord_data['latitude'].','.$coord_data['real_altitude'].' ';
+			}
+			$output .= '</coordinates>';
+			$output .= '<altitudeMode>absolute</altitudeMode>';
+			$output .= '</LineString>';
+			$output .= '</Placemark>';
+		}
+
+		/*
 		if ($spotter_item['waypoints'] != '') {
 			//waypoint plotting
 			$output .= '<Placemark>'; 
@@ -134,6 +153,7 @@ if (!empty($spotter_array)) {
 			$output .= '</LineString>';
 			$output .= '</Placemark>';
 		}
+		*/
 		//departure airport 
 		$output .= '<Placemark>';  
 		$output .= '<name>'.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].')</name>';
@@ -216,6 +236,7 @@ if (!empty($spotter_array)) {
 		$output .= '<altitudeMode>absolute</altitudeMode>';
 		$output .= '</Point>';
 		$output .= '</Placemark>'; 
+		/*
 		//location of aircraft
 		$output .= '<Placemark>';  
 		$output .= '<name>'.$spotter_item['ident'].' - '.$spotter_item['registration'].' - '.$spotter_item['airline_name'].'</name>';
@@ -260,6 +281,7 @@ if (!empty($spotter_array)) {
 		$output .= '<altitudeMode>absolute</altitudeMode>';
 		$output .= '</Point>';
 		$output .= '</Placemark>'; 
+		*/
 		$output .= '<Style id="aircraft_'.$spotter_item['spotter_id'].'">';
 		$output .= '<IconStyle>';
 		$output .= '<Icon>';

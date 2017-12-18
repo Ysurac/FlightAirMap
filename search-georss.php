@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 if (isset($_GET['start_date'])) {
@@ -112,9 +113,23 @@ if (!empty($spotter_array)) {
 		print '<entry>';
 		print '<title>'.$spotter_item['ident'].' '.$spotter_item['airline_name'].' | '.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | '.$spotter_item['departure_airport'].' - '.$spotter_item['arrival_airport'].'</title>';
 		print '<link href="http://www.flightairmap.fr/flightid/'.$spotter_item['spotter_id'].'"/>';
-		print '<id>http://www.flightairmap.fr/flightid/'.$spotter_item['spotter_id'].'</id>';
+		print '<id>http://www.flightairmap.com/flightid/'.$spotter_item['spotter_id'].'</id>';
 		print '<content>Ident: '.$spotter_item['ident'].' | Registration: '.$spotter_item['registration'].' | Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | Airline: '.$spotter_item['airline_name'].' | Coming From: '.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].') | Flying to: '.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].') | Flew nearby on: '.date("M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</content>';
 		print '<updated>'.$date.'</updated>';
+		$SpotterArchive = new SpotterArchive();
+		$archive_data = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+		if (!empty($archive_data)) {
+			print '<georss:where>';
+			print '<gml:LineString>';
+			print '<gml:posList>';
+			foreach ($archive_data as $coord_data) {
+				print $coord_data['latitude'].' '.$coord_data['longitude'].' ';
+			}
+			print '</gml:posList>';
+			print '</gml:LineString>';
+			print '</georss:where>';
+		}
+		/*
 		if ($spotter_item['waypoints'] != "") {
 			print '<georss:where>';
 			print '<gml:LineString>';
@@ -128,6 +143,8 @@ if (!empty($spotter_array)) {
 			print '</gml:LineString>';
 			print '</georss:where>';
 		}
+		*/
+		/*
 		if ($spotter_item['latitude'] != "0" || $spotter_item['longitude'] != "0") {
 			print '<georss:where>';
 			print '<gml:Point>';
@@ -135,6 +152,7 @@ if (!empty($spotter_array)) {
 			print '</gml:Point>';
 			print '</georss:where>';
 		}
+		*/
 		print '</entry>';
 	}
 }

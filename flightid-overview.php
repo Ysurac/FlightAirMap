@@ -598,7 +598,8 @@ if (!empty($spotter_array))
 	}
 	print '</div>';
 
-//	print '<div id="archive-map"></div>';
+	print '<div id="archive-map"></div>';
+	//print '<div id="live-map"></div>';
 
 	if ($spotter_array[0]['registration'] != "" && $spotter_array[0]['registration'] != "NA" && $spotter_array[0]['registration'] != "N/A")
 	{

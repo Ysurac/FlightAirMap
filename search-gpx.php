@@ -1,6 +1,7 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 require_once('require/class.Language.php');
 $Spotter = new Spotter();
 if (isset($_GET['start_date'])) {
@@ -102,6 +103,17 @@ if (!empty($spotter_array))
 		$output .= '<trk>';
 		$output .= '<name>'.$spotter_item['ident'].' '.$spotter_item['airline_name'].' | '.$spotter_item['registration'].' '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | '.$spotter_item['departure_airport'].' - '.$spotter_item['arrival_airport'].'</name>';
 		$output .= '<number>1</number>';
+		$SpotterArchive = new SpotterArchive();
+		$archive_data = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+		if (!empty($archive_data)) {
+			$output .= '<trkseg>';
+			foreach ($archive_data as $coord_data)
+			{
+				$output .= '<trkpt lat="'.$coord_data['latitude'].'" lon="'.$coord_data['longitude'].'"><ele>'.$coord_data['real_altitude'].'</ele><time>'.date("c", strtotime($coord_data['date'])).'</time></trkpt>';
+			}
+			$output .= '</trkseg>';
+		}
+		/*
 		if ($spotter_item['waypoints'] != '') {
 			$output .= '<trkseg>';
 			$waypoint_pieces = explode(' ', $spotter_item['waypoints']);
@@ -112,12 +124,15 @@ if (!empty($spotter_array))
 			}
 			$output .= '</trkseg>';
 		}
+		*/
 		$output .= '</trk>';
+		/*
 		//location of aircraft
 		$output .= '<wpt lat="'.$spotter_item['latitude'].'" lon="'.$spotter_item['longitude'].'">';
 		$output .= '<ele>'.$altitude.'</ele>';
 		$output .= '<name>Ident: '.$spotter_item['ident'].' | Registration: '.$spotter_item['registration'].' | Aircraft: '.$spotter_item['aircraft_name'].' ('.$spotter_item['aircraft_type'].') | Airline: '.$spotter_item['airline_name'].' | Route: '.$spotter_item['departure_airport_city'].', '.$spotter_item['departure_airport_name'].', '.$spotter_item['departure_airport_country'].' ('.$spotter_item['departure_airport'].') - '.$spotter_item['arrival_airport_city'].', '.$spotter_item['arrival_airport_name'].', '.$spotter_item['arrival_airport_country'].' ('.$spotter_item['arrival_airport'].') | Date: '.date("D M j, Y, g:i a T", strtotime($spotter_item['date_iso_8601'])).'</name>';
 		$output .= '</wpt>';
+		*/
 	}
 }
 $output .= '</gpx>';
