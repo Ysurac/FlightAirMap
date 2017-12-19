@@ -865,14 +865,16 @@ function getLiveData(click)
 				layer_data.addTo(map);
 				//re-create the bootstrap tooltips on the marker 
 				//showBootstrapTooltip();
-				if (typeof flightcount != "undefined" && flightcount != 0) {
-					if (flightcount != nbaircraft) {
-						info_update(nbaircraft+'/'+flightcount);
+				if (typeof info_update != "undefined") {
+					if (typeof flightcount != "undefined" && flightcount != 0) {
+						if (flightcount != nbaircraft) {
+							info_update(nbaircraft+'/'+flightcount);
+						} else {
+							info_update(nbaircraft);
+						}
 					} else {
 						info_update(nbaircraft);
 					}
-				} else {
-					info_update(nbaircraft);
 				}
 			}
 		});

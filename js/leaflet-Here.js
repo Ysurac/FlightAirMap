@@ -31,6 +31,22 @@ L.TileLayer.HERE = L.TileLayer.extend({
 		// 🍂option appCode: String = ''
 		// Required option. The `app_code` provided as part of the HERE credentials
 		appCode: '',
+
+		// 🍂option useCIT: boolean = false
+		// Whether to use the CIT when loading the here-maptiles
+		useCIT: false,
+
+		// 🍂option useHTTPS: boolean = true
+		// Whether to use HTTPS when loading the here-maptiles
+		useHTTPS: true,
+
+		// 🍂option language: String = ''
+		// The language of the descriptions on the maps that are loaded
+		language: '',
+
+		// 🍂option language: String = ''
+		// The second language of the descriptions on the maps that are loaded
+		language2: '',
 	},
 
 
@@ -41,31 +57,40 @@ L.TileLayer.HERE = L.TileLayer.extend({
 		var schemeStart = options.scheme.split('.')[0];
 		options.tileResolution = 256;
 
-		if (L.Browser.retina) {
-			options.tileResolution = 512;
+		// {Base URL}{Path}/{resource (tile type)}/{map id}/{scheme}/{zoom}/{column}/{row}/{size}/{format}
+		// ?app_id={YOUR_APP_ID}
+		// &app_code={YOUR_APP_CODE}
+		// &{param}={value}
+
+		var params = [
+			'app_id=' + encodeURIComponent(options.appId),
+			'app_code=' + encodeURIComponent(options.appCode)
+		];
+		if(options.language) {
+			params.push('lg=' + encodeURIComponent(options.language));
 		}
+		if(options.language2) {
+			params.push('lg2=' + encodeURIComponent(options.language2));
+		}
+		var urlQuery = '?' + params.join('&');
 
-// 		{Base URL}{Path}/{resource (tile type)}/{map id}/{scheme}/{zoom}/{column}/{row}/{size}/{format}
-// 		?app_id={YOUR_APP_ID}
-// 		&app_code={YOUR_APP_CODE}
-// 		&{param}={value}
-
-		var path = '/{resource}/2.1/{resource}/{mapId}/{scheme}/{z}/{x}/{y}/{tileResolution}/{format}?app_id={appId}&app_code={appCode}';
+		var path = '/maptile/2.1/{resource}/{mapId}/{scheme}/{z}/{x}/{y}/{tileResolution}/{format}' + urlQuery;
 		var attributionPath = '/maptile/2.1/copyright/{mapId}?app_id={appId}&app_code={appCode}';
 
-		var tileServer = 'base.maps.api.here.com';
-		if (schemeStart == 'satellite' ||
-				schemeStart == 'terrain' ||
-				schemeStart == 'hybrid') {
-			tileServer = 'aerial.maps.api.here.com';
+		// make sure the CIT-url can be used
+		var baseUrl = 'maps' + (options.useCIT ? '.cit' : '') + '.api.here.com';
+		var tileServer = 'base.' + baseUrl;
+		if (schemeStart == 'satellite' || schemeStart == 'terrain' || schemeStart == 'hybrid') {
+			tileServer = 'aerial.' + baseUrl;
 		}
 		if (options.scheme.indexOf('.traffic.') !== -1) {
-			tileServer = 'traffic.maps.api.here.com';
+			tileServer = 'traffic' + baseUrl;
 		}
 
-		var tileUrl = 'https://{s}.' + tileServer + path;
+		var protocol = 'http' + (options.useHTTPS ? 's' : '');
+		var tileUrl = protocol + '://{s}.' + tileServer + path;
 
-		this._attributionUrl = L.Util.template('https://1.' + tileServer + attributionPath, this.options);
+		this._attributionUrl = L.Util.template(protocol + '://1.' + tileServer + attributionPath, this.options);
 
 		L.TileLayer.prototype.initialize.call(this, tileUrl, options);
 
@@ -82,11 +107,19 @@ L.TileLayer.HERE = L.TileLayer.extend({
 	},
 
 	onRemove: function onRemove(map) {
-		L.TileLayer.prototype.onRemove.call(this, map);
-
+		//
+		// Remove the attribution text, and clear the cached text so it will be recalculated
+		// if/when we are shown again.
+		//
 		this._map.attributionControl.removeAttribution(this._attributionText);
+		this._attributionText = '';
 
 		this._map.off('moveend zoomend resetview', this._findCopyrightBBox, this);
+
+		//
+		// Call the prototype last, once we've tidied up our own changes
+		//
+		L.TileLayer.prototype.onRemove.call(this, map);
 	},
 
 	_fetchAttributionBBoxes: function _onMapMove() {
@@ -127,24 +160,24 @@ L.TileLayer.HERE = L.TileLayer.extend({
 		var visibleBounds = this._map.getBounds();
 
 		for (var i=0; i<providers.length; i++) {
-			if (providers[i].minLevel < zoom && providers[i].maxLevel > zoom)
+			if (providers[i].minLevel <= zoom && providers[i].maxLevel >= zoom) {
 
-			if (!providers[i].boxes) {
-				// No boxes = attribution always visible
-				visibleProviders.push(providers[i]);
-				break;
-			}
-
-			for (var j=0; j<providers[i].boxes.length; j++) {
-				var box = providers[i].boxes[j];
-				if (visibleBounds.overlaps(box)) {
+				if (!providers[i].boxes) {
+					// No boxes = attribution always visible
 					visibleProviders.push(providers[i]);
-					break;
+				} else {
+					for (var j=0; j<providers[i].boxes.length; j++) {
+						var box = providers[i].boxes[j];
+						if (visibleBounds.intersects(box)) {
+							visibleProviders.push(providers[i]);
+							break;
+						}
+					}
 				}
 			}
 		}
 
-		var attributions = ['<a href="https://legal.here.com/terms/serviceterms/gb/">HERE maps</a>'];
+		var attributions = ['<a href="https://legal.here.com/en-gb/terms" target="_blank" rel="noopener noreferrer">HERE maps</a>'];
 		for (var i=0; i<visibleProviders.length; i++) {
 			var provider = visibleProviders[i];
 			attributions.push('<abbr title="' + provider.alt + '">' + provider.label + '</abbr>');

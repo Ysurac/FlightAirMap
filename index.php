@@ -374,9 +374,9 @@ require_once('header.php');
 			    <?php
 					if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
 			    ?>
-			    <option value="Here-Aerial"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Aerial</option>
-			    <option value="Here-Hybrid"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Hybrid</option>
-			    <option value="Here-Road"<?php if ($MapType == 'Here') print ' selected'; ?>>Here-Road</option>
+			    <option value="Here-Aerial"<?php if ($MapType == 'Here-Aerial') print ' selected'; ?>>Here-Aerial</option>
+			    <option value="Here-Hybrid"<?php if ($MapType == 'Here-Hybrid') print ' selected'; ?>>Here-Hybrid</option>
+			    <option value="Here-Road"<?php if ($MapType == 'Here-Road') print ' selected'; ?>>Here-Road</option>
 			    <?php
 					}
 			    ?>
@@ -399,7 +399,6 @@ require_once('header.php');
 			    <?php
 					}
 			    ?>
-			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
 			    <option value="offline"<?php if ($MapType == 'offline') print ' selected'; ?>>Natural Earth</option>
 			    <?php
 				    }
@@ -427,6 +426,7 @@ require_once('header.php');
 				    }
 			    ?>
 			    <option value="OpenStreetMap"<?php if ($MapType == 'OpenStreetMap') print ' selected'; ?>>OpenStreetMap</option>
+			    <option value="Yandex"<?php if ($MapType == 'Yandex') print ' selected'; ?>>Yandex</option>
 			    <?php
 				}
 			    ?>

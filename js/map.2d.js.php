@@ -330,7 +330,7 @@ $( document ).ready(function() {
 	var bingLayer = new L.tileLayer.bing({bingMapsKey: '<?php print $globalBingMapKey; ?>',imagerySet: 'Road'});
 	map.addLayer(bingLayer);
 <?php
-	} elseif ($MapType == 'Here-Roadmap') {
+	} elseif ($MapType == 'Here-Road') {
 ?>
 	var hereLayer = new L.tileLayer.here({appId: '<?php print $globalHereappId; ?>',appcode: '<?php print $globalHereappCode; ?>',scheme: 'normal.day'});
 	map.addLayer(hereLayer);
