@@ -172,7 +172,7 @@ if (isset($_GET['ident'])) {
 	} elseif ($marine) {
 		$spotter_array = $MarineLive->getMinLiveMarineData($filter);
 	} else {
-		$spotter_array = $SpotterLive->getMinLiveSpotterData($filter);
+		$spotter_array = $SpotterLive->getMinLiveSpotterData($limit,$filter);
 	}
 #	$min = true;
 } else {
