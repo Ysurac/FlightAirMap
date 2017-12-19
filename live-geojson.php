@@ -205,7 +205,7 @@ $sqltime = round(microtime(true)-$begintime,2);
 $currenttime = filter_input(INPUT_GET,'currenttime',FILTER_SANITIZE_NUMBER_INT);
 if ($currenttime != '') $currenttime = round($currenttime/1000);
 
-if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation == FALSE) || (isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'false')) $usenextlatlon = false;
+if ((!isset($_COOKIE['flightestimation']) && isset($globalMapEstimation) && $globalMapEstimation === FALSE) || (isset($_COOKIE['flightestimation']) && $_COOKIE['flightestimation'] == 'false')) $usenextlatlon = false;
 else $usenextlatlon = true;
 if ($usenextlatlon === false) $currenttime = '';
 $j = 0;
@@ -765,7 +765,7 @@ $output = '{';
 							*/
 							$prev_alt = $alt;
 						} else {
-							if ($d == false) {
+							if ($d === false) {
 								if ($compress) {
 									$output_history = '{"type": "Feature","properties": {"c": "'.$spotter_item['ident'].'",';
 									if (isset($spotter_history_array[0]['mapmatching_engine']) && $spotter_history_array[0]['mapmatching_engine'] == 'graphhopper') $output_history .= '"atr": "Powered by <a href=\"https://www.graphhopper.com/\">GraphHopper API</a>", Map matching engine use data from © <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>",';

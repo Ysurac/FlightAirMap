@@ -201,7 +201,7 @@ if (!empty($spotter_array) && is_array($spotter_array)) {
 			$k = 0;
 		}
 
-		if ($end == false) {
+		if ($end === false) {
 			$k++;
 			$output_history .= '['.$spotter_item['longitude'].', '.$spotter_item['latitude'].'],';
 			$output_time .= (strtotime($spotter_item['date'])*1000).',';

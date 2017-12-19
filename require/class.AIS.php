@@ -558,12 +558,14 @@ class AIS {
 		);
 		// "
 		$_a = str_split($name);
-		if ($_a) foreach ($_a as $_1) {
-			if (isset($ais_chars[$_1])) $dec = $ais_chars[$_1];
-			else $dec = 0;
-			$bin = str_pad(decbin( $dec ), 6, '0', STR_PAD_LEFT);
-			$rv .= $bin;
-			//echo "$_1 $dec ($bin)<br/>";
+		if (!empty($_a)) {
+			foreach ($_a as $_1) {
+				if (isset($ais_chars[$_1])) $dec = $ais_chars[$_1];
+				else $dec = 0;
+				$bin = str_pad(decbin( $dec ), 6, '0', STR_PAD_LEFT);
+				$rv .= $bin;
+				//echo "$_1 $dec ($bin)<br/>";
+			}
 		}
 		return $rv.$pad;
 	}

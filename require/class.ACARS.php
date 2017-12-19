@@ -740,7 +740,7 @@ class ACARS {
 	* @param String ACARS data in acarsdec data
 	*
 	*/
-	function add($data) {
+	public function add($data) {
 		global $globalDebug, $globalACARSArchive;
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
@@ -1064,6 +1064,7 @@ class ACARS {
 			return "error : ".$e->getMessage();
 		}
 		$i=0;
+		$result = array();
 		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 			$data = array();
 			if ($row['registration'] != '') {
@@ -1108,7 +1109,7 @@ class ACARS {
 			$result[] = $data;
 			$i++;
 		}
-		if (isset($result)) {
+		if (!empty($result)) {
 			$result[0]['query_number_rows'] = $i;
 			return $result;
 		} else return array();
