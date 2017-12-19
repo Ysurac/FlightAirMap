@@ -94,7 +94,7 @@ if (isset($_GET['reset'])) {
 			$_SESSION['error'] = $error;
 			$_SESSION['errorlst'] = array_merge($_SESSION['errorlst'],array('Create and import tables'));
 		} else $_SESSION['done'] = array_merge($_SESSION['done'],array('Create and import tables'));
-		if ($globalSBS1 && !$globalIVAO && !$globalVATSIM && !$globalphpVMS) {
+		if ((!isset($globalAircraft) || $globalAircraft === TRUE) && (!isset($globalVA) || $globalVA === FALSE)) {
 			$_SESSION['install'] = 'populate';
 			$_SESSION['next'] = 'Populate aircraft_modes table with externals data for ADS-B';
 		} else {
