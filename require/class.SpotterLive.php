@@ -191,7 +191,7 @@ class SpotterLive {
 	* @return Array the spotter information
 	*
 	*/
-	public function getMinLiveSpotterData($filter = array())
+	public function getMinLiveSpotterData($limit = 0,$filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalArchive, $globalMap2DAircraftsLimit;
 		date_default_timezone_set('UTC');
@@ -222,8 +222,12 @@ class SpotterLive {
 				FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate".$filter_query." spotter_live.latitude <> '0' AND spotter_live.longitude <> '0'";
 			}
 		}
-		if (isset($globalMap2DAircraftsLimit) && $globalMap2DAircraftsLimit != '') {
-			$query .= ' LIMIT '.$globalMap2DAircraftsLimit;
+
+		if ($limit == 0 && isset($globalMap2DAircraftsLimit) && $globalMap2DAircraftsLimit != '') {
+			$limit = $globalMap2DAircraftsLimit;
+		}
+		if ($limit != 0 && filter_var($limit,FILTER_VALIDATE_INT)) {
+			$query .= ' LIMIT '.$limit;
 		}
 
 		try {
@@ -446,7 +450,7 @@ class SpotterLive {
 	*/
 	public function getLiveSpotterDatabyCoord($coord, $filter = array())
 	{
-		global $globalDBdriver, $globalLiveInterval;
+		global $globalDBdriver, $globalLiveInterval,$globalMap2DAircraftsLimit;
 		$Spotter = new Spotter($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		$filter_query = $this->getFilter($filter);
@@ -461,8 +465,11 @@ class SpotterLive {
 			$query  = 'SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL '.$globalLiveInterval.' SECOND) <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN '.$minlat.' AND '.$maxlat.' AND spotter_live.longitude BETWEEN '.$minlong.' AND '.$maxlong.' GROUP BY spotter_live.flightaware_id'.$filter_query;
 		} else {
 			$query  = "SELECT spotter_live.* FROM spotter_live INNER JOIN (SELECT l.flightaware_id, max(l.date) as maxdate FROM spotter_live l WHERE NOW() at time zone 'UTC'  - INTERVAL '".$globalLiveInterval." SECONDS' <= l.date GROUP BY l.flightaware_id) s on spotter_live.flightaware_id = s.flightaware_id AND spotter_live.date = s.maxdate AND spotter_live.latitude BETWEEN ".$minlat." AND ".$maxlat." AND spotter_live.longitude BETWEEN ".$minlong." AND ".$maxlong." GROUP BY spotter_live.flightaware_id".$filter_query;
-
 		}
+		if (isset($globalMap2DAircraftsLimit) && $globalMap2DAircraftsLimit != '') {
+			$query .= ' LIMIT '.$globalMap2DAircraftsLimit;
+		}
+
 		$spotter_array = $Spotter->getDataFromDB($query);
 		return $spotter_array;
 	}
@@ -473,7 +480,7 @@ class SpotterLive {
 	* @return Array the spotter information
 	*
 	*/
-	public function getMinLiveSpotterDatabyCoord($coord, $filter = array())
+	public function getMinLiveSpotterDatabyCoord($coord,$limit = 0, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalArchive,$globalMap2DAircraftsLimit;
 		$Spotter = new Spotter($this->db);
@@ -545,8 +552,11 @@ class SpotterLive {
 				AND spotter_live.date = s.maxdate".$filter_query." spotter_live.latitude <> '0' AND spotter_live.longitude <> '0'";
 			}
 		}
-		if (isset($globalMap2DAircraftsLimit) && $globalMap2DAircraftsLimit != '') {
-			$query .= ' LIMIT '.$globalMap2DAircraftsLimit;
+		if ($limit == 0 && isset($globalMap2DAircraftsLimit) && $globalMap2DAircraftsLimit != '') {
+			$limit = $globalMap2DAircraftsLimit;
+		}
+		if ($limit != 0 && filter_var($limit,FILTER_VALIDATE_INT)) {
+			$query .= ' LIMIT '.$limit;
 		}
 		try {
 			$sth = $this->db->prepare($query);

@@ -57,6 +57,10 @@ function dynamicSortMultiple() {
     }
 }
 
+function map2dlimit(limit) {
+    createCookie('map_2d_limit',limit,9999);
+}
+
 function mapType(selectObj) {
     var idx = selectObj.selectedIndex;
     var atype = selectObj.options[idx].value;

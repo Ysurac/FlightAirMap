@@ -60,6 +60,7 @@ header('Content-Type: text/javascript');
 if (!isset($globalJsonCompress)) $compress = true;
 else $compress = $globalJsonCompress;
 
+$limit = 0;
 $from_archive = false;
 $min = true;
 $allhistory = false;
@@ -81,6 +82,11 @@ if (isset($_COOKIE['filter_blocked']) && $_COOKIE['filter_blocked'] == 'true') $
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) {
 	$min = true;
 } else $min = false;
+
+
+if (isset($_COOKIE['map_2d_limit'])) {
+	$limit = filter_var($_COOKIE['map_2d_limit'],FILTER_SANITIZE_NUMBER_INT);
+}
 
 $spotter_array = array();
 
@@ -139,7 +145,7 @@ if (isset($_GET['ident'])) {
 		} elseif ($marine) {
 			$spotter_array = $MarineLive->getMinLiveMarineDatabyCoord($coord,$filter);
 		} else {
-			$spotter_array = $SpotterLive->getMinLiveSpotterDatabyCoord($coord,$filter);
+			$spotter_array = $SpotterLive->getMinLiveSpotterDatabyCoord($coord,$limit,$filter);
 		}
 	} else {
 		if ($tracker) {
@@ -147,7 +153,7 @@ if (isset($_GET['ident'])) {
 		} elseif ($marine) {
 			$spotter_array = $MarineLive->getMinLiveMarineData($filter);
 		} else {
-			$spotter_array = $SpotterLive->getMinLiveSpotterData($filter);
+			$spotter_array = $SpotterLive->getMinLiveSpotterData($limit,$filter);
 		}
 	}
 } elseif (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate']) && isset($_GET['speed']) && !isset($_GET['tracker']) && !isset($_GET['marine'])) {

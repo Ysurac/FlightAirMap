@@ -538,7 +538,13 @@ require_once('header.php');
 <?php
     if (!isset($_COOKIE['MapFormat']) || $_COOKIE['MapFormat'] != '3d') {
 ?>
-
+		    <?php
+			if (!isset($globalAircraft) || $globalAircraft === TRUE) {
+		    ?>
+		    <li><?php echo _("Max number of flights to display:"); ?> <input type="number" name="2dlimit" value="<?php if (isset($_COOKIE['map_2d_limit'])) print $_COOKIE['map_2d_limit']; elseif (isset($globalMap2DAircraftsLimit)) print $globalMapAircraftsLimit; else print 15000; ?>" onchange="map2dlimit(this.value);" /></li>
+		    <?php
+			}
+		    ?>
 		    <?php
 			if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 		    	    if (extension_loaded('gd') && function_exists('gd_info')) {
@@ -547,7 +553,7 @@ require_once('header.php');
 		    <?php 
 				if (!isset($_COOKIE['IconColorAltitude']) || $_COOKIE['IconColorAltitude'] == 'false') {
 		    ?>
-			<li><?php echo _("Aircraft icon color:"); ?><input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(aircraftcolor.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>"></li>
+			<li><?php echo _("Aircraft icon color:"); ?> <input type="color" name="aircraftcolor" id="html5colorpicker" onchange="iconColor(this.value);" value="#<?php if (isset($_COOKIE['IconColor'])) print $_COOKIE['IconColor']; elseif (isset($globalAircraftIconColor)) print $globalAircraftIconColor; else print '1a3151'; ?>"></li>
 		    <?php
 				}
 			    }

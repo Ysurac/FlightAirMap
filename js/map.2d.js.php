@@ -178,13 +178,13 @@ $( document ).ready(function() {
 <?php
 		if (isset($viewcenterlatitude) && isset($viewcenterlongitude)) {
 ?>
-	map = L.map('live-map', { zoomControl:false }).setView([<?php print $viewcenterlatitude; ?>,<?php print $viewcenterlongitude; ?>], zoom);
+	map = L.map('live-map', { zoomControl:false, preferCanvas: true }).setView([<?php print $viewcenterlatitude; ?>,<?php print $viewcenterlongitude; ?>], zoom);
 	//map = L.map('live-map', { crs : L.CRS.EPSG4326, zoomControl:false }).setView([<?php print $viewcenterlatitude; ?>,<?php print $viewcenterlongitude; ?>], zoom);
 	//map = WE.map('live-map');
 <?php
 		} else {
 ?>
-	map = L.map('live-map', { zoomControl:false }).setView([0,0], zoom);
+	map = L.map('live-map', { zoomControl:false,preferCanvas: true }).setView([0,0], zoom);
 <?php
 		}
 	}
