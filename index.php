@@ -541,7 +541,7 @@ require_once('header.php');
 		    <?php
 			if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 		    ?>
-		    <li><?php echo _("Max number of flights to display:"); ?> <input type="number" name="2dlimit" value="<?php if (isset($_COOKIE['map_2d_limit'])) print $_COOKIE['map_2d_limit']; elseif (isset($globalMap2DAircraftsLimit)) print $globalMapAircraftsLimit; else print 15000; ?>" onchange="map2dlimit(this.value);" /></li>
+		    <li><?php echo _("Max number of flights to display:"); ?> <input type="number" name="2dlimit" value="<?php if (isset($_COOKIE['map_2d_limit'])) print $_COOKIE['map_2d_limit']; elseif (isset($globalMap2DAircraftsLimit)) print $globalMap2DAircraftsLimit; else print 15000; ?>" onchange="map2dlimit(this.value);" /></li>
 		    <?php
 			}
 		    ?>
