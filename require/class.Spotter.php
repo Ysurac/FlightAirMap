@@ -1647,7 +1647,6 @@ class Spotter{
 		$query_values = array();
 		$limit_query = '';
 		$additional_query = '';
-		$filter_query = $this->getFilter($filters,true,true);
 		
 		if ($airline != "")
 		{
@@ -1681,8 +1680,13 @@ class Spotter{
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
-
-		$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
+		if ($additional_query == '') {
+			$filter_query = $this->getFilter($filters,false,false);
+			$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
+		} else {
+			$filter_query = $this->getFilter($filters,true,true);
+			$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
+		}
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
