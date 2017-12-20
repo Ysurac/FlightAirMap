@@ -1960,7 +1960,6 @@ class Spotter{
 		$query_values = array();
 		$additional_query = '';
 		$limit_query = '';
-		$filter_query = $this->getFilter($filters,true,true);
 		if ($departure_airport_icao != "")
 		{
 			if (!is_string($departure_airport_icao))
@@ -2011,6 +2010,11 @@ class Spotter{
 
 		$query = "SELECT spotter_output.spotter_id,spotter_output.flightaware_id,spotter_output.ident,spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time,spotter_output.real_departure_airport_icao,spotter_output.real_departure_airport_time FROM spotter_output";
 		//$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
+		if ($additional_query != '') {
+			$filter_query = $this->getFilter($filters,true,true);
+		} else {
+			$filter_query = $this->getFilter($filters,false,false);
+		}
 		$query .= $filter_query." ".$additional_query." ".$orderby_query;
           
 		//$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
@@ -3740,8 +3744,18 @@ class Spotter{
 	*/	
 	public function updateLatestScheduleSpotterData($flightaware_id = '', $departure_airport_icao = '', $departure_airport_time = '', $arrival_airport_icao = '',$arrival_airport_time = '')
 	{
-		$query = 'UPDATE spotter_output SET departure_airport_icao = :departure_airport_icao, departure_airport_time = :departure_airport_time, arrival_airport_icao = :arrival_airport_icao, arrival_airport_time = :arrival_airport_time WHERE flightaware_id = :flightaware_id';
-		$query_values = array(':flightaware_id' => $flightaware_id,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time);
+		$departure_airport_array = $this->getAllAirportInfo($departure_airport_icao);
+		$departure_airport_name = $departure_airport_array[0]['name'];
+		$departure_airport_city = $departure_airport_array[0]['city'];
+		$departure_airport_country = $departure_airport_array[0]['country'];
+
+		$arrival_airport_array = $this->getAllAirportInfo($arrival_airport_icao);
+		$arrival_airport_name = $arrival_airport_array[0]['name'];
+		$arrival_airport_city = $arrival_airport_array[0]['city'];
+		$arrival_airport_country = $arrival_airport_array[0]['country'];
+
+		$query = 'UPDATE spotter_output SET departure_airport_icao = :departure_airport_icao, departure_airport_name = :departure_airport_name, departure_airport_city = :departure_airport_city, departure_airport_country = :departure_airport_country, departure_airport_time = :departure_airport_time, arrival_airport_icao = :arrival_airport_icao, arrival_airport_city = :arrival_airport_city, arrival_airport_name = :arrival_airport_name, arrival_airport_country = :arrival_airport_country, arrival_airport_time = :arrival_airport_time WHERE flightaware_id = :flightaware_id';
+		$query_values = array(':flightaware_id' => $flightaware_id,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time,':departure_airport_name' => $departure_airport_name,':departure_airport_city' => $departure_airport_city,':departure_airport_country' => $departure_airport_country, ':arrival_airport_name' => $arrival_airport_name, ':arrival_airport_city' => $arrival_airport_city, ':arrival_airport_country' => $arrival_airport_country);
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
