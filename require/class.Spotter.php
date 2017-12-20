@@ -1425,7 +1425,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query = " AND spotter_output.owner_name = :owner";
+				$additional_query = " spotter_output.owner_name = :owner";
 				$query_values = array(':owner' => $owner);
 			}
 		}
@@ -1452,7 +1452,11 @@ class Spotter{
 		} else {
 			$orderby_query = " ORDER BY spotter_output.date DESC";
 		}
-
+		if ($additional_query == '') {
+			$filter_query = $this->getFilter($filter,false,false);
+		} else {
+			$filter_query = $this->getFilter($filter,true,true);
+		}
 		$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
 
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
