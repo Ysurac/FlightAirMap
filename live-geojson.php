@@ -731,6 +731,7 @@ $output = '{';
 					} else {
 						if ($from_archive || $globalArchive) {
 							$spotter_history_array = $SpotterArchive->getAllArchiveSpotterDataById($spotter_item['flightaware_id']);
+							//print_r($spotter_history_array);
 						} else {
 							$spotter_history_array = $SpotterLive->getAllLiveSpotterDataById($spotter_item['flightaware_id']);
 						}

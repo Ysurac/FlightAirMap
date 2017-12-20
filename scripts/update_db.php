@@ -25,6 +25,8 @@ if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN' && (!isset($globalDisableUpdateChe
 require(dirname(__FILE__).'/../install/class.update_db.php');
 $update_db = new update_db();
 
+if ($update_db->check() === false) die();
+
 if ((!isset($globalMasterServer) || !$globalMasterServer) && (!isset($globalOffline) || $globalOffline === FALSE)) {
 	if (isset($globalNOTAM) && $globalNOTAM && $update_db->check_last_notam_update()) {
 		echo "updating NOTAM...";

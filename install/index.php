@@ -65,7 +65,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 		print '<div class="alert alert-danger"><strong>Error</strong> The directory <i>data</i> must be writable from this page or at least to <i>scripts/update_db.php</i> user.</div>';
 	}
 	if (!$Common->is__writable('../images/airlines')) {
-		print '<div class="alert alert-warning">The directory <i>images/airlines</i> must be writable for IVAO (else you can ignore this warning).</div>';
+		print '<div class="alert alert-warning">The directory <i>images/airlines</i> must be writable for virtual airlines IVAO (else you can ignore this warning).</div>';
 	}
 	if (!set_time_limit(0)) {
 		print '<div class="alert alert-info">You may need to update the maximum execution time.</div>';
@@ -106,6 +106,9 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype'])) {
 	}
 	if (!extension_loaded('curl')) {
 		$error[] = "Curl is not loaded.";
+	}
+	if (!file_exists(dirname(__FILE__).'/../.htaccess')) {
+		$error[] = dirname(__FILE__).'/../.htaccess'." doesn't exist. The provided .htaccess must exist if you use Apache.";
 	}
 	if(function_exists('apache_get_modules') ){
 		if(!in_array('mod_rewrite',apache_get_modules())) {
@@ -400,6 +403,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 		<fieldset id="sourceloc">
 			<legend>Sources location</legend>
 			<table class="sources">
+				<thead>
 				<tr>
 					<th>Name</th>
 					<th>Latitude</th>
@@ -409,7 +413,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<th>Country</th>
 					<th>Source name</th>
 				</tr>
-				
+				</thead>
+				<tbody>
 		<?php
 		    if (isset($globalDBuser) && isset($globalDBpass) && $globalDBuser != '' && $globalDBpass != '') {
 		?>
@@ -455,6 +460,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<td><input type="text" name="source_country[]" value="" /></td>
 					<td><input type="text" name="source_ref[]" value="" /></td>
 				</tr>
+				</tbody>
 			</table>
 			<center>
 				<input type="button" value="Add a row" class="add-row-source" />
@@ -573,8 +579,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								<?php
 								    if (filter_var($source['host'],FILTER_VALIDATE_URL)) {
 								?>
-								<td><input type="text" name="host[]" id="host" value="<?php print $source['host']; ?>" /></td>
-								<td><input type="text" name="port[]" class="col-xs-2" id="port" value="<?php if (isset($source['port'])) print $source['port']; ?>" /></td>
+								<td><input type="text" name="host[]" value="<?php print $source['host']; ?>" /></td>
+								<td><input type="text" name="port[]" class="col-xs-2" value="<?php if (isset($source['port'])) print $source['port']; ?>" /></td>
 								<?php
 								    } else {
 									$hostport = explode(':',$source['host']);
@@ -586,13 +592,13 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										$port = $source['port'];
 									}
 								?>
-								<td><input type="text" name="host[]" id="host" value="<?php print $host; ?>" /></td>
-								<td><input type="text" name="port[]" class="col-xs-2" id="port" value="<?php print $port; ?>" /></td>
+								<td><input type="text" name="host[]" value="<?php print $host; ?>" /></td>
+								<td><input type="text" name="port[]" class="col-xs-2" value="<?php print $port; ?>" /></td>
 								<?php
 								    }
 								?>
 								<td>
-									<select name="format[]" id="format">
+									<select name="format[]">
 										<option value="auto" <?php if (!isset($source['format'])) print 'selected'; ?>>Auto</option>
 										<option value="sbs" <?php if (isset($source['format']) && $source['format'] == 'sbs') print 'selected'; ?>>SBS</option>
 										<option value="tsv" <?php if (isset($source['format']) && $source['format'] == 'tsv') print 'selected'; ?>>TSV</option>
@@ -620,12 +626,12 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 									</select>
 								</td>
 								<td>
-									<input type="text" name="name[]" id="name" value="<?php if (isset($source['name'])) print $source['name']; ?>" />
+									<input type="text" name="name[]" value="<?php if (isset($source['name'])) print $source['name']; ?>" />
 								</td>
-								<td><input type="checkbox" name="sourcestats[]" id="sourcestats" title="Create statistics for the source like number of messages, distance,..." value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
-								<td><input type="checkbox" name="noarchive[]" id="noarchive" title="Don't archive this source" value="1" <?php if (isset($source['noarchive']) && $source['noarchive']) print 'checked'; ?> /></td>
+								<td><input type="checkbox" name="sourcestats[]" title="Create statistics for the source like number of messages, distance,..." value="1" <?php if (isset($source['sourcestats']) && $source['sourcestats']) print 'checked'; ?> /></td>
+								<td><input type="checkbox" name="noarchive[]" title="Don't archive this source" value="1" <?php if (isset($source['noarchive']) && $source['noarchive']) print 'checked'; ?> /></td>
 								<td>
-									<select name="timezones[]" id="timezones">
+									<select name="timezones[]">
 								<?php
 									$timezonelist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
 									foreach($timezonelist as $timezones){
@@ -638,17 +644,17 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								?>
 									</select>
 								</td>
-								<td><input type="button" id="delhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
+								<td><input type="button" value="Delete" onclick="deleteRow(this)" /> <input type="button" value="Add" onclick="insRow()" /></td>
 							</tr>
 <?php
 			}
 		}
 ?>
 							<tr>
-								<td><input type="text" id="host" name="host[]" value="" /></td>
-								<td><input type="text" id="port" name="port[]" class="col-xs-2" value="" /></td>
+								<td><input type="text" name="host[]" value="" /></td>
+								<td><input type="text" name="port[]" class="col-xs-2" value="" /></td>
 								<td>
-									<select name="format[]" id="format">
+									<select name="format[]">
 										<option value="auto">Auto</option>
 										<option value="sbs">SBS</option>
 										<option value="tsv">TSV</option>
@@ -692,7 +698,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 								?>
 									</select>
 								</td>
-								<td><input type="button" id="addhost" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhost" value="Add" onclick="insRow()" /></td>
+								<td><input type="button" id="delhosti" value="Delete" onclick="deleteRow(this)" /> <input type="button" id="addhosti" value="Add" onclick="insRow()" /></td>
 							</tr>
 						</tbody>
 					</table>

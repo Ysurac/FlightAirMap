@@ -91,6 +91,7 @@ $from_archive = false;
 $min = false;
 $allhistory = false;
 $filter['source'] = array();
+$limit = 0;
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalVATSIM) && $globalVATSIM && isset($_COOKIE['filter_ShowVATSIM']) && $_COOKIE['filter_ShowVATSIM'] == 'true') $filter['source'] = array_merge($filter['source'],array('vatsimtxt'));
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalIVAO) && $globalIVAO && isset($_COOKIE['filter_ShowIVAO']) && $_COOKIE['filter_ShowIVAO'] == 'true') $filter['source'] = array_merge($filter['source'],array('whazzup'));
 if ((!isset($globalMapVAchoose) || $globalMapVAchoose) && isset($globalphpVMS) && $globalphpVMS && isset($_COOKIE['filter_ShowVMS']) && $_COOKIE['filter_ShowVMS'] == 'true') $filter['source'] = array_merge($filter['source'],array('phpvmacars'));
@@ -104,6 +105,11 @@ if (isset($_COOKIE['filter_airlinestype']) && $_COOKIE['filter_airlinestype'] !=
 if (isset($_COOKIE['filter_alliance']) && $_COOKIE['filter_alliance'] != 'all') $filter['alliance'] = filter_var($_COOKIE['filter_alliance'],FILTER_SANITIZE_STRING);
 if (isset($_COOKIE['filter_race']) && $_COOKIE['filter_race'] != 'all') $filter['race'] = filter_var($_COOKIE['filter_race'],FILTER_SANITIZE_NUMBER_INT);
 if (isset($_COOKIE['filter_blocked']) && $_COOKIE['filter_blocked'] == 'true') $filter['blocked'] = true;
+
+if (isset($_COOKIE['map_3d_limit'])) {
+	$limit = filter_var($_COOKIE['map_3d_limit'],FILTER_SANITIZE_NUMBER_INT);
+}
+
 /*
 if (isset($globalMapPopup) && !$globalMapPopup && !(isset($_COOKIE['flightpopup']) && $_COOKIE['flightpopup'] == 'true')) {
 	$min = true;
@@ -246,14 +252,14 @@ if (isset($_GET['archive']) && isset($_GET['begindate']) && isset($_GET['enddate
 	$previous_filter = $filter;
 	if (((isset($_COOKIE['singlemodel']) && $_COOKIE['singlemodel'] == 'true') || (!isset($_COOKIE['singlemodel']) && isset($globalMap3DSelected) && $globalMap3DSelected)) && (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '')) {
 		//$filter = array_merge($filter,array('id' => $_COOKIE['MapTrack']));
-		$spotter_array = $SpotterLive->getMinLastLiveSpotterDataByID($_COOKIE['MapTrack'],$filter,false);
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterDataByID($_COOKIE['MapTrack'],$filter,$limit);
 		//$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false);
 	} elseif (isset($_COOKIE['MapTrack']) && $_COOKIE['MapTrack'] != '') {
 		//$spotter_array = $SpotterLive->getMinLastLiveSpotterDataByID($_COOKIE['MapTrack'],$filter,false);
 		//if (empty($spotter_array)) $spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false,$_COOKIE['MapTrack']);
-		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false,$_COOKIE['MapTrack']);
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,$limit,$_COOKIE['MapTrack']);
 	} elseif (!isset($_COOKIE['singlemodel']) || $_COOKIE['singlemodel'] == 'false') {
-		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,false);
+		$spotter_array = $SpotterLive->getMinLastLiveSpotterData($coord,$filter,$limit);
 	} else {
 		$spotter_array = array();
 	}

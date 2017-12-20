@@ -308,7 +308,7 @@ class Accident {
 		$Spotter = new Spotter($this->db);
 
 		if (empty($crash)) return false;
-		if (!$new) {
+		if ($new === false) {
 			$query_delete = 'DELETE FROM accidents WHERE source = :source';
 			$sthd = $Connection->db->prepare($query_delete);
 			$sthd->execute(array(':source' => $crash[0]['source']));
@@ -335,17 +335,19 @@ class Accident {
 					if ($result_check[0]['nb'] == 0) {
 						$query_values = array(':registration' => trim($cr['registration']),':date' => date('Y-m-d',$cr['date']),':url' => $cr['url'],':country' => $cr['country'],':place' => $cr['place'],':title' => $cr['title'],':fatalities' => $cr['fatalities'],':latitude' => $cr['latitude'],':longitude' => $cr['longitude'],':type' => $cr['type'],':source' => $cr['source'],':ident' => $cr['ident'],':aircraft_manufacturer' => $cr['aircraft_manufacturer'],':aircraft_name' => $cr['aircraft_name'],':airline_name' => $cr['operator']);
 						$sth->execute($query_values);
-						if ($globalAircraftImageFetch && $cr['date'] > time()-(30*86400)) {
-							$imgchk = $Image->getSpotterImage($cr['registration']);
-							if (empty($imgchk)) {
-								if ($globalDebug) echo "\t".'Get image for '.$cr['registration'].'...';
-								$Image->addSpotterImage($cr['registration']);
-								if ($globalDebug) echo "\t".'Done'."\n";
+						if ($cr['date'] > time()-(30*86400)) {
+							if ($globalAircraftImageFetch) {
+								$imgchk = $Image->getSpotterImage($cr['registration']);
+								if (empty($imgchk)) {
+									if ($globalDebug) echo "\t".'Get image for '.$cr['registration'].'...';
+									$Image->addSpotterImage($cr['registration']);
+									if ($globalDebug) echo "\t".'Done'."\n";
+								}
+								// elseif ($globalDebug) echo 'Image already in DB'."\n";
 							}
-							// elseif ($globalDebug) echo 'Image already in DB'."\n";
+							if ($cr['title'] == '') $cr['title'] = $cr['registration'].' '.$cr['type'];
+							$Spotter->setHighlightFlightByRegistration($cr['registration'],$cr['title'],date('Y-m-d',$cr['date']));
 						}
-						if ($cr['title'] == '') $cr['title'] = $cr['registration'].' '.$cr['type'];
-						$Spotter->setHighlightFlightByRegistration($cr['registration'],$cr['title'],date('Y-m-d',$cr['date']));
 					}
 				}
 				if ($globalTransaction && $j % 1000 == 0) {

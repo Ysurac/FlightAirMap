@@ -9,6 +9,16 @@ $tmp_dir = dirname(__FILE__).'/tmp/';
 //$globalTransaction = true;
 class update_db {
 	public static $db_sqlite;
+	
+	public static function check() {
+		$globalDebug;
+		$Common = new Common();
+		$writable = $Common->is__writable(dirname(__FILE__).'/tmp/');
+		if ($writable === false && $globalDebug) {
+			echo dirname(__FILE__).'/tmp/'.' is not writable, fix permissions and try again.';
+		}
+		return $writable;
+	}
 
 	public static function download($url, $file, $referer = '') {
 		global $globalProxy, $globalForceIPv4;

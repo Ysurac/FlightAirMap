@@ -541,7 +541,7 @@ require_once('header.php');
 		    <?php
 			if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 		    ?>
-		    <li><?php echo _("Max number of flights to display:"); ?> <input type="number" name="2dlimit" value="<?php if (isset($_COOKIE['map_2d_limit'])) print $_COOKIE['map_2d_limit']; elseif (isset($globalMap2DAircraftsLimit)) print $globalMap2DAircraftsLimit; else print 15000; ?>" onchange="map2dlimit(this.value);" /></li>
+		    <li><?php echo _("Max number of flights to display in 2D:"); ?> <input type="number" name="2dlimit" value="<?php if (isset($_COOKIE['map_2d_limit'])) print $_COOKIE['map_2d_limit']; elseif (isset($globalMap2DAircraftsLimit)) print $globalMap2DAircraftsLimit; else print 15000; ?>" onchange="map2dlimit(this.value);" /></li>
 		    <?php
 			}
 		    ?>
@@ -605,6 +605,7 @@ require_once('header.php');
 <?php
 	if (!isset($globalAircraft) || $globalAircraft === TRUE) {
 ?>
+		    <!-- <li><?php echo _("Max number of flights to display in 3D:"); ?> <input type="number" name="3dlimit" value="<?php if (isset($_COOKIE['map_3d_limit'])) print $_COOKIE['map_3d_limit']; elseif (isset($globalMap3DAircraftsLimit)) print $globalMap3DAircraftsLimit; else print 300; ?>" onchange="map3dlimit(this.value);" /></li> -->
 		    <li><input type="checkbox" name="useliveries" value="1" onclick="useLiveries(this)" <?php if (isset($_COOKIE['UseLiveries']) && $_COOKIE['UseLiveries'] == 'true') print 'checked'; ?> > <?php echo _("Use airlines liveries"); ?></li>
 		    <li><input type="checkbox" name="aircraftcolorforce" value="1" onclick="iconColorForce(this)" <?php if (isset($_COOKIE['IconColorForce']) && $_COOKIE['IconColorForce'] == 'true') print 'checked'; ?> > <?php echo _("Force Aircraft color"); ?>&nbsp;
 		    <!--<li><?php echo _("Aircraft icon color:"); ?>-->

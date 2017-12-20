@@ -93,7 +93,7 @@ if ($facebook_meta_image != "")
 	    }
 	});
 	$('.add-row-source').click(function() {
-	    $(".sources").append('<tr><td><input type="text" name="source_name[]" value="" /></td><td><input type="text" name="source_latitude[]" value="" /></td><td><input type="text" name="source_longitude[]" value="" /></td><td><input type="text" name="source_altitude[]" value="" /></td><td><input type="text" name="source_city[]" value="" /></td><td><input type="text" name="source_country[]" value="" /></td></tr>');
+	    $(".sources").append('<tr><td><input type="text" name="source_name[]" value="" /></td><td><input type="text" name="source_latitude[]" value="" /></td><td><input type="text" name="source_longitude[]" value="" /></td><td><input type="text" name="source_altitude[]" value="" /></td><td><input type="text" name="source_city[]" value="" /></td><td><input type="text" name="source_country[]" value="" /></td><td><input type="text" name="source_name[]" value="" /></td></tr>');
 	});
 	$('.del-row-source').click(function() {
 	    if($(".sources tr").length != 2)
