@@ -1715,7 +1715,7 @@ class Spotter{
 			{
 				return false;
 			} else {
-				$additional_query .= " AND (spotter_output.departure_airport_icao = :airport OR spotter_output.arrival_airport_icao = :airport)";
+				$additional_query .= " (spotter_output.departure_airport_icao = :airport OR spotter_output.arrival_airport_icao = :airport)";
 				$query_values = array(':airport' => $airport);
 			}
 		}
