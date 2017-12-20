@@ -11,7 +11,7 @@ class update_db {
 	public static $db_sqlite;
 	
 	public static function check() {
-		$globalDebug;
+		global $globalDebug;
 		$Common = new Common();
 		$writable = $Common->is__writable(dirname(__FILE__).'/tmp/');
 		if ($writable === false && $globalDebug) {
