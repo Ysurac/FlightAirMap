@@ -19,13 +19,15 @@ class SBS {
 		// Not yet finished, no CRC checks
 		$data = array();
 		$typehex = substr($buffer,0,1);
-		if ($typehex == '*' || $typehex == ':') $hex = substr($buffer,1,-1);
+		if ($typehex == '*' || $typehex == ':') $hex = substr($buffer,1);
 		//elseif ($typehex == '@' || $typehex == '%') $hex = substr($buffer,13,-13);
 		elseif ($typehex == '@' || $typehex == '%') $hex = substr($buffer,13,-1);
 		else $hex = substr($buffer,1,-1);
 		$bin = gmp_strval( gmp_init($hex,16), 2);
 		//if (strlen($hex) == 28 && $this->parityCheck($hex,$bin)) {
 		//if (strlen($hex) == 28) {
+		//echo strlen($hex);
+		//echo $hex;
 		if (strlen($hex) == 28 || strlen($hex) == 16) {
 			$df = intval(substr($bin,0,5),2);
 			//$ca = intval(substr($bin,5,3),2);
@@ -35,9 +37,29 @@ class SBS {
 				$icao = substr($hex,2,6);
 				$data['hex'] = $icao;
 				$tc = intval(substr($bin,32,5),2);
-				$ec = intval(substr($bin,37,3),2);
-				//$data['category'] = $ec;
 				if ($tc >= 1 && $tc <= 4) {
+					// Category:
+					// 1 = light aircraft <= 7000 kg
+					// 2 = reserved
+					// 3 = 7000 kg < medium aircraft < 136000 kg
+					// 4 = reserved
+					// 5 = 136000 kg <= heavy aircraft
+					// 6 = highly manoeuvrable (5g acceleration capability) and high speed (>400 knots cruise)
+					// 7 to 9 = reserved
+					// 10 = rotocraft
+					// 11 = glider / sailplane
+					// 12 = lighter-than-air
+					// 13 = unmanned aerial vehicle
+					// 14 = space / transatmospheric vehicle
+					// 15 = ultralight / handglider / paraglider
+					// 16 = parachutist / skydiver
+					// 17 to 19 = reserved
+					// 20 = surface emergency vehicle
+					// 21 = surface service vehicle
+					// 22 = fixed ground or tethered obstruction
+					// 23 to 24 = reserved
+					//$data['category'] = intval(substr($bin,5,3),2);
+					$data['category'] = intval(substr($bin,37,3),2);
 					//callsign
 					$csbin = substr($bin,40,56);
 					$charset = str_split('#ABCDEFGHIJKLMNOPQRSTUVWXYZ#####_###############0123456789######');
