@@ -391,12 +391,11 @@ if (strtolower($current_page) == "search")
 		if ($type == 'tracker') {
 			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 		}
-		if ($showDuration && (!isset($globalVM) || $globalVM === FALSE)) {
-			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
-		} elseif ($showDuration) {
+		if ($showDuration && $type == 'marine' && isset($globalVM) && $globalVM === TRUE) {
 			print '<th class="duration"><span class="nomobile">'._("Race duration").'</span><span class="mobile">'._("Race duration").'</span></th>';
+		} elseif ($showDuration) {
+			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
 		}
-		
 		if (strtolower($current_page) == "date")
 		{
 			if ($_GET['sort'] == "date_asc")
@@ -545,10 +544,10 @@ if (strtolower($current_page) == "search")
 		if ($type == 'tracker') {
 			print '<th class="comment"><span class="nomobile">'._("Comment").'</span><span class="mobile">'._("Comment").'</span></th>';
 		}
-		if ($showDuration && (!isset($globalVM) || $globalVM === FALSE)) {
-			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
-		} elseif ($showDuration) {
+		if ($showDuration && $type == 'marine' && isset($globalVM) && $globalVM === TRUE) {
 			print '<th class="duration"><span class="nomobile">'._("Race duration").'</span><span class="mobile">'._("Race duration").'</span></th>';
+		} else {
+			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
 		}
 		if (strtolower($current_page) == "date")
 		{
