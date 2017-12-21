@@ -60,6 +60,9 @@ function dynamicSortMultiple() {
 function map2dlimit(limit) {
     createCookie('map_2d_limit',limit,9999);
 }
+function map3dlimit(limit) {
+    createCookie('map_3d_limit',limit,9999);
+}
 
 function mapType(selectObj) {
     var idx = selectObj.selectedIndex;

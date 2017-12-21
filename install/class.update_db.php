@@ -1027,6 +1027,32 @@ class update_db {
 		return '';
         }
 
+	public static function diagrams_fam() {
+		global $tmp_dir, $globalTransaction;
+		$header = NULL;
+		$delimiter = " ";
+		$Connection = new Connection();
+		if (($handle = fopen($tmp_dir.'diagramspdf', 'r')) !== FALSE)
+		{
+			$Connection->db->beginTransaction();
+			while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+			{
+				$query = 'UPDATE airport SET diagram_pdf = :diagrampdf, diagram_png = :diagrampng WHERE icao = :icao';
+				$icao = str_replace('.pdf','',$data[2]);
+				try {
+					$sth = $Connection->db->prepare($query);
+					$sth->execute(array(':icao' => $icao,':diagrampdf' => 'https://data.flightairmap.com/data/diagrams/'.$icao.'.pdf',':diagrampng' => 'https://data.flightairmap.com/data/diagrams/'.$icao.'.png'));
+				} catch(PDOException $e) {
+					echo "error : ".$e->getMessage();
+					return "error : ".$e->getMessage();
+				}
+			}
+			fclose($handle);
+			$Connection->db->commit();
+		}
+		return '';
+        }
+
 	/*
 	* This function use FAA public data.
 	* With the help of data from other source, Mfr id is added to manufacturer table. Then ModeS with ICAO are added based on that.
@@ -2655,6 +2681,31 @@ class update_db {
 		}
 		return '';
 	}
+	public static function update_diagrams_fam() {
+		global $tmp_dir, $globalDebug;
+		update_db::download('http://data.flightairmap.com/data/diagrams/diagramspdf.md5',$tmp_dir.'diagramspdf.md5');
+		if (file_exists($tmp_dir.'diagramspdf.md5')) {
+			$diagrams_md5_file = explode(' ',file_get_contents($tmp_dir.'diagramspdf.md5'));
+			$diagrams_md5 = $diagrams_md5_file[0];
+			if (!update_db::check_diagrams_version($diagrams_md5)) {
+				if ($globalDebug) echo "Airports diagrams from FlightAirMap website : Download...";
+				update_db::download('http://data.flightairmap.com/data/diagrams/diagramspdf',$tmp_dir.'diagramspdf');
+				if (file_exists($tmp_dir.'diagramspdf')) {
+					if (md5_file($tmp_dir.'diagramspdf') == $diagrams_md5) {
+						if ($globalDebug) echo "Add to DB...";
+						$error = update_db::diagrams_fam();
+					} else $error = "File ".$tmp_dir.'diagramspdf'." md5 failed. Download failed.";
+				} else $error = "File ".$tmp_dir.'diagramspdf'." doesn't exist. Download failed.";
+				if ($error != '') {
+					return $error;
+				} else {
+					update_db::insert_diagrams_version($diagrams_md5);
+					if ($globalDebug) echo "Done\n";
+				}
+			}
+		}
+		return '';
+	}
 	public static function update_banned_fam() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Banned airlines in Europe from FlightAirMap website : Download...";
@@ -3296,6 +3347,19 @@ class update_db {
 		if ($row['nb'] > 0) return true;
 		else return false;
 	}
+	public static function check_diagrams_version($version) {
+		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'diagrams_version' AND value = :version";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+		$row = $sth->fetch(PDO::FETCH_ASSOC);
+		if ($row['nb'] > 0) return true;
+		else return false;
+	}
 
 	public static function check_airlines_version($version) {
 		$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'airlines_version' AND value = :version";
@@ -3388,6 +3452,17 @@ class update_db {
 	public static function insert_satellite_version($version) {
 		$query = "DELETE FROM config WHERE name = 'satellite_version';
 			INSERT INTO config (name,value) VALUES ('satellite_version',:version);";
+		try {
+			$Connection = new Connection();
+			$sth = $Connection->db->prepare($query);
+			$sth->execute(array(':version' => $version));
+		} catch(PDOException $e) {
+			return "error : ".$e->getMessage();
+		}
+	}
+	public static function insert_diagrams_version($version) {
+		$query = "DELETE FROM config WHERE name = 'diagrams_version';
+			INSERT INTO config (name,value) VALUES ('diagrams_version',:version);";
 		try {
 			$Connection = new Connection();
 			$sth = $Connection->db->prepare($query);
@@ -3814,6 +3889,7 @@ class update_db {
 				echo update_db::fix_icaotype();
 				echo update_db::update_banned_fam();
 				echo update_db::update_block_fam();
+				echo update_db::update_diagrams();
 				//echo update_db::update_celestrak();
 				//echo update_db::delete_duplicatemodes();
 			} else {
@@ -3829,6 +3905,7 @@ class update_db {
 				//echo update_db::delete_duplicatemodes();
 				echo update_db::update_banned_fam();
 				echo update_db::update_block_fam();
+				echo update_db::update_diagrams();
 			}
 		}
 	}
@@ -3865,5 +3942,6 @@ class update_db {
 //echo update_db::update_celestrak();
 //echo update_db::update_aircraft();
 //echo update_db::update_block_fam();
+//echo update_db::update_diagrams_fam();
 
 ?>

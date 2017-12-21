@@ -34,7 +34,6 @@ if (!isset($_GET['airport'])){
 	
 	$sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 	$airport_array = $Spotter->getAllAirportInfo($airport_icao);
-	
 	if (!empty($airport_array))
 	{
 		if ($sort != '') {
@@ -96,6 +95,8 @@ if (!isset($_GET['airport'])){
 			print '</div>';
 			print '<div><span class="label">'._("Coordinates").'</span><a href="http://maps.google.com/maps?z=10&t=k&q='.$airport_array[0]['latitude'].','.$airport_array[0]['longitude'].'" target="_blank">Google Map<i class="fa fa-angle-double-right"></i></a></div>';
 			print '<div><span class="label">'._("Live Air Traffic").'</span><a href="http://www.liveatc.net/search/?icao='.$airport_array[0]['icao'].'" target="_blank">LiveATC.net<i class="fa fa-angle-double-right"></i></a></div>';
+			if (isset($airport_array[0]['home_link']) && $airport_array[0]['home_link'] != '') print '<div><a href="'.$airport_array[0]['home_link'].'"><i class="fa fa-home"></i></a></div>';
+			if (isset($airport_array[0]['wikipedia_link']) && $airport_array[0]['wikipedia_link'] != '') print '<div><a href="'.$airport_array[0]['wikipedia_link'].'"><i class="fa fa-wikipedia-w"></i></a></div>';
 			if (isset($airport_array[0]['diagram_pdf']) && $airport_array[0]['diagram_pdf'] != '') print '<div><span class="label">'._("Diagram").'</span><a href="'.$airport_array[0]['diagram_pdf'].'" target="_blank">'.$airport_array[0]['icao'].'<i class="fa fa-angle-double-right"></i></a></div>';
 			print '</div>';
 			
@@ -190,24 +191,29 @@ if (!isset($_GET['airport'])){
 		} else {
 			print '<div class="alert alert-warning">'._("This special airport profile shows all flights that do <u>not</u> have a departure and/or arrival airport associated with them.").'</div>';
 		}
-		include('airport-sub-menu.php');
-		print '<div class="table column">';
-		if ($airport_array[0]['iata'] != "NA")
-		{
-			print '<p>'.sprintf(_("The table below shows the detailed information of all flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
+		if (!empty($spotter_array)) {
+			include('airport-sub-menu.php');
+			print '<div class="table column">';
+			if ($airport_array[0]['iata'] != "NA")
+			{
+				print '<p>'.sprintf(_("The table below shows the detailed information of all flights to/from <strong>%s, %s (%s)</strong>."),$airport_array[0]['city'],$airport_array[0]['name'],$airport_array[0]['icao']).'</p>';
+			}
+			include('table-output.php');  
+			print '<div class="pagination">';
+			if ($limit_previous_1 >= 0)
+			{
+				print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;'._("Previous Page").'</a>';
+			}
+			if (isset($spotter_array[0]['query_number_rows']) && $spotter_array[0]['query_number_rows'] == $absolute_difference)
+			{
+				print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">'._("Next Page").'&raquo;</a>';
+			}
+			print '</div>';
+			print '</div>';
+		} else {
+			if (isset($airport_array[0]['image']) && $airport_array[0]['image'] != '') print '<center><img src="'.$airport_array[0]['image'].'" /></center>';
+			print '<p>'._("Sorry, no flights used the airport in this database.").'</p>'; 
 		}
-		include('table-output.php');  
-		print '<div class="pagination">';
-		if ($limit_previous_1 >= 0)
-		{
-			print '<a href="'.$page_url.'/'.$limit_previous_1.','.$limit_previous_2.'/'.$sort.'">&laquo;'._("Previous Page").'</a>';
-		}
-		if (isset($spotter_array[0]['query_number_rows']) && $spotter_array[0]['query_number_rows'] == $absolute_difference)
-		{
-			print '<a href="'.$page_url.'/'.$limit_end.','.$limit_next.'/'.$sort.'">'._("Next Page").'&raquo;</a>';
-		}
-		print '</div>';
-		print '</div>';
 	} else {
 		$title = "Airport";
 		require_once('header.php');

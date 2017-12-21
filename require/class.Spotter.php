@@ -2190,9 +2190,9 @@ class Spotter{
 		if ($airport == 'NA') {
 			return array(array('name' => 'Not available','city' => 'N/A', 'country' => 'N/A','iata' => 'NA','icao' => 'NA','altitude' => NULL,'latitude' => 0,'longitude' => 0,'type' => 'NA','home_link' => '','wikipedia_link' => '','image_thumb' => '', 'image' => ''));
 		} elseif ($airport == '') {
-			$query  = "SELECT airport.name, airport.city, airport.country, airport.iata, airport.icao, airport.latitude, airport.longitude, airport.altitude, airport.type, airport.home_link, airport.wikipedia_link, airport.image_thumb, airport.image FROM airport";
+			$query  = "SELECT airport.name, airport.city, airport.country, airport.iata, airport.icao, airport.latitude, airport.longitude, airport.altitude, airport.type, airport.home_link, airport.wikipedia_link, airport.image_thumb, airport.image, airport.diagram_pdf, airport.diagram_png FROM airport";
 		} else {
-			$query  = "SELECT airport.name, airport.city, airport.country, airport.iata, airport.icao, airport.latitude, airport.longitude, airport.altitude, airport.type, airport.home_link, airport.wikipedia_link, airport.image_thumb, airport.image FROM airport WHERE airport.icao = :airport LIMIT 1";
+			$query  = "SELECT airport.name, airport.city, airport.country, airport.iata, airport.icao, airport.latitude, airport.longitude, airport.altitude, airport.type, airport.home_link, airport.wikipedia_link, airport.image_thumb, airport.image, airport.diagram_pdf, airport.diagram_png FROM airport WHERE airport.icao = :airport LIMIT 1";
 			$query_values = array(':airport' => $airport);
 		}
 		
