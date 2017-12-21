@@ -1029,7 +1029,6 @@ class update_db {
 
 	public static function diagrams_fam() {
 		global $tmp_dir, $globalTransaction;
-		$header = NULL;
 		$delimiter = " ";
 		$Connection = new Connection();
 		if (($handle = fopen($tmp_dir.'diagramspdf', 'r')) !== FALSE)
@@ -3889,7 +3888,7 @@ class update_db {
 				echo update_db::fix_icaotype();
 				echo update_db::update_banned_fam();
 				echo update_db::update_block_fam();
-				echo update_db::update_diagrams();
+				echo update_db::update_diagrams_fam();
 				//echo update_db::update_celestrak();
 				//echo update_db::delete_duplicatemodes();
 			} else {
@@ -3905,7 +3904,7 @@ class update_db {
 				//echo update_db::delete_duplicatemodes();
 				echo update_db::update_banned_fam();
 				echo update_db::update_block_fam();
-				echo update_db::update_diagrams();
+				echo update_db::update_diagrams_fam();
 			}
 		}
 	}
