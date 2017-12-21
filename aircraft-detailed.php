@@ -73,9 +73,9 @@ if (!isset($_GET['aircraft_type'])){
 				print '<div><span class="label">'._("Name").'</span>'.$aircraft_info[0]['type'].'</div>';
 				print '<div><span class="label">'._("ICAO").'</span>'.$aircraft_info[0]['icao'].'</div>'; 
 				print '<div><span class="label">'._("Manufacturer").'</span><a href="'.$globalURL.'/manufacturer/'.strtolower(str_replace(" ", "-", $aircraft_info[0]['manufacturer'])).'">'.$aircraft_info[0]['manufacturer'].'</a></div>';
-				if ($aircraft_info[0]['aircraft_description'] != '') print '<div><span class="label">'._("Description").'</span>'.$aircraft_info[0]['aircraft_description'].'</div>'; 
-				if ($aircraft_info[0]['engine_type'] != '') print '<div><span class="label">'._("Engine").'</span>'.$aircraft_info[0]['engine_type'].'</div>'; 
-				if ($aircraft_info[0]['engine_count'] != '') print '<div><span class="label">'._("Engine count").'</span>'.$aircraft_info[0]['engine_count'].'</div>'; 
+				if ($aircraft_info[0]['aircraft_description'] != '' && $aircraft_info[0]['aircraft_description'] != 'None') print '<div><span class="label">'._("Description").'</span>'.$aircraft_info[0]['aircraft_description'].'</div>'; 
+				if ($aircraft_info[0]['engine_type'] != '' && $aircraft_info[0]['engine_type'] != 'None') print '<div><span class="label">'._("Engine").'</span>'.$aircraft_info[0]['engine_type'].'</div>'; 
+				if ($aircraft_info[0]['engine_count'] != '' && $aircraft_info[0]['engine_count'] != 0) print '<div><span class="label">'._("Engine count").'</span>'.$aircraft_info[0]['engine_count'].'</div>'; 
 			} else {
 				print '<h1>'.$spotter_array[0]['aircraft_name'].' ('.$spotter_array[0]['aircraft_type'].')</h1>';
 				print '<div><span class="label">'._("Name").'</span>'.$spotter_array[0]['aircraft_name'].'</div>';
