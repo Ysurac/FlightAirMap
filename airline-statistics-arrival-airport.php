@@ -55,6 +55,7 @@ if (!empty($spotter_array) || $alliance === true)
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	print '</form>';
 	print '</div>';
+	print '<br />';
 
 	if ($airline != "NA")
 	{

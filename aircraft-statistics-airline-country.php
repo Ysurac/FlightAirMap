@@ -38,6 +38,7 @@ if (!empty($spotter_array))
 	print '<button type="submit"><i class="fa fa-angle-double-right"></i></button>';
 	print '</form>';
 	print '</div>';
+	print '<br />';
 
 	if ($aircraft_type != "NA")
 	{

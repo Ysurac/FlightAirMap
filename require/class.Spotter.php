@@ -2363,15 +2363,15 @@ class Spotter{
 		} else {
 			if (strlen($airline_icao) == 2) {
 				if ($fromsource === NULL) {
-					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type, airlines.home_link, airlines.wikipedia_link FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
 				} else {
-					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' AND airlines.forsource = :fromsource LIMIT 1";
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type, airlines.home_link, airlines.wikipedia_link FROM airlines WHERE airlines.iata = :airline_icao AND airlines.active = 'Y' AND airlines.forsource = :fromsource LIMIT 1";
 				}
 			} else {
 				if ($fromsource === NULL) {
-					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type, airlines.home_link, airlines.wikipedia_link FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' AND airlines.forsource IS NULL LIMIT 1";
 				} else {
-					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' AND airlines.forsource = :fromsource LIMIT 1";
+					$query  = "SELECT airlines.name, airlines.iata, airlines.icao, airlines.callsign, airlines.country, airlines.type, airlines.home_link, airlines.wikipedia_link FROM airlines WHERE airlines.icao = :airline_icao AND airlines.active = 'Y' AND airlines.forsource = :fromsource LIMIT 1";
 				}
 			}
 			
