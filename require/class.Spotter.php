@@ -4552,7 +4552,7 @@ class Spotter{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count, countries.iso3 AS airline_country_iso3 
-			FROM spotter_output, countries ".$filter_query." countries.name = spotter_output.airline_country AND spotter_output.airline_country <> '' AND spotter_output.aircraft_icao = :aircraft_icao
+			FROM spotter_output, countries ".$filter_query." countries.name = spotter_output.airline_country AND spotter_output.aircraft_icao = :aircraft_icao
 			GROUP BY spotter_output.airline_country, countries.iso3
 			ORDER BY airline_country_count DESC
 			LIMIT 10 OFFSET 0";
@@ -4624,7 +4624,7 @@ class Spotter{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count, countries.iso3 AS airline_country_iso3 
-			FROM countries, spotter_output".$filter_query." countries.name = spotter_output.airline_country AND spotter_output.airline_country <> '' AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao )
+			FROM countries, spotter_output".$filter_query." countries.name = spotter_output.airline_country AND (spotter_output.departure_airport_icao = :airport_icao OR spotter_output.arrival_airport_icao = :airport_icao )
 			GROUP BY spotter_output.airline_country, countries.iso3
 			ORDER BY airline_country_count DESC
 			LIMIT 10 OFFSET 0";
@@ -4694,7 +4694,7 @@ class Spotter{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count, countries.iso3 AS airline_country_iso3
-		 			FROM spotter_output,countries".$filter_query." spotter_output.airline_country <> '' AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer AND spotter_output.airline_country = countries.name 
+		 			FROM spotter_output,countries".$filter_query." spotter_output.aircraft_manufacturer = :aircraft_manufacturer AND spotter_output.airline_country = countries.name 
 					GROUP BY spotter_output.airline_country, countries.iso3
 					ORDER BY airline_country_count DESC
 					LIMIT 10 OFFSET 0";
@@ -5155,7 +5155,7 @@ class Spotter{
 		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$query  = "SELECT DISTINCT spotter_output.airline_country, COUNT(spotter_output.airline_country) AS airline_country_count, countries.iso3 AS airline_country_iso3
-		 			FROM countries, spotter_output".$filter_query." countries.name = spotter_output.airline_country AND spotter_output.airline_country <> '' AND spotter_output.airline_country <> 'NA'";
+		 			FROM countries, spotter_output".$filter_query." countries.name = spotter_output.airline_country AND spotter_output.airline_country <> 'NA'";
 		$query_values = array();
 		if ($year != '') {
 			if ($globalDBdriver == 'mysql') {
