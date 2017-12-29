@@ -1,12 +1,14 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 require_once('require/class.Language.php');
 if (!isset($_GET['owner'])) {
         header('Location: '.$globalURL.'/owner');
         die();
 }
 $Spotter = new Spotter();
+$SpotterArchive = new SpotterArchive();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $owner = urldecode(filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING));
 $year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
@@ -14,8 +16,12 @@ $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
 $filter = array();
 if ($year != '') $filter = array_merge($filter,array('year' => $year));
 if ($month != '') $filter = array_merge($filter,array('month' => $month));
+$archive = false;
 $spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort,$filter);
-
+if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
+	$archive = true;
+	$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,"0,1", $sort,$filter);
+}
 if (!empty($spotter_array))
 {
 	$title = sprintf(_("Most Common Time of Day of %s"),$spotter_array[0]['aircraft_owner']);
@@ -31,7 +37,11 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Time of Day").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common time of day of flights owned by <strong>%s</strong>."),$spotter_array[0]['aircraft_owner']).'</p>';
 
-	$hour_array = $Spotter->countAllHoursByOwner($owner,$filter);
+	if ($archive === false) {
+		$hour_array = $Spotter->countAllHoursByOwner($owner,$filter);
+	} else {
+		$hour_array = $SpotterArchive->countAllHoursByOwner($owner,$filter);
+	}
 	print '<link href="'.$globalURL.'/css/c3.min.css" rel="stylesheet" type="text/css">';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/d3.min.js"></script>';
 	print '<script type="text/javascript" src="'.$globalURL.'/js/c3.min.js"></script>';

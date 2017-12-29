@@ -47,17 +47,9 @@ if (!isset($_GET['owner'])){
 	$filter = array();
 	if ($year != '') $filter = array_merge($filter,array('year' => $year));
 	if ($month != '') $filter = array_merge($filter,array('month' => $month));
-	if ($sort != '') 
-	{
-		$spotter_array = $Spotter->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference, $sort,$filter);
-		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
-			$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference, $sort,$filter);
-		}
-	} else {
-		$spotter_array = $Spotter->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference,'',$filter);
-		if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
-			$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference,'',$filter);
-		}
+	$spotter_array = $Spotter->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference, $sort,$filter);
+	if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
+		$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,$limit_start.",".$absolute_difference, $sort,$filter);
 	}
 
 	if (!empty($spotter_array))
@@ -67,55 +59,6 @@ if (!isset($_GET['owner'])){
 		if (isset($spotter_array[0]['latitude'])) $latitude = $spotter_array[0]['latitude'];
 		if (isset($spotter_array[0]['longitude'])) $longitude = $spotter_array[0]['longitude'];
 		require_once('header.php');
-		/*
-		if (isset($globalArchive) && $globalArchive) {
-			// Requirement for altitude graph
-			print '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-			$all_data = $SpotterArchive->getAltitudeSpeedArchiveSpotterDataById($spotter_array[0]['flightaware_id']);
-			if (isset($globalTimezone)) {
-				date_default_timezone_set($globalTimezone);
-			} else date_default_timezone_set('UTC');
-			if (count($all_data) > 0) {
-				print '<div id="chart6" class="chart" width="100%"></div>
-                    <script> 
-                        google.load("visualization", "1.1", {packages:["line","corechart"]});
-                      google.setOnLoadCallback(drawChart6);
-                      function drawChart6() {
-                        var data = google.visualization.arrayToDataTable([
-                            ["Hour","'._("Altitude").'","'._("Speed").'"], ';
-                            $altitude_data = '';
-				foreach($all_data as $data)
-				{
-					$altitude_data .= '[ "'.date("G:i",strtotime($data['date']." UTC")).'",'.$data['altitude'].','.$data['ground_speed'].'],';
-				}
-				$altitude_data = substr($altitude_data, 0, -1);
-				print $altitude_data.']);
-
-                        var options = {
-                            legend: {position: "none"},
-                            series: {
-                                0: {axis: "Altitude"},
-                                1: {axis: "Speed"}
-                            },
-                            axes: {
-                                y: {
-                                    Altitude: {label: "'._("Altitude (FL)").'"},
-                                    Speed: {label: "'._("Speed (knots)").'"},
-                                }
-                            },
-                            height:210
-                        };
-
-                        var chart = new google.charts.Line(document.getElementById("chart6"));
-                        chart.draw(data, options);
-                      }
-                      $(window).resize(function(){
-                              drawChart6();
-                            });
-				 </script>';
-  			}
-		}
-		*/
 		print '<div class="info column">';
 		print '<h1>'.$spotter_array[0]['aircraft_owner'].'</h1>';
 		//print '<div><span class="label">'._("Owner").'</span>'.$spotter_array[0]['aircraft_owner'].'</div>';

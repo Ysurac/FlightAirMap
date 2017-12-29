@@ -1,12 +1,14 @@
 <?php
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.SpotterArchive.php');
 require_once('require/class.Language.php');
 if (!isset($_GET['owner'])) {
         header('Location: '.$globalURL.'/owner');
         die();
 }
 $Spotter = new Spotter();
+$SpotterArchive = new SpotterArchive();
 $sort = filter_input(INPUT_GET,'sort',FILTER_SANITIZE_STRING);
 $owner = urldecode(filter_input(INPUT_GET,'owner',FILTER_SANITIZE_STRING));
 $year = filter_input(INPUT_GET,'year',FILTER_SANITIZE_NUMBER_INT);
@@ -14,8 +16,11 @@ $month = filter_input(INPUT_GET,'month',FILTER_SANITIZE_NUMBER_INT);
 $filter = array();
 if ($year != '') $filter = array_merge($filter,array('year' => $year));
 if ($month != '') $filter = array_merge($filter,array('month' => $month));
+$archive = false;
 $spotter_array = $Spotter->getSpotterDataByOwner($owner,"0,1", $sort,$filter);
-
+if (empty($spotter_array) && isset($globalArchiveResults) && $globalArchiveResults) {
+	$spotter_array = $SpotterArchive->getSpotterDataByOwner($owner,"0,1", $sort,$filter);
+}
 if (!empty($spotter_array))
 {
 	$title = sprintf(_("Most Common Aircraft Manufacturer of %s"),$spotter_array[0]['aircraft_owner']);
@@ -31,7 +36,11 @@ if (!empty($spotter_array))
 	print '<h2>'._("Most Common Aircraft Manufacturer").'</h2>';
 	print '<p>'.sprintf(_("The statistic below shows the most common Aircraft Manufacturer of flights owned by <strong>%s</strong>."),$spotter_array[0]['aircraft_owner']).'</p>';
 
-	$manufacturers_array = $Spotter->countAllAircraftManufacturerByOwner($owner,$filter);
+	if ($archive === false) {
+		$manufacturers_array = $Spotter->countAllAircraftManufacturerByOwner($owner,$filter);
+	} else {
+		$manufacturers_array = $SpotterArchive->countAllAircraftManufacturerByOwner($owner,$filter);
+	}
 	if (!empty($manufacturers_array))
 	{
 		print '<div class="table-responsive">';
