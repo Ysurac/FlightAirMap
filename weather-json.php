@@ -27,8 +27,15 @@ while($ew) {
 	if (!empty($met)) {
 		$parsed = $METAR->parse($met[0]['metar']);
 		//print_r($parsed);
+		$rain = array();
+		if (isset($parsed['temperature'])) {
+			$rain = array_merge($rain,array('temp' => $parsed['temperature']));
+		}
+		if (isset($parsed['rh'])) {
+			$rain = array_merge($rain,array('rh' => $parsed['rh']));
+		}
 		if (isset($parsed['weather']) && $parsed['weather'] == 'CAVOK') {
-			echo json_encode(array());
+			echo json_encode(array('clouds' => array(),'rain' => array()));
 			$ew  = false;
 			$dtf = true;
 		} elseif (isset($parsed['cloud'])) {
@@ -36,7 +43,7 @@ while($ew) {
 			if (!empty($result)) {
 				//print_r($met);
 				//print_r($parsed);
-				echo json_encode($result);
+				echo json_encode(array('clouds' => $result,'rain' => $rain));
 				$ew = false;
 				$dtf = true;
 			}

@@ -68,7 +68,7 @@ class Weather {
 		$url = 'http://api.openweathermap.org/data/2.5/weather?lat='.$latitude.'&lon='.$longitude.'&units=metric&appid='.$globalOpenWeatherMapKey;
 		//echo $url."\n";
 		$weatherdata = json_decode($Common->getData($url),true);
-		if (!isset($weatherdata['main']['temp']) || !isset($weatherdata['weather'][0]['id'])) return array();
+		if (!isset($weatherdata['main']['temp']) || !isset($weatherdata['weather'][0]['id'])) return array('clouds' => array(),'rain' => array());
 		$dew = $weatherdata['main']['temp'] - ((100-$weatherdata['main']['humidity'])/5);
 		$cumulus_base = 122.0 * ($weatherdata['main']['temp'] - $dew);
 		$stratus_base = 100.0 * (100.0 * $weatherdata['main']['humidity'])*0.3048;
@@ -99,7 +99,7 @@ class Weather {
 		if ($weatherdata['main']['humidity'] > 60) {
 			$result[] = array('cov' => 0.75, 'type' => 'ci','alt' => 4000,'rh' => $weatherdata['main']['humidity']);
 		}
-		return $result;
+		return array('clouds' => $result,'rain' => array('tmp' => $weatherdata['main']['temp'],'rh' => $weatherdata['main']['humidity']));
 	}
 	
 	public function nomad_wind($hour = '') {

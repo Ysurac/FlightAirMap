@@ -27,7 +27,8 @@ function delete_clouds() {
 function create_clouds(cposition) {
 	//console.log('Create clouds');
 	cloudscenter = cposition;
-	$.getJSON('/weather-json.php?latitude='+Cesium.Math.toDegrees(cposition.latitude)+'&longitude='+Cesium.Math.toDegrees(cposition.longitude),function(data) {
+	$.getJSON('/weather-json.php?latitude='+Cesium.Math.toDegrees(cposition.latitude)+'&longitude='+Cesium.Math.toDegrees(cposition.longitude),function(alldata) {
+		var data = alldata['clouds'];
 		//delete_clouds();
 		var coord = A.EclCoord.fromWgs84(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude),0);
 		var tp = A.Solar.topocentricPosition(new A.JulianDay(new Date(viewer.clock.currentTime.toString())),coord,true);
