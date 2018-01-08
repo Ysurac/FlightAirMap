@@ -747,7 +747,7 @@ function updateSanta() {
 var handler_santa = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler_santa.setInputAction(function(click) {
 	var pickedObject = viewer.scene.pick(click.position);
-	console.log(pickedObject);
+	//console.log(pickedObject);
 	if (Cesium.defined(pickedObject)) {
 		var currenttime = viewer.clock.currentTime;
 		if (typeof pickedObject.id.properties != 'undefined') {
