@@ -24,10 +24,94 @@ function delete_clouds() {
 	}
 }
 
+// Define how the particles will be updated
+function snowParticleUpdateFunction (particle, dt) {
+    var gravityScratch = new Cesium.Cartesian3();
+    var position = particle.position;
+    Cesium.Cartesian3.normalize(position, gravityScratch);
+    var magnitude = Cesium.Math.randomBetween(-5500.0, -1500.0);
+    Cesium.Cartesian3.multiplyByScalar(gravityScratch, magnitude * dt, gravityScratch);
+    particle.velocity = Cesium.Cartesian3.add(particle.velocity, gravityScratch, particle.velocity);
+}
+var snowSystem;
+function create_snow()  {
+	if (Cesium.defined(snowSystem)) {
+		viewer.scene.primitives.remove(snowSystem);
+	}
+	var minParticleSize = 20.0;
+	var cposition = viewer.scene.camera.positionWC;
+	snowSystem = new Cesium.ParticleSystem({
+	    modelMatrix : new Cesium.Matrix4.fromTranslation(cposition),
+	    minimumSpeed : -2.0,
+	    maximumSpeed : 2.0,
+	    lifeTime : 15.0,
+	    emitter : new Cesium.SphereEmitter(100000.0),
+	    startScale : 1.0,
+	    endScale : 0.0,
+	    startColor : Cesium.Color.WHITE.withAlpha(0.0),
+	    endColor : Cesium.Color.WHITE.withAlpha(0.9),
+	    minimumWidth : minParticleSize,
+	    minimumHeight : minParticleSize,
+	    maximumWidth : minParticleSize * 2.0,
+	    maximumHeight : minParticleSize * 2.0,
+	    forces : [snowParticleUpdateFunction],
+	    image : 'images/weather/snowparticle.png',
+	    rate : 2500.0
+	});
+	var addsnow = viewer.scene.primitives.add(snowSystem);
+}
+
+// Define how the particles will be updated
+function rainParticleUpdateFunction (particle, dt) {
+    var gravityScratch = new Cesium.Cartesian3();
+    var position = particle.position;
+    Cesium.Cartesian3.normalize(position, gravityScratch);
+    var magnitude = Cesium.Math.randomBetween(-1500.0, -500.0);
+    Cesium.Cartesian3.multiplyByScalar(gravityScratch, magnitude * dt, gravityScratch);
+    particle.velocity = Cesium.Cartesian3.add(particle.velocity, gravityScratch, particle.velocity);
+}
+var rainSystem;
+function create_rain()  {
+	if (Cesium.defined(rainSystem)) {
+		viewer.scene.primitives.remove(rainSystem);
+	}
+	var minParticleSize = 4.0;
+	var cposition = viewer.scene.camera.positionWC;
+	rainSystem = new Cesium.ParticleSystem({
+	    modelMatrix : new Cesium.Matrix4.fromTranslation(cposition),
+	    minimumSpeed : 1.0,
+	    maximumSpeed : 4.0,
+	    lifeTime : 15.0,
+	    emitter : new Cesium.SphereEmitter(100000.0),
+	    startScale : 1.0,
+	    endScale : 0.0,
+	    startColor : Cesium.Color.LIGHTSTEELBLUE.withAlpha(0.0),
+	    endColor : Cesium.Color.LIGHTSTEELBLUE.withAlpha(0.9),
+	    minimumWidth : minParticleSize,
+	    minimumHeight : minParticleSize,
+	    maximumWidth : minParticleSize * 2.0,
+	    maximumHeight : minParticleSize * 2.0,
+	    forces : [snowParticleUpdateFunction],
+	    image : 'images/weather/waterdrop.png',
+	    rate : 15000.0
+	});
+	var addrain = viewer.scene.primitives.add(rainSystem);
+}
 function create_clouds(cposition) {
 	//console.log('Create clouds');
 	cloudscenter = cposition;
 	$.getJSON('/weather-json.php?latitude='+Cesium.Math.toDegrees(cposition.latitude)+'&longitude='+Cesium.Math.toDegrees(cposition.longitude),function(alldata) {
+		console.log(alldata);
+		var rain = alldata['rain'];
+		if (typeof rain['rh'] != 'undefined' && rain['rh'] > 95) {
+			if (rain['temp'] > 3) {
+				console.log('Add rain');
+				create_rain();
+			} else {
+				console.log('Add snow');
+				create_snow();
+			}
+		}
 		var data = alldata['clouds'];
 		//delete_clouds();
 		var coord = A.EclCoord.fromWgs84(Cesium.Math.toDegrees(cposition.latitude),Cesium.Math.toDegrees(cposition.longitude),0);
@@ -108,7 +192,8 @@ function create_clouds(cposition) {
 			}
 			var timecolorsstep = chour/24*10;
 			var currentcolor = getColor(prevcolor,nextcolor,3*60,(timecolorsstep%3)*60+cminute);
-			var color = new Cesium.Color.multiply(new Cesium.Color(rh/100,rh/100,rh/100,1),new Cesium.Color.fromBytes(currentcolor['r'],currentcolor['v'],currentcolor['b'],255), new Cesium.Color());
+			var color = new Cesium.Color.multiply(new Cesium.Color(rh/100,rh/100,rh/100,1),new Cesium.Color.fromBytes(currentcolor['r'],currentcolor['v'],currentcolor['b'],155), new Cesium.Color());
+			//var color = new Cesium.Color(rh/100,rh/100,rh/100,1);
 
 			if (typeof cloudb != 'undefined') {
 				for (j = 0; j < 2000*cov; j++) {
@@ -175,6 +260,7 @@ function create_clouds(cposition) {
 						allowPicking: false
 					    }
 					});
+					
 				}
 			}
 		}
