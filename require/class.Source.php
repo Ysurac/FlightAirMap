@@ -60,7 +60,11 @@ class Source {
 		return $all;
 	}
 
-	public function getLocationInfobySourceName($name) {
+    /**
+     * @param $name
+     * @return array
+     */
+    public function getLocationInfobySourceName($name) {
 		$query = "SELECT * FROM source_location WHERE source = :name";
 		$query_values = array(':name' => $name);
 		try {

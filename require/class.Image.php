@@ -22,12 +22,14 @@ class Image {
 		if ($this->db === null) die('Error: No DB connection. (Image)');
 	}
 
-	/**
-	* Gets the images based on the aircraft registration
-	*
-	* @return Array the images list
-	*
-	*/
+    /**
+     * Gets the images based on the aircraft registration
+     *
+     * @param $registration
+     * @param string $aircraft_icao
+     * @param string $airline_icao
+     * @return array the images list
+     */
 	public function getSpotterImage($registration,$aircraft_icao = '', $airline_icao = '')
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
@@ -47,12 +49,15 @@ class Image {
 		else return array();
 	}
 
-	/**
-	* Gets the images based on the ship name
-	*
-	* @return Array the images list
-	*
-	*/
+    /**
+     * Gets the images based on the ship name
+     *
+     * @param $mmsi
+     * @param string $imo
+     * @param string $name
+     * @param string $type_name
+     * @return array the images list
+     */
 	public function getMarineImage($mmsi,$imo = '',$name = '',$type_name = '')
 	{
 		global $globalMarineImagePics;
@@ -89,12 +94,12 @@ class Image {
 		return $result;
 	}
 
-	/**
-	* Gets the image copyright based on the Exif data
-	*
-	* @return String image copyright
-	*
-	*/
+    /**
+     * Gets the image copyright based on the Exif data
+     *
+     * @param $url
+     * @return String image copyright
+     */
 	public function getExifCopyright($url) {
 		$exif = exif_read_data($url);
 		$copyright = '';
@@ -108,12 +113,14 @@ class Image {
 		return $copyright;
 	}
 
-	/**
-	* Adds the images based on the aircraft registration
-	*
-	* @return String either success or error
-	*
-	*/
+    /**
+     * Adds the images based on the aircraft registration
+     *
+     * @param $registration
+     * @param string $aircraft_icao
+     * @param string $airline_icao
+     * @return String either success or error
+     */
 	public function addSpotterImage($registration,$aircraft_icao = '', $airline_icao = '')
 	{
 		global $globalDebug,$globalAircraftImageFetch, $globalOffline;
@@ -140,12 +147,14 @@ class Image {
 		return "success";
 	}
 
-	/**
-	* Adds the images based on the marine name
-	*
-	* @return String either success or error
-	*
-	*/
+    /**
+     * Adds the images based on the marine name
+     *
+     * @param $mmsi
+     * @param string $imo
+     * @param string $name
+     * @return String either success or error
+     */
 	public function addMarineImage($mmsi,$imo = '',$name = '')
 	{
 		global $globalDebug,$globalMarineImageFetch, $globalOffline;
@@ -181,13 +190,14 @@ class Image {
 		return "success";
 	}
 
-	/**
-	* Gets the aircraft image
-	*
-	* @param String $aircraft_registration the registration of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
-	*
-	*/
+    /**
+     * Gets the aircraft image
+     *
+     * @param String $aircraft_registration the registration of the aircraft
+     * @param string $aircraft_icao
+     * @param string $airline_icao
+     * @return array the aircraft thumbnail, orignal url and copyright
+     */
 	public function findAircraftImage($aircraft_registration, $aircraft_icao = '', $airline_icao = '')
 	{
 		global $globalAircraftImageSources, $globalIVAO, $globalAircraftImageCheckICAO, $globalVA;
@@ -236,7 +246,7 @@ class Image {
 	* @param String $mmsi the vessel mmsi
 	* @param String $imo the vessel imo
 	* @param String $name the vessel name
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function findMarineImage($mmsi,$imo = '',$name = '')
@@ -276,7 +286,7 @@ class Image {
 	*
 	* @param String $aircraft_registration the registration of the aircraft
 	* @param String $aircraft_name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function fromPlanespotters($type,$aircraft_registration, $aircraft_name='') {
@@ -289,7 +299,7 @@ class Image {
 			$url= 'http://www.planespotters.net/Aviation_Photos/search.php?reg='.$aircraft_registration.'&output=rss';
 		}
 		$data = $Common->getData($url);
-		if (substr($data, 0, 5) != "<?xml") return false;
+		if (substr($data, 0, 5) != "<?xml") return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item)) {
 				$image_url = array();
@@ -302,17 +312,17 @@ class Image {
 				return $image_url;
 			}
 		} 
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
-	/**
-	* Gets the aircraft image from Deviantart
-	*
-	* @param String $registration the registration of the aircraft
-	* @param String $name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
-	*
-	*/
+    /**
+     * Gets the aircraft image from Deviantart
+     *
+     * @param $type
+     * @param String $registration the registration of the aircraft
+     * @param String $name type of the aircraft
+     * @return array the aircraft thumbnail, orignal url and copyright
+     */
 	public function fromDeviantart($type,$registration, $name='') {
 		$Common = new Common();
 		if ($type == 'aircraft') {
@@ -328,7 +338,7 @@ class Image {
 			$url= 'http://backend.deviantart.com/rss.xml?type=deviation&q="'.urlencode($name).'"';
 		}
 		$data = $Common->getData($url);
-		if (substr($data, 0, 5) != "<?xml") return false;
+		if (substr($data, 0, 5) != "<?xml") return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item->link)) {
 				$image_url = array();
@@ -342,7 +352,7 @@ class Image {
 				return $image_url;
 			}
 		} 
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
 	/**
@@ -350,7 +360,7 @@ class Image {
 	*
 	* @param String $aircraft_registration the registration of the aircraft
 	* @param String $aircraft_name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function fromJetPhotos($type,$aircraft_registration, $aircraft_name='') {
@@ -384,7 +394,7 @@ class Image {
 			$image_url['source'] = 'JetPhotos';
 			return $image_url;
 		}
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
 	/**
@@ -392,7 +402,7 @@ class Image {
 	*
 	* @param String $aircraft_registration the registration of the aircraft
 	* @param String $aircraft_name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function fromPlanePictures($type,$aircraft_registration, $aircraft_name='') {
@@ -418,7 +428,7 @@ class Image {
 			$image_url['source'] = 'PlanePictures';
 			return $image_url;
 		}
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
 	/**
@@ -426,7 +436,7 @@ class Image {
 	*
 	* @param String $registration the registration of the aircraft
 	* @param String $name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function fromFlickr($type,$registration,$name='') {
@@ -439,7 +449,7 @@ class Image {
 			else $url = 'https://api.flickr.com/services/feeds/photos_public.gne?format=rss2&license=1,2,3,4,5,6,7&per_page=1&tags='.$registration.',ship';
 		}
 		$data = $Common->getData($url);
-		if (substr($data, 0, 5) != "<?xml") return false;
+		if (substr($data, 0, 5) != "<?xml") return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 		if ($xml = simplexml_load_string($data)) {
 			if (isset($xml->channel->item)) {
 				$original_url = trim((string)$xml->channel->item->enclosure->attributes()->url);
@@ -452,10 +462,16 @@ class Image {
 				return $image_url;
 			}
 		} 
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
-	public function fromIvaoMtl($type,$aircraft_icao,$airline_icao) {
+    /**
+     * @param $type
+     * @param $aircraft_icao
+     * @param $airline_icao
+     * @return array
+     */
+    public function fromIvaoMtl($type, $aircraft_icao, $airline_icao) {
 		$Common = new Common();
 		//echo "\n".'SEARCH IMAGE : http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg';
 		if ($Common->urlexist('http://mtlcatalog.ivao.aero/images/aircraft/'.$aircraft_icao.$airline_icao.'.jpg')) {
@@ -467,22 +483,22 @@ class Image {
 			$image_url['source'] = 'ivao.aero';
 			return $image_url;
 		} else {
-			return false;
+			return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 		}
 	}
 
-	/**
-	* Gets the aircraft image from Bing
-	*
-	* @param String $aircraft_registration the registration of the aircraft
-	* @param String $aircraft_name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
-	*
-	*/
+    /**
+     * Gets the aircraft image from Bing
+     *
+     * @param $type
+     * @param String $aircraft_registration the registration of the aircraft
+     * @param String $aircraft_name type of the aircraft
+     * @return array the aircraft thumbnail, orignal url and copyright
+     */
 	public function fromBing($type,$aircraft_registration,$aircraft_name='') {
 		global $globalImageBingKey;
 		$Common = new Common();
-		if (!isset($globalImageBingKey) || $globalImageBingKey == '') return false;
+		if (!isset($globalImageBingKey) || $globalImageBingKey == '') return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 		if ($type == 'aircraft') {
 			if ($aircraft_name != '') $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27'.$aircraft_registration.'%20'.urlencode($aircraft_name).'%20-site:planespotters.com%20-site:flickr.com%27';
 			else $url = 'https://api.datamarket.azure.com/Bing/Search/v1/Image?$format=json&$top=1&Query=%27%2B'.$aircraft_registration.'%20%2Baircraft%20-site:planespotters.com%20-site:flickr.com%27';
@@ -505,7 +521,7 @@ class Image {
 			$image_url['source'] = 'bing';
 			return $image_url;
 		}
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
 	/**
@@ -513,7 +529,7 @@ class Image {
 	*
 	* @param String $aircraft_registration the registration of the aircraft
 	* @param String $aircraft_name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function fromAirportData($type,$aircraft_registration,$aircraft_name='') {
@@ -530,7 +546,7 @@ class Image {
 			$image_url['source'] = 'AirportData';
 			return $image_url;
 		}
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
 	/**
@@ -538,7 +554,7 @@ class Image {
 	*
 	* @param String $registration the registration of the aircraft/mmsi
 	* @param String $name name
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function fromWikimedia($type,$registration,$name='') {
@@ -548,13 +564,13 @@ class Image {
 			else $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.$registration.'"%20aircraft';
 		} elseif ($type == 'marine') {
 			if ($name != '') $url = 'https://commons.wikimedia.org/w/api.php?action=query&list=search&format=json&srlimit=1&srnamespace=6&continue&srsearch="'.urlencode($name).'%20ship"';
-			else return false;
+			else return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 		}
 		$data = $Common->getData($url);
 		$result = json_decode($data);
 		if (isset($result->query->search[0]->title)) {
 			$fileo = $result->query->search[0]->title;
-			if (substr($fileo,-3) == 'pdf') return false;
+			if (substr($fileo,-3) == 'pdf') return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 			$file = urlencode($fileo);
 			$url2 = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&continue&iilimit=500&prop=imageinfo&iiprop=user|url|size|mime|sha1|timestamp&iiurlwidth=200%27&titles='.$file;
 			$data2 = $Common->getData($url2);
@@ -591,7 +607,7 @@ class Image {
 				return $image_url;
 			}
 		}
-		return false;
+		return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
 	}
 
 	/**
@@ -599,7 +615,7 @@ class Image {
 	*
 	* @param String $registration the registration of the aircraft
 	* @param String $name type of the aircraft
-	* @return Array the aircraft thumbnail, orignal url and copyright
+	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
 	public function fromCustomSource($type,$registration,$name='') {
@@ -635,8 +651,9 @@ class Image {
 					return $image_url;
 				}
 			}
-			return false;
-		} else return false;
+			return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
+		} else return array('thumbnail' => '','original' => '', 'copyright' => '','source' => '','source_website' => '');
+
 		if (!empty($globalMarineImageCustomSources) && $type == 'marine') {
 			$customsources = array();
 			if (!isset($globalMarineImageCustomSources[0])) {

@@ -381,7 +381,11 @@ class Accident {
 		return $row['nb'];
 	}
 
-	public static function check_last_accidents_update() {
+    /**
+     * Check if lastest accident update date is older than 1 day
+     * @return bool|string
+     */
+    public static function check_last_accidents_update() {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT COUNT(*) as nb FROM config WHERE name = 'last_update_accident_db' AND value > DATE_SUB(NOW(), INTERVAL 1 DAY)";
@@ -400,7 +404,11 @@ class Accident {
 		else return true;
 	}
 
-	public static function insert_last_accidents_update() {
+    /**
+     * Insert accident update date
+     * @return string
+     */
+    public static function insert_last_accidents_update() {
 		$query = "DELETE FROM config WHERE name = 'last_update_accident_db';
 		    INSERT INTO config (name,value) VALUES ('last_update_accident_db',NOW());";
 		try {

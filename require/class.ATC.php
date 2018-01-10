@@ -21,11 +21,13 @@ class ATC {
 		if ($this->db === null) die('Error: No DB connection. (ATC)');
 	}
 
-	/**
-	* Get SQL query part for filter used
-	* @param Array $filter the filter
-	* @return Array the SQL part
-	*/
+    /**
+     * Get SQL query part for filter used
+     * @param array $filter the filter
+     * @param bool $where
+     * @param bool $and
+     * @return String the SQL part
+     */
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName;
 		if (is_array($globalStatsFilters) && isset($globalStatsFilters[$globalFilterName])) {
@@ -51,9 +53,9 @@ class ATC {
 
 	/*
 	 * Get all ATC from atc table
-	 * @return Array Return all ATC
-	*/
-	public function getAll() {
+	 * @return array Return all ATC
+     */
+    public function getAll() {
 		$filter_query = $this->getFilter(array());
 		$query = "SELECT * FROM atc".$filter_query;
 		$query_values = array();

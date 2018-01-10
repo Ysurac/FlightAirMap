@@ -18,12 +18,13 @@ class Marine{
 		if ($this->db === null) die('Error: No DB connection. (Marine)');
 	}
 
-	/**
-	* Get SQL query part for filter used
-	* @param Array $filter the filter
-	* @return Array the SQL part
-	*/
-	
+    /**
+     * Get SQL query part for filter used
+     * @param array $filter the filter
+     * @param bool $where
+     * @param bool $and
+     * @return string the SQL part
+     */
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
 		$filters = array();
@@ -98,9 +99,9 @@ class Marine{
 	* Executes the SQL statements to get the spotter information
 	*
 	* @param String $query the SQL query
-	* @param Array $params parameter of the query
+	* @param array $params parameter of the query
 	* @param String $limitQuery the limit query
-	* @return Array the spotter information
+	* @return array the spotter information
 	*
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
@@ -249,15 +250,17 @@ class Marine{
 		if ($num_rows == 0) return array();
 		$spotter_array[0]['query_number_rows'] = $num_rows;
 		return $spotter_array;
-	}	
-	
-	
-	/**
-	* Gets all the spotter information based on the latest data entry
-	*
-	* @return Array the spotter information
-	*
-	*/
+	}
+
+
+    /**
+     * Gets all the spotter information based on the latest data entry
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getLatestMarineData($limit = '', $sort = '', $filter = array())
 	{
 		global $global_marine_query;
@@ -289,10 +292,10 @@ class Marine{
 	/*
 	* Gets all the spotter information based on the spotter id
 	*
-	* @return Array the spotter information
-	*
-	*/
-	public function getMarineDataByID($id = '')
+     * @param string $id
+     * @return array the spotter information
+     */
+    public function getMarineDataByID($id = '')
 	{
 		global $global_marine_query;
 		
@@ -305,12 +308,15 @@ class Marine{
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on the callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the callsign
+     *
+     * @param string $ident
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getMarineDataByIdent($ident = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_marine_query;
@@ -325,7 +331,7 @@ class Marine{
 		{
 			if (!is_string($ident))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query = " AND marine_output.ident = :ident";
 				$query_values = array(':ident' => $ident);
@@ -361,12 +367,15 @@ class Marine{
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the marine information based on the type
-	*
-	* @return Array the marine information
-	*
-	*/
+    /**
+     * Gets all the marine information based on the type
+     *
+     * @param string $type
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the marine information
+     */
 	public function getMarineDataByType($type = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_marine_query;
@@ -379,7 +388,7 @@ class Marine{
 		$filter_query = $this->getFilter($filter,true,true);
 		if (!is_string($type))
 		{
-			return false;
+			return array();
 		} else {
 			$additional_query = " AND marine_output.type_id = :type";
 			$query_values = array(':type' => $type);
@@ -413,8 +422,15 @@ class Marine{
 
 		return $spotter_array;
 	}
-	
-	public function getMarineDataByDate($date = '', $limit = '', $sort = '',$filter = array())
+
+    /**
+     * @param string $date
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array
+     */
+    public function getMarineDataByDate($date = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_marine_query, $globalTimezone, $globalDBdriver;
 		
@@ -471,12 +487,15 @@ class Marine{
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the marine information based on the captain
-	*
-	* @return Array the marine information
-	*
-	*/
+    /**
+     * Gets all the marine information based on the captain
+     *
+     * @param string $captain
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the marine information
+     */
 	public function getMarineDataByCaptain($captain = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_marine_query;
@@ -514,12 +533,15 @@ class Marine{
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the marine information based on the race
-	*
-	* @return Array the marine information
-	*
-	*/
+    /**
+     * Gets all the marine information based on the race
+     *
+     * @param string $race
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the marine information
+     */
 	public function getMarineDataByRace($race = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_marine_query,$globalDBdriver;
@@ -561,12 +583,13 @@ class Marine{
 		return $spotter_array;
 	}
 
-	/**
-	* Count races by captain
-	*
-	* @return Integer number of race for a captain
-	*
-	*/
+    /**
+     * Count races by captain
+     *
+     * @param $captain
+     * @param array $filters
+     * @return Integer number of race for a captain
+     */
 	public function countRacesByCaptain($captain,$filters = array())
 	{
 		$captain = filter_var($captain,FILTER_SANITIZE_STRING);
@@ -581,12 +604,13 @@ class Marine{
 		return $result[0]['nb'];
 	}
 
-	/**
-	* Count captains by race
-	*
-	* @return String Duration of all races
-	*
-	*/
+    /**
+     * Count captains by race
+     *
+     * @param $race
+     * @param array $filters
+     * @return String Duration of all races
+     */
 	public function countCaptainsByRace($race,$filters = array())
 	{
 		$race = filter_var($race,FILTER_SANITIZE_STRING);
@@ -601,12 +625,16 @@ class Marine{
 		return $result[0]['nb'];
 	}
 
-	/**
-	* Gets all boat types that have been used by a captain
-	*
-	* @return Array the boat list
-	*
-	*/
+    /**
+     * Gets all boat types that have been used by a captain
+     *
+     * @param $captain
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the boat list
+     */
 	public function countAllBoatTypesByCaptain($captain,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -650,12 +678,16 @@ class Marine{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all boat types that have been used on a race
-	*
-	* @return Array the boat list
-	*
-	*/
+    /**
+     * Gets all boat types that have been used on a race
+     *
+     * @param $race
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the boat list
+     */
 	public function countAllBoatTypesByRace($race,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -699,12 +731,16 @@ class Marine{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets race duration by captain
-	*
-	* @return String Duration of all race
-	*
-	*/
+    /**
+     * Gets race duration by captain
+     *
+     * @param $captain
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return String Duration of all race
+     */
 	public function getRaceDurationByCaptain($captain,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -749,12 +785,16 @@ class Marine{
 		else return $result[0]['duration'];
 	}
 
-	/**
-	* Gets race duration by captains
-	*
-	* @return String Duration of all race
-	*
-	*/
+    /**
+     * Gets race duration by captains
+     *
+     * @param bool $limit
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array Duration of all race
+     */
 	public function getRaceDurationByCaptains($limit = true,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -812,12 +852,12 @@ class Marine{
 
 	}
 
-	/**
-	* Gets a list of all captain names and captain ids
-	*
-	* @return Array list of captain names and captain ids
-	*
-	*/
+    /**
+     * Gets a list of all captain names and captain ids
+     *
+     * @param array $filters
+     * @return array list of captain names and captain ids
+     */
 	public function getAllCaptainNames($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -828,14 +868,14 @@ class Marine{
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
-	} 
+	}
 
-	/**
-	* Gets a list of all race names and race ids
-	*
-	* @return Array list of race names and race ids
-	*
-	*/
+    /**
+     * Gets a list of all race names and race ids
+     *
+     * @param array $filters
+     * @return array list of race names and race ids
+     */
 	public function getAllRaceNames($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -846,16 +886,16 @@ class Marine{
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
-	} 
+	}
 
 
-	/**
-	* Gets all source name
-	*
-	* @param String type format of source
-	* @return Array list of source name
-	*
-	*/
+    /**
+     * Gets all source name
+     *
+     * @param String type format of source
+     * @param array $filters
+     * @return array list of source name
+     */
 	public function getAllSourceName($type = '',$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -884,12 +924,12 @@ class Marine{
 	}
 
 
-	/**
-	* Gets a list of all idents/callsigns
-	*
-	* @return Array list of ident/callsign names
-	*
-	*/
+    /**
+     * Gets a list of all idents/callsigns
+     *
+     * @param array $filters
+     * @return array list of ident/callsign names
+     */
 	public function getAllIdents($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -912,12 +952,12 @@ class Marine{
 		return $ident_array;
 	}
 
-	/**
-	* Gets all info from a mmsi
-	*
-	* @return Array ident
-	*
-	*/
+    /**
+     * Gets all info from a mmsi
+     *
+     * @param $mmsi
+     * @return array ident
+     */
 	public function getIdentity($mmsi)
 	{
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
@@ -929,10 +969,14 @@ class Marine{
 		else return array();
 	}
 
-	/**
-	* Add identity
-	*
-	*/
+    /**
+     * Add identity
+     * @param $mmsi
+     * @param $imo
+     * @param $ident
+     * @param $callsign
+     * @param $type
+     */
 	public function addIdentity($mmsi,$imo,$ident,$callsign,$type)
 	{
 		$mmsi = filter_var($mmsi,FILTER_SANITIZE_NUMBER_INT);
@@ -1064,14 +1108,23 @@ class Marine{
 		return "success";
 
 	}
-	/**
-	* Update latest marine data
-	*
-	* @param String $fammarine_id the ID
-	* @param String $ident the marine ident
-	* @return String success or false
-	*
-	*/	
+
+    /**
+     * Update latest marine data
+     *
+     * @param String $fammarine_id the ID
+     * @param String $ident the marine ident
+     * @param string $latitude
+     * @param string $longitude
+     * @param float $groundspeed
+     * @param string $date
+     * @param float $distance
+     * @param integer $race_rank
+     * @param integer $race_time
+     * @param string $status
+     * @param string $race_begin
+     * @return String success or false
+     */
 	public function updateLatestMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $groundspeed = NULL, $date = '',$distance = NULL,$race_rank = NULL, $race_time = NULL, $status = '', $race_begin = '')
 	{
 		if ($latitude == '') $latitude = NULL;
@@ -1096,31 +1149,36 @@ class Marine{
 
 	}
 
-	/**
-	* Adds a new marine data
-	*
-	* @param String $fammarine_id the ID
-	* @param String $ident the marine ident
-	* @param String $departure_airport_icao the departure airport
-	* @param String $arrival_airport_icao the arrival airport
-	* @param String $latitude latitude of flight
-	* @param String $longitude latitude of flight
-	* @param String $waypoints waypoints of flight
-	* @param String $heading heading of flight
-	* @param String $groundspeed speed of flight
-	* @param String $date date of flight
-	* @param String $departure_airport_time departure time of flight
-	* @param String $arrival_airport_time arrival time of flight
-	* @param String $squawk squawk code of flight
-	* @param String $route_stop route stop of flight
-	* @param String $highlight highlight or not
-	* @param String $ModeS ModesS code of flight
-	* @param String $registration registration code of flight
-	* @param String $pilot_id pilot id of flight (for virtual airlines)
-	* @param String $pilot_name pilot name of flight (for virtual airlines)
-	* @param String $verticalrate vertival rate of flight
-	* @return String success or false
-	*/
+    /**
+     * Adds a new marine data
+     *
+     * @param String $fammarine_id the ID
+     * @param String $ident the marine ident
+     * @param String $latitude latitude of flight
+     * @param String $longitude latitude of flight
+     * @param String $heading heading of flight
+     * @param String $groundspeed speed of flight
+     * @param String $date date of flight
+     * @param string $mmsi
+     * @param string $type
+     * @param string $typeid
+     * @param string $imo
+     * @param string $callsign
+     * @param string $arrival_code
+     * @param string $arrival_date
+     * @param string $status
+     * @param string $statusid
+     * @param string $format_source
+     * @param string $source_name
+     * @param string $captain_id
+     * @param string $captain_name
+     * @param string $race_id
+     * @param string $race_name
+     * @param string $distance
+     * @param string $race_rank
+     * @param string $race_time
+     * @return String success or false
+     */
 	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$format_source = '', $source_name = '', $captain_id = '',$captain_name = '',$race_id = '', $race_name = '', $distance = '',$race_rank = '', $race_time = '')
 	{
 		global $globalURL, $globalMarineImageFetch;
@@ -1251,14 +1309,14 @@ class Marine{
 		return "success";
 
 	}
-	
-  
-	/**
-	* Gets the aircraft ident within the last hour
-	*
-	* @return String the ident
-	*
-	*/
+
+
+    /**
+     * Gets the aircraft ident within the last hour
+     *
+     * @param $ident
+     * @return String the ident
+     */
 	public function getIdentFromLastHour($ident)
 	{
 		global $globalDBdriver, $globalTimezone;
@@ -1286,14 +1344,14 @@ class Marine{
 
 		return $ident_result;
 	}
-	
-	
-	/**
-	* Gets the aircraft data from the last 20 seconds
-	*
-	* @return Array the marine data
-	*
-	*/
+
+
+    /**
+     * Gets the aircraft data from the last 20 seconds
+     *
+     * @param string $q
+     * @return array the marine data
+     */
 	public function getRealTimeData($q = '')
 	{
 		global $globalDBdriver;
@@ -1326,16 +1384,17 @@ class Marine{
 
 		return $marine_array;
 	}
-	
-	
-	
 
-	/**
-	* Gets all number of flight over countries
-	*
-	* @return Array the airline country list
-	*
-	*/
+
+    /**
+     * Gets all number of flight over countries
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the airline country list
+     */
 
 	public function countAllMarineOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
@@ -1404,15 +1463,20 @@ class Marine{
 		}
 		return $flight_array;
 	}
-	
-	
-	
-	/**
-	* Gets all callsigns that have flown over
-	*
-	* @return Array the callsign list
-	*
-	*/
+
+
+    /**
+     * Gets all callsigns that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the callsign list
+     */
 	public function countAllCallsigns($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -1478,12 +1542,12 @@ class Marine{
 	}
 
 
-	/**
-	* Counts all dates
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDates($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1526,14 +1590,14 @@ class Marine{
 
 		return $date_array;
 	}
-	
-	
-	/**
-	* Counts all dates during the last 7 days
-	*
-	* @return Array the date list
-	*
-	*/
+
+
+    /**
+     * Counts all dates during the last 7 days
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesLast7Days($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1574,12 +1638,12 @@ class Marine{
 		return $date_array;
 	}
 
-	/**
-	* Counts all dates during the last month
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates during the last month
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesLastMonth($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1625,7 +1689,7 @@ class Marine{
 	/**
 	* Counts all month
 	*
-	* @return Array the month list
+	* @return array the month list
 	*
 	*/
 	public function countAllMonths($filters = array())
@@ -1668,15 +1732,13 @@ class Marine{
 		return $date_array;
 	}
 
-	
-	
 
-	/**
-	* Counts all dates during the last year
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates during the last year
+     *
+     * @param $filters
+     * @return array the date list
+     */
 	public function countAllMonthsLastYear($filters)
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1717,15 +1779,15 @@ class Marine{
 
 		return $date_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours
+     *
+     * @param $orderby
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHours($orderby,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1784,15 +1846,15 @@ class Marine{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by date
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1832,15 +1894,15 @@ class Marine{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by a ident/callsign
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by a ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByIdent($ident, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1881,13 +1943,16 @@ class Marine{
 
 		return $hour_array;
 	}
-	
-	/**
-	* Gets all aircraft registrations that have flown over
-	*
-	* @return Array the aircraft list
-	*
-	*/
+
+    /**
+     * Gets all aircraft registrations that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllCaptainsByRaces($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
@@ -1924,13 +1989,15 @@ class Marine{
 		}
 		return $marine_array;
 	}
-	
-	/**
-	* Counts all vessels
-	*
-	* @return Integer the number of vessels
-	*
-	*/
+
+    /**
+     * Counts all vessels
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of vessels
+     */
 	public function countOverallMarine($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -1963,13 +2030,15 @@ class Marine{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-	
-	/**
-	* Counts all vessel type
-	*
-	* @return Integer the number of vessels
-	*
-	*/
+
+    /**
+     * Counts all vessel type
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of vessels
+     */
 	public function countOverallMarineTypes($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -2001,13 +2070,15 @@ class Marine{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-	
-	/**
-	* Gets a number of all race
-	*
-	* @return Integer number of races
-	*
-	*/
+
+    /**
+     * Gets a number of all race
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer number of races
+     */
 	public function countOverallMarineRaces($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -2039,13 +2110,15 @@ class Marine{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-  
-	/**
-	* Gets a number of all captain
-	*
-	* @return Integer number of captain
-	*
-	*/
+
+    /**
+     * Gets a number of all captain
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer number of captain
+     */
 	public function countOverallMarineCaptains($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -2077,13 +2150,13 @@ class Marine{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-  
-	/**
-	* Counts all hours of today
-	*
-	* @return Array the hour list
-	*
-	*/
+
+    /**
+     * Counts all hours of today
+     *
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursFromToday($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -2153,7 +2226,7 @@ q	*
 	*
 	* @param String $dateString the date string
 	* @param String $timezone the timezone of a user
-	* @return Array the time information
+	* @return array the time information
 	*
 	*/
 	public function parseDateString($dateString, $timezone = '')
@@ -2191,7 +2264,7 @@ q	*
 	* Parses the direction degrees to working
 	*
 	* @param Float $direction the direction in degrees
-	* @return Array the direction information
+	* @return array the direction information
 	*
 	*/
 	public function parseDirection($direction = 0)
@@ -2276,7 +2349,7 @@ q	*
 	*
 	* @param Float $latitude latitute of the flight
 	* @param Float $longitude longitute of the flight
-	* @return String the countrie
+	* @return String the countries
 	*/
 	public function getCountryFromLatitudeLongitude($latitude,$longitude)
 	{
@@ -2317,7 +2390,7 @@ q	*
 	* Gets Country from iso2
 	*
 	* @param String $iso2 ISO2 country code
-	* @return String the countrie
+	* @return String the countries
 	*/
 	public function getCountryFromISO2($iso2)
 	{
@@ -2377,13 +2450,19 @@ q	*
 		return $bitly_url;
 	}
 
-	
-	/**
-	* Gets all vessels types that have flown over
-	*
-	* @return Array the vessel type list
-	*
-	*/
+
+    /**
+     * Gets all vessels types that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the vessel type list
+     */
 	public function countAllMarineTypes($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -2448,12 +2527,27 @@ q	*
 		return $marine_array;
 	}
 
-	/**
-	* Gets all the tracker information
-	*
-	* @return Array the tracker information
-	*
-	*/
+    /**
+     * Gets all the tracker information
+     *
+     * @param string $q
+     * @param string $callsign
+     * @param string $mmsi
+     * @param string $imo
+     * @param string $date_posted
+     * @param string $limit
+     * @param string $sort
+     * @param string $includegeodata
+     * @param string $origLat
+     * @param string $origLon
+     * @param string $dist
+     * @param string $captain_id
+     * @param string $captain_name
+     * @param string $race_id
+     * @param string $race_name
+     * @param array $filters
+     * @return array the tracker information
+     */
 	public function searchMarineData($q = '', $callsign = '',$mmsi = '', $imo = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$captain_id = '',$captain_name = '',$race_id = '',$race_name = '',$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -2465,7 +2559,7 @@ q	*
 		{
 			if (!is_string($q))
 			{
-				return false;
+				return array();
 			} else {
 				$q_array = explode(" ", $q);
 				foreach ($q_array as $q_item){
@@ -2488,7 +2582,7 @@ q	*
 			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 			if (!is_string($callsign))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND marine_output.ident = :callsign";
 				$query_values = array_merge($query_values,array(':callsign' => $callsign));
@@ -2499,7 +2593,7 @@ q	*
 			$mmsi = filter_var($mmsi,FILTER_SANITIZE_STRING);
 			if (!is_numeric($mmsi))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND marine_output.mmsi = :mmsi";
 				$query_values = array_merge($query_values,array(':mmsi' => $mmsi));
@@ -2510,7 +2604,7 @@ q	*
 			$imo = filter_var($imo,FILTER_SANITIZE_STRING);
 			if (!is_numeric($imo))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND marine_output.imo = :imo";
 				$query_values = array_merge($query_values,array(':imo' => $imo));
@@ -2521,7 +2615,7 @@ q	*
 			$captain_id = filter_var($captain_id,FILTER_SANITIZE_STRING);
 			if (!is_numeric($captain_id))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND marine_output.captain_id = :captain_id";
 				$query_values = array_merge($query_values,array(':captain_id' => $captain_id));
@@ -2532,7 +2626,7 @@ q	*
 			$race_id = filter_var($race_id,FILTER_SANITIZE_STRING);
 			if (!is_numeric($race_id))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND marine_output.race_id = :race_id";
 				$query_values = array_merge($query_values,array(':race_id' => $race_id));
@@ -2543,7 +2637,7 @@ q	*
 			$captain_name = filter_var($captain_name,FILTER_SANITIZE_STRING);
 			if (!is_string($captain_name))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND marine_output.captain_name = :captain_name";
 				$query_values = array_merge($query_values,array(':captain_name' => $captain_name));
@@ -2554,7 +2648,7 @@ q	*
 			$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
 			if (!is_numeric($race_name))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND marine_output.race_name = :race_name";
 				$query_values = array_merge($query_values,array(':race_name' => $race_name));
@@ -2629,12 +2723,12 @@ q	*
 		return $marine_array;
 	}
 
-	/**
-	* Check marine by id
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Check marine by id
+     *
+     * @param $id
+     * @return String the ident
+     */
 	public function checkId($id)
 	{
 		global $globalDBdriver, $globalTimezone;
@@ -2650,12 +2744,12 @@ q	*
 		return $ident_result;
 	}
 
-	/**
-	* Gets all info from a race
-	*
-	* @return Array race
-	*
-	*/
+    /**
+     * Gets all info from a race
+     *
+     * @param $race_name
+     * @return array race
+     */
 	public function getRaceByName($race_name)
 	{
 		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
@@ -2667,12 +2761,12 @@ q	*
 		else return array();
 	}
 
-	/**
-	* Gets all info from a race
-	*
-	* @return Array race
-	*
-	*/
+    /**
+     * Gets all info from a race
+     *
+     * @param $race_id
+     * @return array race
+     */
 	public function getRace($race_id)
 	{
 		$race_id = filter_var($race_id,FILTER_SANITIZE_NUMBER_INT);
@@ -2684,10 +2778,15 @@ q	*
 		else return array();
 	}
 
-	/**
-	* Add race
-	*
-	*/
+    /**
+     * Add race
+     * @param $race_id
+     * @param $race_name
+     * @param $race_creator
+     * @param $race_desc
+     * @param $race_startdate
+     * @param $race_markers
+     */
 	public function addRace($race_id,$race_name,$race_creator,$race_desc,$race_startdate,$race_markers)
 	{
 		$race_id = filter_var($race_id,FILTER_SANITIZE_NUMBER_INT);
@@ -2715,9 +2814,7 @@ q	*
 	public function getOrderBy()
 	{
 		$orderby = array("type_asc" => array("key" => "type_asc", "value" => "Type - ASC", "sql" => "ORDER BY marine_output.type ASC"), "type_desc" => array("key" => "type_desc", "value" => "Type - DESC", "sql" => "ORDER BY marine_output.type DESC"),"manufacturer_asc" => array("key" => "manufacturer_asc", "value" => "Aircraft Manufacturer - ASC", "sql" => "ORDER BY marine_output.aircraft_manufacturer ASC"), "manufacturer_desc" => array("key" => "manufacturer_desc", "value" => "Aircraft Manufacturer - DESC", "sql" => "ORDER BY marine_output.aircraft_manufacturer DESC"),"airline_name_asc" => array("key" => "airline_name_asc", "value" => "Airline Name - ASC", "sql" => "ORDER BY marine_output.airline_name ASC"), "airline_name_desc" => array("key" => "airline_name_desc", "value" => "Airline Name - DESC", "sql" => "ORDER BY marine_output.airline_name DESC"), "ident_asc" => array("key" => "ident_asc", "value" => "Ident - ASC", "sql" => "ORDER BY marine_output.ident ASC"), "ident_desc" => array("key" => "ident_desc", "value" => "Ident - DESC", "sql" => "ORDER BY marine_output.ident DESC"), "airport_departure_asc" => array("key" => "airport_departure_asc", "value" => "Departure port - ASC", "sql" => "ORDER BY marine_output.departure_port_city ASC"), "airport_departure_desc" => array("key" => "airport_departure_desc", "value" => "Departure Airport - DESC", "sql" => "ORDER BY marine_output.departure_airport_city DESC"), "airport_arrival_asc" => array("key" => "airport_arrival_asc", "value" => "Arrival Airport - ASC", "sql" => "ORDER BY marine_output.arrival_airport_city ASC"), "airport_arrival_desc" => array("key" => "airport_arrival_desc", "value" => "Arrival Airport - DESC", "sql" => "ORDER BY marine_output.arrival_airport_city DESC"), "date_asc" => array("key" => "date_asc", "value" => "Date - ASC", "sql" => "ORDER BY marine_output.date ASC"), "date_desc" => array("key" => "date_desc", "value" => "Date - DESC", "sql" => "ORDER BY marine_output.date DESC"),"distance_asc" => array("key" => "distance_asc","value" => "Distance - ASC","sql" => "ORDER BY distance ASC"),"distance_desc" => array("key" => "distance_desc","value" => "Distance - DESC","sql" => "ORDER BY distance DESC"));
-		
 		return $orderby;
-		
 	}
     
 }

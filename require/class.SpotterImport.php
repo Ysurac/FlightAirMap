@@ -167,7 +167,7 @@ class SpotterImport {
         	    $airport_icao = $closestAirports[0]['icao'];
         	    $airport_time = $this->all_flights[$key]['datetime'];
         	    if ($globalDebug) echo "---++ Find arrival airport. airport_icao : ".$airport_icao."\n";
-        	} elseif (count($closestAirports > 1) && isset($this->all_flights[$key]['arrival_airport']) && $this->all_flights[$key]['arrival_airport'] != '') {
+        	} elseif (count($closestAirports) > 1 && isset($this->all_flights[$key]['arrival_airport']) && $this->all_flights[$key]['arrival_airport'] != '') {
         	    foreach ($closestAirports as $airport) {
         		if ($this->all_flights[$key]['arrival_airport'] == $airport['icao']) {
         		    $airport_icao = $airport['icao'];
@@ -537,9 +537,9 @@ class SpotterImport {
 	    	    	|| (isset($globalphpVMS) && $globalphpVMS)
 	    	    	|| (isset($globalVAM) && $globalVAM)
 	    	    	|| !isset($timediff)
-	    	    	|| $timediff > $globalLiveInterval
+	    	    	|| (isset($timediff) && $timediff > $globalLiveInterval)
 	    	    	|| $globalArchive
-	    	    	|| ($timediff > 30 
+	    	    	|| (isset($timediff) && $timediff > 30
 	    	    	    && isset($this->all_flights[$id]['latitude']) 
 	    	    	    && isset($this->all_flights[$id]['longitude']) 
 	    	    	    && $Common->withinThreshold($timediff,$Common->distance($line['latitude'],$line['longitude'],$this->all_flights[$id]['latitude'],$this->all_flights[$id]['longitude'],'m'))
@@ -762,7 +762,7 @@ class SpotterImport {
   		}
 		if ($globalDaemon === TRUE && isset($globalSourcesupdate) && $globalSourcesupdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSourcesupdate) $dataFound = false;
 		elseif ($globalDaemon === TRUE && isset($globalSBS1update) && $globalSBS1update != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalSBS1update) $dataFound = false;
-		elseif ($globalDaemon === TRUE && isset($globalAircraftMinUpdate) && $globalAircraftMinUpdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalAircraftMinupdate) $dataFound = false;
+		elseif ($globalDaemon === TRUE && isset($globalAircraftMinUpdate) && $globalAircraftMinUpdate != '' && isset($this->all_flights[$id]['lastupdate']) && time()-$this->all_flights[$id]['lastupdate'] < $globalAircraftMinUpdate) $dataFound = false;
 
 //		print_r($this->all_flights[$id]);
 		//gets the callsign from the last hour

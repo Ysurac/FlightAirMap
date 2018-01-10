@@ -77,8 +77,8 @@ class Spotter{
 
 	/**
 	* Get SQL query part for filter used
-	* @param Array $filter the filter
-	* @return Array the SQL part
+	* @param array $filter the filter
+	* @return String the SQL part
 	*/
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
@@ -203,9 +203,9 @@ class Spotter{
 	* Executes the SQL statements to get the spotter information
 	*
 	* @param String $query the SQL query
-	* @param Array $params parameter of the query
+	* @param array $params parameter of the query
 	* @param String $limitQuery the limit query
-	* @return Array the spotter information
+	* @return array the spotter information
 	*
 	*/
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
@@ -223,14 +223,14 @@ class Spotter{
 		
 		if (!is_string($query))
 		{
-			return false;
+			return array();
 		}
 		
 		if ($limitQuery != "")
 		{
 			if (!is_string($limitQuery))
 			{
-				return false;
+				return array();
 			}
 		}
 
@@ -614,15 +614,39 @@ class Spotter{
 		if ($num_rows == 0) return array();
 		$spotter_array[0]['query_number_rows'] = $num_rows;
 		return $spotter_array;
-	}	
-	
-	
-	/**
-	* Gets all the spotter information
-	*
-	* @return Array the spotter information
-	*
-	*/
+	}
+
+
+    /**
+     * Gets all the spotter information
+     *
+     * @param string $q
+     * @param string $registration
+     * @param string $aircraft_icao
+     * @param string $aircraft_manufacturer
+     * @param string $highlights
+     * @param string $airline_icao
+     * @param string $airline_country
+     * @param string $airline_type
+     * @param string $airport
+     * @param string $airport_country
+     * @param string $callsign
+     * @param string $departure_airport_route
+     * @param string $arrival_airport_route
+     * @param string $owner
+     * @param string $pilot_id
+     * @param string $pilot_name
+     * @param string $altitude
+     * @param string $date_posted
+     * @param string $limit
+     * @param string $sort
+     * @param string $includegeodata
+     * @param string $origLat
+     * @param string $origLon
+     * @param string $dist
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver, $globalVA;
@@ -638,7 +662,7 @@ class Spotter{
 		{
 			if (!is_string($q))
 			{
-				return false;
+				return array();
 			} else {
 				$q_array = explode(" ", $q);
 				foreach ($q_array as $q_item){
@@ -681,7 +705,7 @@ class Spotter{
 			$registration = filter_var($registration,FILTER_SANITIZE_STRING);
 			if (!is_string($registration) || strlen($registration) > 10)
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.registration = :registration";
 				$query_values = array_merge($query_values,array(':registration' => $registration));
@@ -693,7 +717,7 @@ class Spotter{
 			$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
 			if (!is_string($aircraft_icao) || strlen($aircraft_icao) > 5)
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.aircraft_icao = :aircraft_icao";
 				$query_values = array_merge($query_values,array(':aircraft_icao' => $aircraft_icao));
@@ -705,7 +729,7 @@ class Spotter{
 			$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
 			if (!is_string($aircraft_manufacturer))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer";
 				$query_values = array_merge($query_values,array(':aircraft_manufacturer' => $aircraft_manufacturer));
@@ -716,7 +740,7 @@ class Spotter{
 		{
 			if (!is_string($highlights))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_output.highlight <> '')";
 			}
@@ -727,7 +751,7 @@ class Spotter{
 			$airline_icao = filter_var($airline_icao,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_icao) || strlen($airline_icao) > 5)
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.airline_icao = :airline_icao";
 				$query_values = array_merge($query_values,array(':airline_icao' => $airline_icao));
@@ -739,7 +763,7 @@ class Spotter{
 			$airline_country = filter_var($airline_country,FILTER_SANITIZE_STRING);
 			if (!is_string($airline_country))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.airline_country = :airline_country";
 				$query_values = array_merge($query_values,array(':airline_country' => $airline_country));
@@ -750,7 +774,7 @@ class Spotter{
 		{
 			if (!is_string($airline_type))
 			{
-				return false;
+				return array();
 			} else {
 				if ($airline_type == "passenger")
 				{
@@ -772,7 +796,7 @@ class Spotter{
 			$airport = filter_var($airport,FILTER_SANITIZE_STRING);
 			if (!is_string($airport) || strlen($airport) > 5)
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_output.departure_airport_icao = :airport OR spotter_output.arrival_airport_icao = :airport)";
 				$query_values = array_merge($query_values,array(':airport' => $airport));
@@ -784,7 +808,7 @@ class Spotter{
 			$airport_country = filter_var($airport_country,FILTER_SANITIZE_STRING);
 			if (!is_string($airport_country))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_output.departure_airport_country = :airport_country OR spotter_output.arrival_airport_country = :airport_country)";
 				$query_values = array_merge($query_values,array(':airport_country' => $airport_country));
@@ -796,7 +820,7 @@ class Spotter{
 			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 			if (!is_string($callsign))
 			{
-				return false;
+				return array();
 			} else {
 				$translate = $Translation->ident2icao($callsign);
 				if ($translate != $callsign) {
@@ -814,7 +838,7 @@ class Spotter{
 			$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 			if (!is_string($owner))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.owner_name = :owner";
 				$query_values = array_merge($query_values,array(':owner' => $owner));
@@ -826,7 +850,7 @@ class Spotter{
 			$pilot_name = filter_var($pilot_name,FILTER_SANITIZE_STRING);
 			if (!is_string($pilot_name))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.pilot_name = :pilot_name";
 				$query_values = array_merge($query_values,array(':pilot_name' => $pilot_name));
@@ -838,7 +862,7 @@ class Spotter{
 			$pilot_id = filter_var($pilot_id,FILTER_SANITIZE_STRING);
 			if (!is_string($pilot_id))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.pilot_id = :pilot_id";
 				$query_values = array_merge($query_values,array(':pilot_id' => $pilot_id));
@@ -850,7 +874,7 @@ class Spotter{
 			$departure_airport_route = filter_var($departure_airport_route,FILTER_SANITIZE_STRING);
 			if (!is_string($departure_airport_route))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.departure_airport_icao = :departure_airport_route";
 				$query_values = array_merge($query_values,array(':departure_airport_route' => $departure_airport_route));
@@ -862,7 +886,7 @@ class Spotter{
 			$arrival_airport_route = filter_var($arrival_airport_route,FILTER_SANITIZE_STRING);
 			if (!is_string($arrival_airport_route))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.arrival_airport_icao = :arrival_airport_route";
 				$query_values = array_merge($query_values,array(':arrival_airport_route' => $arrival_airport_route));
@@ -963,7 +987,7 @@ class Spotter{
 						AND (3956 * 2 * ASIN(SQRT( POWER(SIN(($origLat - CAST(spotter_archive.latitude as double precision))*pi()/180/2),2)+COS( $origLat *pi()/180)*COS(CAST(spotter_archive.latitude as double precision)*pi()/180)*POWER(SIN(($origLon-CAST(spotter_archive.longitude as double precision))*pi()/180/2),2)))) < $dist".$filter_query.$orderby_query;
 			}
 		} else {		
-			$query  = "SELECT spotter_output.* FROM spotter_output".$filter_query." 
+			$query = "SELECT spotter_output.* FROM spotter_output".$filter_query." 
 					".substr($additional_query,4)."
 					".$orderby_query;
 		}
@@ -975,7 +999,7 @@ class Spotter{
 	/**
 	* Gets all the spotter information based on the latest data entry
 	*
-	* @return Array the spotter information
+	* @return array the spotter information
 	*
 	*/
 	public function getLatestSpotterData($limit = '', $sort = '', $filter = array())
@@ -1014,14 +1038,17 @@ class Spotter{
 
 		return $spotter_array;
 	}
-    
-    
+
+
     /**
-	* Gets all the spotter information based on a user's latitude and longitude
-	*
-	* @return Array the spotter information
-	*
-	*/
+     * Gets all the spotter information based on a user's latitude and longitude
+     *
+     * @param $lat
+     * @param $lng
+     * @param $radius
+     * @param $interval
+     * @return array the spotter information
+     */
 	public function getLatestSpotterForLayar($lat, $lng, $radius, $interval)
 	{
 		date_default_timezone_set('UTC');
@@ -1030,7 +1057,7 @@ class Spotter{
 		{
 			if (!is_numeric($lat))
 			{
-				return false;
+				return array();
 			}
 		}
         
@@ -1038,7 +1065,7 @@ class Spotter{
 		{
 			if (!is_numeric($lng))
 			{
-				return false;
+				return array();
 			}
 		}
 		
@@ -1046,7 +1073,7 @@ class Spotter{
 		{
 			if (!is_numeric($radius))
 			{
-				return false;
+				return array();
 			}
 		}
     		$additional_query = '';
@@ -1054,7 +1081,7 @@ class Spotter{
 		{
 			if (!is_string($interval))
 			{
-				return false;
+				return array();
 			} else {
 				if ($interval == "30m"){
 					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) <= $this_output.date ';
@@ -1087,14 +1114,16 @@ class Spotter{
 
 		return $spotter_array;
 	}
-    
-    
+
+
     /**
-	* Gets all the spotter information sorted by the newest aircraft type
-	*
-	* @return Array the spotter information
-	*
-	*/
+     * Gets all the spotter information sorted by the newest aircraft type
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getNewestSpotterDataSortedByAircraftType($limit = '', $sort = '',$filter = array())
 	{
 		global $global_query;
@@ -1132,14 +1161,15 @@ class Spotter{
 
 		return $spotter_array;
 	}
-    
-    
-	/**
-	* Gets all the spotter information sorted by the newest aircraft registration
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information sorted by the newest aircraft registration
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getNewestSpotterDataSortedByAircraftRegistration($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1178,12 +1208,14 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all the spotter information sorted by the newest airline
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information sorted by the newest airline
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getNewestSpotterDataSortedByAirline($limit = '', $sort = '',$filter = array())
 	{
 		global $global_query;
@@ -1220,14 +1252,16 @@ class Spotter{
 
 		return $spotter_array;
 	}
-    
-    
+
+
     /**
-	* Gets all the spotter information sorted by the newest departure airport
-	*
-	* @return Array the spotter information
-	*
-	*/
+     * Gets all the spotter information sorted by the newest departure airport
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getNewestSpotterDataSortedByDepartureAirport($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1268,12 +1302,14 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all the spotter information sorted by the newest arrival airport
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information sorted by the newest arrival airport
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getNewestSpotterDataSortedByArrivalAirport($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1309,14 +1345,13 @@ class Spotter{
 
 		return $spotter_array;
 	}
-	
 
-	/**
-	* Gets all the spotter information based on the spotter id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the spotter id
+     *
+     * @param string $id
+     * @return array the spotter information
+     */
 	public function getSpotterDataByID($id = '')
 	{
 		global $global_query;
@@ -1340,8 +1375,6 @@ class Spotter{
 	*/
 	public function checkIdentBlocked($ident = '')
 	{
-		global $global_query;
-		
 		date_default_timezone_set('UTC');
 		$query = "SELECT count(*) as nb FROM aircraft_block WHERE callsign  = :callsign";
 		$query_values = array(':callsign' => $ident);
@@ -1353,26 +1386,28 @@ class Spotter{
 			return true;
 		} else return false;
 	}
-	
-	/**
-	* Gets all the spotter information based on the callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information based on the callsign
+     *
+     * @param string $ident
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByIdent($ident = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
 		
 		$query_values = array();
 		$limit_query = '';
-		$additional_query = '';
 		$filter_query = $this->getFilter($filter,true,true);
 		if ($ident != "")
 		{
 			if (!is_string($ident))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query = " spotter_output.ident = :ident";
 				$query_values = array(':ident' => $ident);
@@ -1402,13 +1437,16 @@ class Spotter{
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
-	
-	/**
-	* Gets all the spotter information based on the owner
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information based on the owner
+     *
+     * @param string $owner
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByOwner($owner = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1418,12 +1456,11 @@ class Spotter{
 		$query_values = array();
 		$limit_query = '';
 		$additional_query = '';
-		$filter_query = $this->getFilter($filter,true,true);
 		if ($owner != "")
 		{
 			if (!is_string($owner))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query = " spotter_output.owner_name = :owner";
 				$query_values = array(':owner' => $owner);
@@ -1463,13 +1500,16 @@ class Spotter{
 
 		return $spotter_array;
 	}
-	
-	/**
-	* Gets all the spotter information based on the pilot
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information based on the pilot
+     *
+     * @param string $pilot
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByPilot($pilot = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1514,15 +1554,17 @@ class Spotter{
 
 		return $spotter_array;
 	}
-	
-	
-	
-	/**
-	* Gets all the spotter information based on the aircraft type
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+
+    /**
+     * Gets all the spotter information based on the aircraft type
+     *
+     * @param string $aircraft_type
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByAircraft($aircraft_type = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1538,7 +1580,7 @@ class Spotter{
 		{
 			if (!is_string($aircraft_type))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query = " AND spotter_output.aircraft_icao = :aircraft_type";
 				$query_values = array(':aircraft_type' => $aircraft_type);
@@ -1573,14 +1615,17 @@ class Spotter{
 
 		return $spotter_array;
 	}
-	
-	
-	/**
-	* Gets all the spotter information based on the aircraft registration
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+
+    /**
+     * Gets all the spotter information based on the aircraft registration
+     *
+     * @param string $registration
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByRegistration($registration = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1595,7 +1640,7 @@ class Spotter{
 		{
 			if (!is_string($registration))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query = " spotter_output.registration = :registration";
 				$query_values = array(':registration' => $registration);
@@ -1633,15 +1678,16 @@ class Spotter{
 		return $spotter_array;
 	}
 
-	
-	
-	
-	/**
-	* Gets all the spotter information based on the airline
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information based on the airline
+     *
+     * @param string $airline
+     * @param string $limit
+     * @param string $sort
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function getSpotterDataByAirline($airline = '', $limit = '', $sort = '',$filters = array())
 	{
 		global $global_query;
@@ -1656,7 +1702,7 @@ class Spotter{
 		{
 			if (!is_string($airline))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query = " spotter_output.airline_icao = :airline";
 				$query_values = array(':airline' => $airline);
@@ -1695,14 +1741,17 @@ class Spotter{
 
 		return $spotter_array;
 	}
-	
-	
-	/**
-	* Gets all the spotter information based on the airport
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+
+    /**
+     * Gets all the spotter information based on the airport
+     *
+     * @param string $airport
+     * @param string $limit
+     * @param string $sort
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function getSpotterDataByAirport($airport = '', $limit = '', $sort = '',$filters = array())
 	{
 		global $global_query;
@@ -1717,7 +1766,7 @@ class Spotter{
 		{
 			if (!is_string($airport))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " (spotter_output.departure_airport_icao = :airport OR spotter_output.arrival_airport_icao = :airport)";
 				$query_values = array(':airport' => $airport);
@@ -1754,13 +1803,15 @@ class Spotter{
 	}
 
 
-
-	/**
-	* Gets all the spotter information based on the date
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the date
+     *
+     * @param string $date
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByDate($date = '', $limit = '', $sort = '',$filter = array())
 	{
 		global $global_query, $globalTimezone, $globalDBdriver;
@@ -1828,13 +1879,15 @@ class Spotter{
 	}
 
 
-
-	/**
-	* Gets all the spotter information based on the country name
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the country name
+     *
+     * @param string $country
+     * @param string $limit
+     * @param string $sort
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function getSpotterDataByCountry($country = '', $limit = '', $sort = '',$filters = array())
 	{
 		global $global_query;
@@ -1849,7 +1902,7 @@ class Spotter{
 		{
 			if (!is_string($country))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND (spotter_output.departure_airport_country = :country OR spotter_output.arrival_airport_country = :country";
 				$additional_query .= " OR spotter_output.airline_country = :country)";
@@ -1884,15 +1937,18 @@ class Spotter{
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
-	}	
-	
-	
-	/**
-	* Gets all the spotter information based on the manufacturer name
-	*
-	* @return Array the spotter information
-	*
-	*/
+	}
+
+
+    /**
+     * Gets all the spotter information based on the manufacturer name
+     *
+     * @param string $aircraft_manufacturer
+     * @param string $limit
+     * @param string $sort
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function getSpotterDataByManufacturer($aircraft_manufacturer = '', $limit = '', $sort = '', $filters = array())
 	{
 		global $global_query;
@@ -1908,7 +1964,7 @@ class Spotter{
 		{
 			if (!is_string($aircraft_manufacturer))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND spotter_output.aircraft_manufacturer = :aircraft_manufacturer";
 				$query_values = array(':aircraft_manufacturer' => $aircraft_manufacturer);
@@ -1943,20 +1999,18 @@ class Spotter{
 	}
 
 
-  
-  
-	/**
-	* Gets a list of all aircraft that take a route
-	*
-	* @param String $departure_airport_icao ICAO code of departure airport
-	* @param String $arrival_airport_icao ICAO code of arrival airport
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets a list of all aircraft that take a route
+     *
+     * @param String $departure_airport_icao ICAO code of departure airport
+     * @param String $arrival_airport_icao ICAO code of arrival airport
+     * @param string $limit
+     * @param string $sort
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function getSpotterDataByRoute($departure_airport_icao = '', $arrival_airport_icao = '', $limit = '', $sort = '', $filters = array())
 	{
-		global $global_query;
-		
 		$query_values = array();
 		$additional_query = '';
 		$limit_query = '';
@@ -1964,7 +2018,7 @@ class Spotter{
 		{
 			if (!is_string($departure_airport_icao))
 			{
-				return false;
+				return array();
 			} else {
 				$departure_airport_icao = filter_var($departure_airport_icao,FILTER_SANITIZE_STRING);
 				$additional_query .= " AND spotter_output.departure_airport_icao = :departure_airport_icao";
@@ -1977,7 +2031,7 @@ class Spotter{
 		{
 			if (!is_string($arrival_airport_icao))
 			{
-				return false;
+				return array();
 			} else {
 				$arrival_airport_icao = filter_var($arrival_airport_icao,FILTER_SANITIZE_STRING);
 				$additional_query .= " AND spotter_output.arrival_airport_icao = :arrival_airport_icao";
@@ -2009,29 +2063,25 @@ class Spotter{
 		}
 
 		$query = "SELECT spotter_output.spotter_id,spotter_output.flightaware_id,spotter_output.ident,spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.owner_name,spotter_output.format_source,spotter_output.source_name,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time,spotter_output.real_departure_airport_icao,spotter_output.real_departure_airport_time FROM spotter_output";
-		//$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." ".$orderby_query;
 		if ($additional_query != '') {
 			$filter_query = $this->getFilter($filters,true,true);
 		} else {
 			$filter_query = $this->getFilter($filters,false,false);
 		}
 		$query .= $filter_query." ".$additional_query." ".$orderby_query;
-          
-		//$result = mysqli_query($GLOBALS["___mysqli_ston"], $query);
-
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
-
 		return $spotter_array;
 	}
-	
-	
-	
-	/**
-	* Gets all the spotter information based on the special column in the table
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+
+    /**
+     * Gets all the spotter information based on the special column in the table
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByHighlight($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -2049,8 +2099,7 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
-				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+					$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -2092,6 +2141,7 @@ class Spotter{
 			$highlight = $row['highlight'];
 		}
 		if (isset($highlight)) return $highlight;
+		else return '';
 	}
 
 	
@@ -2178,7 +2228,7 @@ class Spotter{
 	* Gets the airport info based on the icao
 	*
 	* @param String $airport the icao code of the airport
-	* @return Array airport information
+	* @return array airport information
 	*
 	*/
 	public function getAllAirportInfo($airport = '')
@@ -2228,8 +2278,8 @@ class Spotter{
 	/**
 	* Gets the airport info based on the country
 	*
-	* @param Array $countries Airports countries
-	* @return Array airport information
+	* @param array $countries Airports countries
+	* @return array airport information
 	*
 	*/
 	public function getAllAirportInfobyCountry($countries)
@@ -2271,8 +2321,8 @@ class Spotter{
 	/**
 	* Gets airports info based on the coord
 	*
-	* @param Array $coord Airports longitude min,latitude min, longitude max, latitude max
-	* @return Array airport information
+	* @param array $coord Airports longitude min,latitude min, longitude max, latitude max
+	* @return array airport information
 	*
 	*/
 	public function getAllAirportInfobyCoord($coord)
@@ -2307,8 +2357,8 @@ class Spotter{
 	/**
 	* Gets waypoints info based on the coord
 	*
-	* @param Array $coord waypoints coord
-	* @return Array airport information
+	* @param array $coord waypoints coord
+	* @return array airport information
 	*
 	*/
 	public function getAllWaypointsInfobyCoord($coord)
@@ -2347,7 +2397,7 @@ class Spotter{
 	* Gets the airline info based on the icao code or iata code
 	*
 	* @param String $airline_icao the iata code of the airport
-	* @return Array airport information
+	* @return array airport information
 	*
 	*/
 	public function getAllAirlineInfo($airline_icao, $fromsource = NULL)
@@ -2417,7 +2467,7 @@ class Spotter{
 	* Gets the airline info based on the airline name
 	*
 	* @param String $airline_name the name of the airline
-	* @return Array airline information
+	* @return array airline information
 	*
 	*/
 	public function getAllAirlineInfoByName($airline_name, $fromsource = NULL)
@@ -2451,7 +2501,7 @@ class Spotter{
 	* Gets the aircraft info based on the aircraft type
 	*
 	* @param String $aircraft_type the aircraft type
-	* @return Array aircraft information
+	* @return array aircraft information
 	*
 	*/
 	public function getAllAircraftInfo($aircraft_type)
@@ -2573,7 +2623,7 @@ class Spotter{
 	* Gets the spotter_id and flightaware_id based on the aircraft registration
 	*
 	* @param String $registration the aircraft registration
-	* @return Array spotter_id and flightaware_id
+	* @return array spotter_id and flightaware_id
 	*
 	*/
 	public function getAllIDByRegistration($registration, $limit = false)
@@ -2619,7 +2669,7 @@ class Spotter{
 	* Gets the aircraft route based on the aircraft callsign
 	*
 	* @param String $callsign the aircraft callsign
-	* @return Array aircraft type
+	* @return array aircraft type
 	*
 	*/
 	public function getRouteInfo($callsign)
@@ -2642,7 +2692,7 @@ class Spotter{
 	* Gets the aircraft info based on the aircraft registration
 	*
 	* @param String $registration the aircraft registration
-	* @return Array aircraft information
+	* @return array aircraft information
 	*
 	*/
 	public function getAircraftInfoByRegistration($registration, $limit = true)
@@ -2674,7 +2724,7 @@ class Spotter{
 	* Gets the aircraft owner & base based on the aircraft registration
 	*
 	* @param String $registration the aircraft registration
-	* @return Array aircraft information
+	* @return array aircraft information
 	*
 	*/
 	public function getAircraftOwnerByRegistration($registration)
@@ -2691,11 +2741,10 @@ class Spotter{
 		} else return array();
 	}
 	
-  
-  /**
+	/**
 	* Gets all flights (but with only little info)
 	*
-	* @return Array basic flight information
+	* @return array basic flight information
 	*
 	*/
 	public function getAllFlightsforSitemap()
@@ -2729,7 +2778,7 @@ class Spotter{
 	/**
 	* Gets a list of all aircraft manufacturers
 	*
-	* @return Array list of aircraft types
+	* @return array list of aircraft types
 	*
 	*/
 	public function getAllManufacturers()
@@ -2758,11 +2807,10 @@ class Spotter{
 		return $manufacturer_array;
 	}
   
-  
-  /**
+    /**
 	* Gets a list of all aircraft types
 	*
-	* @return Array list of aircraft types
+	* @return array list of aircraft types
 	*
 	*/
 	public function getAllAircraftTypes($filters = array())
@@ -2801,7 +2849,7 @@ class Spotter{
 	/**
 	* Gets a list of all aircraft registrations
 	*
-	* @return Array list of aircraft registrations
+	* @return array list of aircraft registrations
 	*
 	*/
 	public function getAllAircraftRegistrations($filters = array())
@@ -2826,7 +2874,7 @@ class Spotter{
 	* Gets all source name
 	*
 	* @param String type format of source
-	* @return Array list of source name
+	* @return array list of source name
 	*
 	*/
 	public function getAllSourceName($type = '',$filters = array())
@@ -2857,13 +2905,14 @@ class Spotter{
 	}
 
 
-
-	/**
-	* Gets a list of all airline names
-	*
-	* @return Array list of airline names
-	*
-	*/
+    /**
+     * Gets a list of all airline names
+     *
+     * @param string $airline_type
+     * @param null $forsource
+     * @param array $filters
+     * @return array list of airline names
+     */
 	public function getAllAirlineNames($airline_type = '',$forsource = NULL,$filters = array())
 	{
 		global $globalAirlinesSource,$globalVATSIM, $globalIVAO, $globalNoAirlines;
@@ -2905,13 +2954,14 @@ class Spotter{
 		}
 		return $airline_array;
 	}
-	
-	/**
-	* Gets a list of all alliance names
-	*
-	* @return Array list of alliance names
-	*
-	*/
+
+    /**
+     * Gets a list of all alliance names
+     *
+     * @param null $forsource
+     * @param array $filters
+     * @return array list of alliance names
+     */
 	public function getAllAllianceNames($forsource = NULL,$filters = array())
 	{
 		global $globalAirlinesSource,$globalVATSIM, $globalIVAO, $globalNoAirlines;
@@ -2936,12 +2986,14 @@ class Spotter{
 		return $alliance_array;
 	}
 
-	/**
-	* Gets a list of all airlines in an alliance
-	*
-	* @return Array list of airline names
-	*
-	*/
+    /**
+     * Gets a list of all airlines in an alliance
+     *
+     * @param $alliance
+     * @param null $forsource
+     * @param array $filters
+     * @return array list of airline names
+     */
 	public function getAllAirlineNamesByAlliance($alliance,$forsource = NULL,$filters = array())
 	{
 		global $globalAirlinesSource,$globalVATSIM, $globalIVAO, $globalNoAirlines;
@@ -2968,13 +3020,13 @@ class Spotter{
 		$alliance_array = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $alliance_array;
 	}
-	
-	/**
-	* Gets a list of all airline countries
-	*
-	* @return Array list of airline countries
-	*
-	*/
+
+    /**
+     * Gets a list of all airline countries
+     *
+     * @param array $filters
+     * @return array list of airline countries
+     */
 	public function getAllAirlineCountries($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -2999,14 +3051,13 @@ class Spotter{
 		return $airline_array;
 	}
 
-	
-	
-	/**
-	* Gets a list of all departure & arrival names
-	*
-	* @return Array list of airport names
-	*
-	*/
+
+    /**
+     * Gets a list of all departure & arrival names
+     *
+     * @param array $filters
+     * @return array list of airport names
+     */
 	public function getAllAirportNames($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3051,14 +3102,14 @@ class Spotter{
 		}
 
 		return $airport_array;
-	} 
+	}
 
-	/**
-	* Gets a list of all owner names
-	*
-	* @return Array list of owner names
-	*
-	*/
+    /**
+     * Gets a list of all owner names
+     *
+     * @param array $filters
+     * @return array list of owner names
+     */
 	public function getAllOwnerNames($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3069,14 +3120,14 @@ class Spotter{
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
-	} 
+	}
 
-	/**
-	* Gets a list of all pilot names and pilot ids
-	*
-	* @return Array list of pilot names and pilot ids
-	*
-	*/
+    /**
+     * Gets a list of all pilot names and pilot ids
+     *
+     * @param array $filters
+     * @return array list of pilot names and pilot ids
+     */
 	public function getAllPilotNames($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3087,15 +3138,15 @@ class Spotter{
 		$sth = $this->db->prepare($query);
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
-	} 
-	
-	
-	/**
-	* Gets a list of all departure & arrival airport countries
-	*
-	* @return Array list of airport countries
-	*
-	*/
+	}
+
+
+    /**
+     * Gets a list of all departure & arrival airport countries
+     *
+     * @param array $filters
+     * @return array list of airport countries
+     */
 	public function getAllAirportCountries($filters = array())
 	{
 		$airport_array = array();
@@ -3137,17 +3188,15 @@ class Spotter{
 		}
 
 		return $airport_array;
-	} 
-	
-	
-	
-	
-	/**
-	* Gets a list of all countries (airline, departure airport & arrival airport)
-	*
-	* @return Array list of countries
-	*
-	*/
+	}
+
+
+    /**
+     * Gets a list of all countries (airline, departure airport & arrival airport)
+     *
+     * @param array $filters
+     * @return array list of countries
+     */
 	public function getAllCountries($filters = array())
 	{
 		$Connection= new Connection($this->db);
@@ -3218,17 +3267,15 @@ class Spotter{
 		}
 		}  
 		return $country_array;
-	} 
-	
-	
-	
-	
-	/**
-	* Gets a list of all idents/callsigns
-	*
-	* @return Array list of ident/callsign names
-	*
-	*/
+	}
+
+
+    /**
+     * Gets a list of all idents/callsigns
+     *
+     * @param array $filters
+     * @return array list of ident/callsign names
+     */
 	public function getAllIdents($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3251,11 +3298,12 @@ class Spotter{
 		return $ident_array;
 	}
 
-	/**
-	* Get a list of flights from airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights from airport since 7 days
+     * @param string $airport_icao
+     * @param array $filters
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysAirportsDeparture($airport_icao = '',$filters = array()) {
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3284,11 +3332,11 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Get a list of flights from airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights from airport since 7 days
+     * @param string $airport_icao
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysAirportsDepartureByAirlines($airport_icao = '') {
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -3316,11 +3364,12 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Get a list of flights from detected airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights from detected airport since 7 days
+     * @param string $airport_icao
+     * @param array $filters
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysDetectedAirportsDeparture($airport_icao = '', $filters = array()) {
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3356,11 +3405,11 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Get a list of flights from detected airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights from detected airport since 7 days
+     * @param string $airport_icao
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysDetectedAirportsDepartureByAirlines($airport_icao = '') {
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -3400,11 +3449,12 @@ class Spotter{
 	}
 
 
-	/**
-	* Get a list of flights to airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights to airport since 7 days
+     * @param string $airport_icao
+     * @param array $filters
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysAirportsArrival($airport_icao = '', $filters = array()) {
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3435,11 +3485,12 @@ class Spotter{
 	}
 
 
-	/**
-	* Get a list of flights detected to airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights detected to airport since 7 days
+     * @param string $airport_icao
+     * @param array $filters
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysDetectedAirportsArrival($airport_icao = '',$filters = array()) {
 		global $globalTimezone, $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3478,11 +3529,11 @@ class Spotter{
 	}
 
 
-	/**
-	* Get a list of flights to airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights to airport since 7 days
+     * @param string $airport_icao
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysAirportsArrivalByAirlines($airport_icao = '') {
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -3512,11 +3563,11 @@ class Spotter{
 	}
 
 
-	/**
-	* Get a list of flights detected to airport since 7 days
-	* @return Array number, icao, name and city of airports
-	*/
-
+    /**
+     * Get a list of flights detected to airport since 7 days
+     * @param string $airport_icao
+     * @return array number, icao, name and city of airports
+     */
 	public function getLast7DaysDetectedAirportsArrivalByAirlines($airport_icao = '') {
 		global $globalTimezone, $globalDBdriver;
 		if ($globalTimezone != '') {
@@ -3553,15 +3604,13 @@ class Spotter{
 			$sth = $this->db->prepare($query);
 			$sth->execute(array(':offset' => $offset, ':airport_icao' => $airport_icao));
 		}
-		
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
-
 
 	/**
 	* Gets a list of all dates
 	*
-	* @return Array list of date names
+	* @return array list of date names
 	*
 	*/
 	public function getAllDates()
@@ -3606,7 +3655,7 @@ class Spotter{
 	/**
 	* Gets all route combinations
 	*
-	* @return Array the route list
+	* @return array the route list
 	*
 	*/
 	public function getAllRoutes()
@@ -3633,14 +3682,15 @@ class Spotter{
 		return $routes_array;
 	}
 
-	/**
-	* Update ident spotter data
-	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @return String success or false
-	*
-	*/	
+    /**
+     * Update ident spotter data
+     *
+     * @param String $flightaware_id the ID from flightaware
+     * @param String $ident the flight ident
+     * @param null $fromsource
+     * @param null $sourcetype
+     * @return String success or false
+     */
 	public function updateIdentSpotterData($flightaware_id = '', $ident = '',$fromsource = NULL,$sourcetype = NULL)
 	{
 		if (!is_numeric(substr($ident, 0, 3)) && !((substr($ident, 0, 3) == 'OGN' || substr($ident, 0, 3) == 'FLR' || substr($ident, 0, 3) == 'ICA') && $fromsource == 'aprs'))
@@ -3682,16 +3732,23 @@ class Spotter{
 
 	}
 
-	/**
-	* Update latest spotter data
-	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @param String $arrival_airport_icao the arrival airport
-	* @return String success or false
-	*
-	*/	
-	public function updateLatestSpotterData($flightaware_id = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $ground = false, $groundspeed = NULL, $date = '', $arrival_airport_icao = '',$arrival_airport_time = '')
+    /**
+     * Update latest spotter data
+     *
+     * @param String $flightaware_id the ID from flightaware
+     * @param String $ident the flight ident
+     * @param string $latitude
+     * @param string $longitude
+     * @param string $altitude
+     * @param string $altitude_real
+     * @param bool $ground
+     * @param null $groundspeed
+     * @param string $date
+     * @param String $arrival_airport_icao the arrival airport
+     * @param string $arrival_airport_time
+     * @return String success or false
+     */
+	public function updateLatestSpotterData($flightaware_id = '', $ident = '', $latitude = '', $longitude = '', $altitude = '',$altitude_real='', $ground = false, $groundspeed = NULL, $date = '', $arrival_airport_icao = '',$arrival_airport_time = '')
 	{
 		if ($groundspeed == '') $groundspeed = NULL;
 		$query = 'UPDATE spotter_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_altitude = :last_altitude, last_ground = :last_ground, last_seen = :last_seen, real_arrival_airport_icao = :real_arrival_airport_icao, real_arrival_airport_time = :real_arrival_airport_time, last_ground_speed = :last_ground_speed WHERE flightaware_id = :flightaware_id';
@@ -3707,14 +3764,20 @@ class Spotter{
 		return "success";
 	}
 
-	/**
-	* Update initial spotter data
-	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @return String success or false
-	*
-	*/	
+    /**
+     * Update initial spotter data
+     *
+     * @param String $flightaware_id the ID from flightaware
+     * @param String $ident the flight ident
+     * @param string $latitude
+     * @param string $longitude
+     * @param string $altitude
+     * @param $altitude_real
+     * @param bool $ground
+     * @param null $groundspeed
+     * @param string $date
+     * @return String success or false
+     */
 	public function updateInitialSpotterData($flightaware_id = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $altitude_real,$ground = false, $groundspeed = NULL, $date = '')
 	{
 		if ($groundspeed == '') $groundspeed = NULL;
@@ -3791,7 +3854,7 @@ class Spotter{
 	* @param String $pilot_id pilot id of flight (for virtual airlines)
 	* @param String $pilot_name pilot name of flight (for virtual airlines)
 	* @param String $verticalrate vertival rate of flight
-	* @return String success or false
+	* @return array success or false
 	*/
 	public function addSpotterData($flightaware_id = '', $ident = '', $aircraft_icao = '', $departure_airport_icao = '', $arrival_airport_icao = '', $latitude = '', $longitude = '', $waypoints = '', $altitude = '', $altitude_real = '',$heading = '', $groundspeed = '', $date = '', $departure_airport_time = '', $arrival_airport_time = '',$squawk = '', $route_stop = '', $highlight = '', $ModeS = '', $registration = '',$pilot_id = '', $pilot_name = '', $verticalrate = '', $ground = false,$format_source = '', $source_name = '',$source_type = '')
 	{
@@ -3813,7 +3876,7 @@ class Spotter{
 		{
 			if (!is_string($flightaware_id))
 			{
-				return false;
+				return array();
 			} else {
 				if ($ModeS != '') {
 					$timeelapsed = microtime(true);
@@ -3840,7 +3903,7 @@ class Spotter{
 		{
 			if (!is_string($ident))
 			{
-				return false;
+				return array();
 			} else {
 				if (!is_numeric(substr($ident, 0, 3)) && !((substr($ident, 0, 3) == 'OGN' || substr($ident, 0, 3) == 'FLR' || substr($ident, 0, 3) == 'ICA') && $format_source == 'aprs'))
 				//if (!is_numeric(substr($ident, 0, 3)) && $source_type != 'flarm')
@@ -3875,7 +3938,7 @@ class Spotter{
 		{
 			if (!is_string($aircraft_icao))
 			{
-				return false;
+				return array();
 			} else {
 				if ($aircraft_icao == "" || $aircraft_icao == "XXXX")
 				{
@@ -3913,7 +3976,7 @@ class Spotter{
 		{
 			if (!is_string($departure_airport_icao))
 			{
-				return false;
+				return array();
 			} else {
 				$timeelapsed = microtime(true);
 				$departure_airport_array = $this->getAllAirportInfo($departure_airport_icao);
@@ -3928,7 +3991,7 @@ class Spotter{
 		{
 			if (!is_string($arrival_airport_icao))
 			{
-				return false;
+				return array();
 			} else {
 				$timeelapsed = microtime(true);
 				$arrival_airport_array = $this->getAllAirportInfo($arrival_airport_icao);
@@ -3940,7 +4003,7 @@ class Spotter{
 		{
 			if (!is_numeric($latitude))
 			{
-				return false;
+				return array();
 			}
 		}
 		
@@ -3948,7 +4011,7 @@ class Spotter{
 		{
 			if (!is_numeric($longitude))
 			{
-				return false;
+				return array();
 			}
 		}
 		
@@ -3956,7 +4019,7 @@ class Spotter{
 		{
 			if (!is_string($waypoints))
 			{
-				return false;
+				return array();
 			}
 		}
 		
@@ -3964,14 +4027,14 @@ class Spotter{
 		{
 			if (!is_numeric($altitude))
 			{
-				return false;
+				return array();
 			}
 		} else $altitude = 0;
 		if ($altitude_real != "")
 		{
 			if (!is_numeric($altitude_real))
 			{
-				return false;
+				return array();
 			}
 		} else $altitude_real = 0;
 		
@@ -3979,7 +4042,7 @@ class Spotter{
 		{
 			if (!is_numeric($heading))
 			{
-				return false;
+				return array();
 			}
 		}
 		
@@ -3987,7 +4050,7 @@ class Spotter{
 		{
 			if (!is_numeric($groundspeed))
 			{
-				return false;
+				return array();
 			}
 		}
 
@@ -4111,14 +4174,14 @@ class Spotter{
 		return $query_values;
 		//return "success";
 	}
-	
-  
-	/**
-	* Gets the aircraft ident within the last hour
-	*
-	* @return String the ident
-	*
-	*/
+
+
+    /**
+     * Gets the aircraft ident within the last hour
+     *
+     * @param $ident
+     * @return String the ident
+     */
 	public function getIdentFromLastHour($ident)
 	{
 		global $globalDBdriver, $globalTimezone;
@@ -4146,14 +4209,14 @@ class Spotter{
 
 		return $ident_result;
 	}
-	
-	
-	/**
-	* Gets the aircraft data from the last 20 seconds
-	*
-	* @return Array the spotter data
-	*
-	*/
+
+
+    /**
+     * Gets the aircraft data from the last 20 seconds
+     *
+     * @param string $q
+     * @return Array the spotter data
+     */
 	public function getRealTimeData($q = '')
 	{
 		global $globalDBdriver;
@@ -4193,15 +4256,20 @@ class Spotter{
 
 		return $spotter_array;
 	}
-	
-	
-	
-	 /**
-	* Gets all airlines that have flown over
-	*
-	* @return Array the airline list
-	*
-	*/
+
+
+    /**
+     * Gets all airlines that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the airline list
+     */
 	public function countAllAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(), $year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -4268,12 +4336,18 @@ class Spotter{
 		return $airline_array;
 	}
 
-	 /**
-	* Gets all pilots that have flown over
-	*
-	* @return Array the pilots list
-	*
-	*/
+    /**
+     * Gets all pilots that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the pilots list
+     */
 	public function countAllPilots($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -4341,13 +4415,15 @@ class Spotter{
 		}
 		return $airline_array;
 	}
-	
-	/**
-	* Gets all pilots that have flown over
-	*
-	* @return Array the pilots list
-	*
-	*/
+
+    /**
+     * Gets all pilots that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @return array the pilots list
+     */
 	public function countAllPilotsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '')
 	{
 		global $globalDBdriver;
@@ -4388,13 +4464,19 @@ class Spotter{
 		}
 		return $airline_array;
 	}
-	
-	 /**
-	* Gets all owner that have flown over
-	*
-	* @return Array the pilots list
-	*
-	*/
+
+    /**
+     * Gets all owner that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the pilots list
+     */
 	public function countAllOwners($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -4458,13 +4540,16 @@ class Spotter{
 		}
 		return $airline_array;
 	}
-	
-	 /**
-	* Gets all owner that have flown over
-	*
-	* @return Array the pilots list
-	*
-	*/
+
+    /**
+     * Gets all owner that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the pilots list
+     */
 	public function countAllOwnersByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
@@ -4505,12 +4590,13 @@ class Spotter{
 		return $airline_array;
 	}
 
-	/**
-	* Gets all airlines that have flown over by aircraft
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines that have flown over by aircraft
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByAircraft($aircraft_icao,$filters = array())
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
@@ -4541,12 +4627,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airline countries that have flown over by aircraft
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all airline countries that have flown over by aircraft
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllAirlineCountriesByAircraft($aircraft_icao,$filters = array())
 	{
 		$aircraft_icao = filter_var($aircraft_icao,FILTER_SANITIZE_STRING);
@@ -4576,14 +4663,13 @@ class Spotter{
 	}
 
 
-	
-	
-	/**
-	* Gets all airlines that have flown over by airport
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines that have flown over by airport
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByAirport($airport_icao,$filters = array())
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
@@ -4613,12 +4699,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airline countries that have flown over by airport icao
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all airline countries that have flown over by airport icao
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllAirlineCountriesByAirport($airport_icao,$filters = array())
 	{
 		$airport_icao = filter_var($airport_icao,FILTER_SANITIZE_STRING);
@@ -4648,12 +4735,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airlines that have flown over by aircraft manufacturer
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines that have flown over by aircraft manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
@@ -4682,13 +4770,13 @@ class Spotter{
 	}
 
 
-
-	/**
-	* Gets all airline countries that have flown over by aircraft manufacturer
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all airline countries that have flown over by aircraft manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllAirlineCountriesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$aircraft_manufacturer = filter_var($aircraft_manufacturer,FILTER_SANITIZE_STRING);
@@ -4714,12 +4802,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airlines that have flown over by date
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines that have flown over by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -4759,15 +4848,16 @@ class Spotter{
 		}
 
 		return $airline_array;
-	}	
-	
-	
-	/**
-	* Gets all airline countries that have flown over by date
-	*
-	* @return Array the airline country list
-	*
-	*/
+	}
+
+
+    /**
+     * Gets all airline countries that have flown over by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllAirlineCountriesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -4807,12 +4897,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airlines that have flown over by ident/callsign
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines that have flown over by ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByIdent($ident,$filters = array())
 	{
 		$ident = filter_var($ident,FILTER_SANITIZE_STRING);
@@ -4828,12 +4919,13 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all airlines by owner
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByOwner($owner,$filters = array())
 	{
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
@@ -4849,12 +4941,16 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets flight duration by owner
-	*
-	* @return String Duration of all flights
-	*
-	*/
+    /**
+     * Gets flight duration by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return String Duration of all flights
+     */
 	public function getFlightDurationByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -4900,12 +4996,13 @@ class Spotter{
 		else return $result[0]['duration'];
 	}
 
-	/**
-	* Count flights by owner
-	*
-	* @return String Duration of all flights
-	*
-	*/
+    /**
+     * Count flights by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return String Duration of all flights
+     */
 	public function countFlightsByOwner($owner,$filters = array())
 	{
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
@@ -4920,12 +5017,13 @@ class Spotter{
 		return $result[0]['nb'];
 	}
 
-	/**
-	* Count flights by pilot
-	*
-	* @return String Duration of all flights
-	*
-	*/
+    /**
+     * Count flights by pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return String Duration of all flights
+     */
 	public function countFlightsByPilot($pilot,$filters = array())
 	{
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
@@ -4940,12 +5038,16 @@ class Spotter{
 		return $result[0]['nb'];
 	}
 
-	/**
-	* Gets flight duration by pilot
-	*
-	* @return String Duration of all flights
-	*
-	*/
+    /**
+     * Gets flight duration by pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return String Duration of all flights
+     */
 	public function getFlightDurationByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -4990,12 +5092,13 @@ class Spotter{
 		else return $result[0]['duration'];
 	}
 
-	/**
-	* Gets all airlines used by pilot
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines used by pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByPilot($pilot,$filters = array())
 	{
 		$pilot = filter_var($pilot,FILTER_SANITIZE_STRING);
@@ -5011,12 +5114,14 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all airlines that have flown over by route
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines that have flown over by route
+     *
+     * @param $departure_airport_icao
+     * @param $arrival_airport_icao
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5047,12 +5152,14 @@ class Spotter{
 		return $airline_array;
 	}
 
-	/**
-	* Gets all airline countries that have flown over by route
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all airline countries that have flown over by route
+     *
+     * @param $departure_airport_icao
+     * @param $arrival_airport_icao
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllAirlineCountriesByRoute($departure_airport_icao, $arrival_airport_icao,$filters= array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5078,12 +5185,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airlines that have flown over by country
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines that have flown over by country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByCountry($country,$filters = array())
 	{
 		$country = filter_var($country,FILTER_SANITIZE_STRING);
@@ -5112,12 +5220,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airline countries that have flown over by country
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all airline countries that have flown over by country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllAirlineCountriesByCountry($country,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5144,12 +5253,16 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all airlines countries
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all airlines countries
+     *
+     * @param bool $limit
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the airline country list
+     */
 	public function countAllAirlineCountries($limit = true, $filters = array(), $year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -5204,12 +5317,15 @@ class Spotter{
 		return $airline_array;
 	}
 
-	/**
-	* Gets all number of flight over countries
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all number of flight over countries
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver, $globalArchive;
@@ -5289,13 +5405,19 @@ class Spotter{
 		}
 		return $flight_array;
 	}
-	
-	/**
-	* Gets all aircraft types that have flown over
-	*
-	* @return Array the aircraft list
-	*
-	*/
+
+    /**
+     * Gets all aircraft types that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypes($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -5364,12 +5486,18 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft types that have flown over by airline
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by airline
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -5439,12 +5567,15 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft types that have flown over by months
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by months
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByMonths($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
@@ -5487,12 +5618,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft registration that have flown over by aircaft icao
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by aircaft icao
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByAircraft($aircraft_icao,$filters = array())
 	{
 		$Image = new Image($this->db);
@@ -5531,12 +5663,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft types that have flown over by airline icao
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by airline icao
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByAirline($airline_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5564,12 +5697,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft registration that have flown over by airline icao
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by airline icao
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByAirline($airline_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5607,12 +5741,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft manufacturer that have flown over by airline icao
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft manufacturer that have flown over by airline icao
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftManufacturerByAirline($airline_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5640,12 +5775,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft types that have flown over by airline icao
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by airline icao
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByAirport($airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5673,12 +5809,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft registration that have flown over by airport icao
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by airport icao
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByAirport($airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5712,14 +5849,15 @@ class Spotter{
 		}
 		return $aircraft_array;
 	}
-	
-	
-	/**
-	* Gets all aircraft manufacturer that have flown over by airport icao
-	*
-	* @return Array the aircraft list
-	*
-	*/
+
+
+    /**
+     * Gets all aircraft manufacturer that have flown over by airport icao
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftManufacturerByAirport($airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5744,12 +5882,13 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft types that have flown over by aircraft manufacturer
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by aircraft manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5775,12 +5914,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft registration that have flown over by aircaft manufacturer
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by aircaft manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByManufacturer($aircraft_manufacturer, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5814,12 +5954,13 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft types that have flown over by date
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -5860,12 +6001,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft registration that have flown over by date
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -5915,12 +6057,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft manufacturer that have flown over by date
-	*
-	* @return Array the aircraft manufacturer list
-	*
-	*/
+    /**
+     * Gets all aircraft manufacturer that have flown over by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the aircraft manufacturer list
+     */
 	public function countAllAircraftManufacturerByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -5961,12 +6104,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft types that have flown over by ident/callsign
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByIdent($ident,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -5993,12 +6137,16 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft types that have flown over by pilot
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6043,12 +6191,16 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all aircraft types that have flown over by owner
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6092,12 +6244,13 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all aircraft registration that have flown over by ident/callsign
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByIdent($ident,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6135,12 +6288,16 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft registration that have flown over by owner
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6210,12 +6367,16 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft registration that have flown over by pilot
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6286,12 +6447,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft manufacturer that have flown over by ident/callsign
-	*
-	* @return Array the aircraft manufacturer list
-	*
-	*/
+    /**
+     * Gets all aircraft manufacturer that have flown over by ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the aircraft manufacturer list
+     */
 	public function countAllAircraftManufacturerByIdent($ident,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6315,12 +6477,16 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft manufacturer that have flown over by owner
-	*
-	* @return Array the aircraft manufacturer list
-	*
-	*/
+    /**
+     * Gets all aircraft manufacturer that have flown over by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft manufacturer list
+     */
 	public function countAllAircraftManufacturerByOwner($owner,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6367,12 +6533,16 @@ class Spotter{
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all aircraft manufacturer that have flown over by pilot
-	*
-	* @return Array the aircraft manufacturer list
-	*
-	*/
+    /**
+     * Gets all aircraft manufacturer that have flown over by pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft manufacturer list
+     */
 	public function countAllAircraftManufacturerByPilot($pilot,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6420,12 +6590,14 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft types that have flown over by route
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by route
+     *
+     * @param $departure_airport_icao
+     * @param $arrival_airport_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6453,12 +6625,14 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all aircraft registration that have flown over by route
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by route
+     *
+     * @param $departure_airport_icao
+     * @param $arrival_airport_icao
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6496,14 +6670,16 @@ class Spotter{
 
 		return $aircraft_array;
 	}
-	
-	
-	/**
-	* Gets all aircraft manufacturer that have flown over by route
-	*
-	* @return Array the aircraft manufacturer list
-	*
-	*/
+
+
+    /**
+     * Gets all aircraft manufacturer that have flown over by route
+     *
+     * @param $departure_airport_icao
+     * @param $arrival_airport_icao
+     * @param array $filters
+     * @return array the aircraft manufacturer list
+     */
 	public function countAllAircraftManufacturerByRoute($departure_airport_icao, $arrival_airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6531,17 +6707,16 @@ class Spotter{
 		}
 
 		return $aircraft_array;
-	}	
+	}
 
-	
-	
-	
-	/**
-	* Gets all aircraft types that have flown over by country
-	*
-	* @return Array the aircraft list
-	*
-	*/
+
+    /**
+     * Gets all aircraft types that have flown over by country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByCountry($country,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6571,12 +6746,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft registration that have flown over by country
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByCountry($country,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -6646,16 +6822,18 @@ class Spotter{
 		}
 
 		return $aircraft_array;
-	}	
-	
-	
-	
-	/**
-	* Gets all aircraft manufacturers that have flown over
-	*
-	* @return Array the aircraft list
-	*
-	*/
+	}
+
+
+    /**
+     * Gets all aircraft manufacturers that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftManufacturers($filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6711,15 +6889,20 @@ class Spotter{
 
 		return $manufacturer_array;
 	}
-	
-	
-	
-	/**
-	* Gets all aircraft registrations that have flown over
-	*
-	* @return Array the aircraft list
-	*
-	*/
+
+
+    /**
+     * Gets all aircraft registrations that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrations($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -6799,12 +6982,15 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all aircraft registrations that have flown over
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registrations that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationsByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
@@ -6855,17 +7041,22 @@ class Spotter{
           
 			$aircraft_array[] = $temp_array;
 		}
-
 		return $aircraft_array;
 	}
-	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the airport list
+     */
 	public function countAllDepartureAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -6937,12 +7128,15 @@ class Spotter{
 		return $airport_array;
 	}
 
-	/**
-	* Gets all departure airports of the airplanes that have flown over
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all departure airports of the airplanes that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
@@ -6990,12 +7184,18 @@ class Spotter{
 		return $airport_array;
 	}
 
-	/**
-	* Gets all detected departure airports of the airplanes that have flown over
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all detected departure airports of the airplanes that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the airport list
+     */
 	public function countAllDetectedDepartureAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -7068,13 +7268,16 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all detected departure airports of the airplanes that have flown over
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all detected departure airports of the airplanes that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDetectedDepartureAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array())
 	{
 		global $globalDBdriver;
@@ -7120,14 +7323,15 @@ class Spotter{
 			$airport_array[] = $temp_array;
 		}
 		return $airport_array;
-	}	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on an airline icao
-	*
-	* @return Array the airport list
-	*
-	*/
+	}
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on an airline icao
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByAirline($airline_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7189,15 +7393,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on an aircraft icao
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on an aircraft icao
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByAircraft($aircraft_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7225,14 +7429,15 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on an aircraft icao
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on an aircraft icao
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByAircraft($aircraft_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7259,14 +7464,15 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on an aircraft registration
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on an aircraft registration
+     *
+     * @param $registration
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByRegistration($registration,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7293,14 +7499,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on an aircraft registration
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on an aircraft registration
+     *
+     * @param $registration
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByRegistration($registration,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7359,12 +7566,13 @@ class Spotter{
 		return $airport_array;
 	}
 
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on an airport icao
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on an airport icao
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByAirport($airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7389,15 +7597,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on an aircraft manufacturer
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on an aircraft manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7453,14 +7661,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on a date
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on a date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -7499,15 +7708,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on a date
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on a date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -7547,15 +7756,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on a ident/callsign
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on a ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByIdent($ident,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7582,13 +7791,14 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on a owner
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7614,13 +7824,14 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on a pilot
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on a pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByPilot($pilot,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7646,14 +7857,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on a callsign/ident
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on a callsign/ident
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByIdent($ident,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7676,13 +7888,14 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on owner
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7696,13 +7909,14 @@ class Spotter{
 		$sth->execute(array(':owner' => $owner));
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
-	
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on pilot
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByPilot($pilot,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7716,15 +7930,15 @@ class Spotter{
 		$sth->execute(array(':pilot' => $pilot));
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
-	
-	
-	
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on a country
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on a country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByCountry($country,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7752,12 +7966,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on an aircraft icao
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on an aircraft icao
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByCountry($country,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -7789,8 +8004,8 @@ class Spotter{
 	* @param Integer $olderthanmonths Only show result older than x months
 	* @param String $sincedate Only show result since x date
 	* @param Boolean $icaoaskey Show result by ICAO
-	* @param Array $filters Filter used here
-	* @return Array the airport list
+	* @param array $filters Filter used here
+	* @return array the airport list
 	*
 	*/
 	public function countAllArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false,$filters = array(),$year = '',$month = '',$day = '')
@@ -7871,12 +8086,16 @@ class Spotter{
 		return $airport_array;
 	}
 
-	/**
-	* Gets all arrival airports of the airplanes that have flown over
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all arrival airports of the airplanes that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param bool $icaoaskey
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '', $icaoaskey = false,$filters = array())
 	{
 		global $globalDBdriver;
@@ -7933,12 +8152,19 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all detected arrival airports of the airplanes that have flown over
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all detected arrival airports of the airplanes that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param bool $icaoaskey
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the airport list
+     */
 	public function countAllDetectedArrivalAirports($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -8013,13 +8239,17 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all detected arrival airports of the airplanes that have flown over
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all detected arrival airports of the airplanes that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param bool $icaoaskey
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDetectedArrivalAirportsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '',$icaoaskey = false,$filters = array())
 	{
 		global $globalDBdriver;
@@ -8070,14 +8300,15 @@ class Spotter{
 		}
 
 		return $airport_array;
-	}	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on an airline icao
-	*
-	* @return Array the airport list
-	*
-	*/
+	}
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on an airline icao
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByAirline($airline_icao, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8111,14 +8342,15 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on an airline icao
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on an airline icao
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByAirline($airline_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8146,14 +8378,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on an aircraft icao
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on an aircraft icao
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByAircraft($aircraft_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8184,15 +8417,15 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on an aircraft icao
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on an aircraft icao
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByAircraft($aircraft_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8219,14 +8452,15 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on an aircraft registration
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on an aircraft registration
+     *
+     * @param $registration
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByRegistration($registration,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8253,14 +8487,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on an aircraft registration
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on an aircraft registration
+     *
+     * @param $registration
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByRegistration($registration,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8283,15 +8518,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on an departure airport
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on an departure airport
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByAirport($airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8317,14 +8552,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on an airport icao
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on an airport icao
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByAirport($airport_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8349,14 +8585,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on a aircraft manufacturer
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on a aircraft manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8382,15 +8619,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on a aircraft manufacturer
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on a aircraft manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByManufacturer($aircraft_manufacturer,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8413,15 +8650,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on a date
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on a date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByDate($date,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -8460,15 +8697,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on a date
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on a date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -8507,15 +8744,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on a ident/callsign
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on a ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByIdent($ident,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8543,13 +8780,14 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on a owner
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8579,12 +8817,13 @@ class Spotter{
 		return $airport_array;
 	}
 
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on a pilot
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on a pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByPilot($pilot,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8610,13 +8849,14 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on a callsign/ident
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on a callsign/ident
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByIdent($ident, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8639,13 +8879,14 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on a owner
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByOwner($owner, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8658,13 +8899,14 @@ class Spotter{
 		$sth->execute(array(':owner' => $owner));
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on a pilot
-	*
-	* @return Array the airport list
-	*
-	*/
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on a pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByPilot($pilot, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8677,15 +8919,15 @@ class Spotter{
 		$sth->execute(array(':pilot' => $pilot));
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
-	
-	
-	
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on a country
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on a country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByCountry($country,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8712,14 +8954,15 @@ class Spotter{
 		}
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on a country
-	*
-	* @return Array the airport list
-	*
-	*/
+
+
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on a country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByCountry($country,$filters = array())
 	{
 		global $globalDBdriver;
@@ -8745,13 +8988,15 @@ class Spotter{
 	}
 
 
-
-	/**
-	* Counts all airport departure countries
-	*
-	* @return Array the airport departure list
-	*
-	*/
+    /**
+     * Counts all airport departure countries
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the airport departure list
+     */
 	public function countAllDepartureCountries($filters = array(),$year = '',$month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -8808,14 +9053,18 @@ class Spotter{
 
 		return $airport_array;
 	}
-	
-	
-	/**
-	* Counts all airport arrival countries
-	*
-	* @return Array the airport arrival list
-	*
-	*/
+
+
+    /**
+     * Counts all airport arrival countries
+     *
+     * @param bool $limit
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the airport arrival list
+     */
 	public function countAllArrivalCountries($limit = true,$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -8874,15 +9123,12 @@ class Spotter{
 	}
 
 
-
-
-
-	/**
-	* Gets all route combinations
-	*
-	* @return Array the route list
-	*
-	*/
+    /**
+     * Gets all route combinations
+     *
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutes($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8911,16 +9157,15 @@ class Spotter{
 		}
 		return $routes_array;
 	}
-	
-	
-	
-	
-	/**
-	* Gets all route combinations based on an aircraft
-	*
-	* @return Array the route list
-	*
-	*/
+
+
+    /**
+     * Gets all route combinations based on an aircraft
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByAircraft($aircraft_icao,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8953,14 +9198,15 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	
-	/**
-	* Gets all route combinations based on an aircraft registration
-	*
-	* @return Array the route list
-	*
-	*/
+
+
+    /**
+     * Gets all route combinations based on an aircraft registration
+     *
+     * @param $registration
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByRegistration($registration, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -8994,15 +9240,15 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	
-	
-	/**
-	* Gets all route combinations based on an airline
-	*
-	* @return Array the route list
-	*
-	*/
+
+
+    /**
+     * Gets all route combinations based on an airline
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByAirline($airline_icao, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9037,15 +9283,15 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	
-	
-	/**
-	* Gets all route combinations based on an airport
-	*
-	* @return Array the route list
-	*
-	*/
+
+
+    /**
+     * Gets all route combinations based on an airport
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByAirport($airport_icao, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9078,15 +9324,15 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	
-	
-	/**
-	* Gets all route combinations based on an country
-	*
-	* @return Array the route list
-	*
-	*/
+
+
+    /**
+     * Gets all route combinations based on an country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByCountry($country, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9121,12 +9367,13 @@ class Spotter{
 	}
 
 
-	/**
-	* Gets all route combinations based on an date
-	*
-	* @return Array the route list
-	*
-	*/
+    /**
+     * Gets all route combinations based on an date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9173,14 +9420,15 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	
-	/**
-	* Gets all route combinations based on an ident/callsign
-	*
-	* @return Array the route list
-	*
-	*/
+
+
+    /**
+     * Gets all route combinations based on an ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByIdent($ident, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9214,13 +9462,14 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	/**
-	* Gets all route combinations based on an owner
-	*
-	* @return Array the route list
-	*
-	*/
+
+    /**
+     * Gets all route combinations based on an owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9254,13 +9503,14 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	/**
-	* Gets all route combinations based on a pilot
-	*
-	* @return Array the route list
-	*
-	*/
+
+    /**
+     * Gets all route combinations based on a pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByPilot($pilot,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9294,14 +9544,15 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	
-	/**
-	* Gets all route combinations based on an manufacturer
-	*
-	* @return Array the route list
-	*
-	*/
+
+
+    /**
+     * Gets all route combinations based on an manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByManufacturer($aircraft_manufacturer, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9336,14 +9587,13 @@ class Spotter{
 		return $routes_array;
 	}
 
-	
-	
-	/**
-	* Gets all route combinations with waypoints
-	*
-	* @return Array the route list
-	*
-	*/
+
+    /**
+     * Gets all route combinations with waypoints
+     *
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesWithWaypoints($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -9378,13 +9628,19 @@ class Spotter{
 
 		return $routes_array;
 	}
-	
-	/**
-	* Gets all callsigns that have flown over
-	*
-	* @return Array the callsign list
-	*
-	*/
+
+    /**
+     * Gets all callsigns that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the callsign list
+     */
 	public function countAllCallsigns($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -9449,12 +9705,15 @@ class Spotter{
 		return $callsign_array;
 	}
 
-	/**
-	* Gets all callsigns that have flown over
-	*
-	* @return Array the callsign list
-	*
-	*/
+    /**
+     * Gets all callsigns that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the callsign list
+     */
 	public function countAllCallsignsByAirlines($limit = true, $olderthanmonths = 0, $sincedate = '', $filters = array())
 	{
 		global $globalDBdriver;
@@ -9492,14 +9751,12 @@ class Spotter{
 	}
 
 
-
-
-	/**
-	* Counts all dates
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDates($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9542,13 +9799,13 @@ class Spotter{
 
 		return $date_array;
 	}
-	
-	/**
-	* Counts all dates
-	*
-	* @return Array the date list
-	*
-	*/
+
+    /**
+     * Counts all dates
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9590,14 +9847,14 @@ class Spotter{
 		}
 
 		return $date_array;
-	}	
-	
-	/**
-	* Counts all dates during the last 7 days
-	*
-	* @return Array the date list
-	*
-	*/
+	}
+
+    /**
+     * Counts all dates during the last 7 days
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesLast7Days($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9638,12 +9895,12 @@ class Spotter{
 		return $date_array;
 	}
 
-	/**
-	* Counts all dates during the last month
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates during the last month
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesLastMonth($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9685,12 +9942,12 @@ class Spotter{
 	}
 
 
-	/**
-	* Counts all dates during the last month
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates during the last month
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesLastMonthByAirlines($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9732,14 +9989,15 @@ class Spotter{
 
 		return $date_array;
 	}
-	
 
-	/**
-	* Counts all month
-	*
-	* @return Array the month list
-	*
-	*/
+
+    /**
+     * Counts all month
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonths($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9790,12 +10048,13 @@ class Spotter{
 		return $date_array;
 	}
 
-	/**
-	* Counts all month
-	*
-	* @return Array the month list
-	*
-	*/
+    /**
+     * Counts all month
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsByAirlines($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9841,12 +10100,13 @@ class Spotter{
 		return $date_array;
 	}
 
-	/**
-	* Counts all military month
-	*
-	* @return Array the month list
-	*
-	*/
+    /**
+     * Counts all military month
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMilitaryMonths($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9887,13 +10147,14 @@ class Spotter{
 
 		return $date_array;
 	}
-	
-	/**
-	* Counts all month owners
-	*
-	* @return Array the month list
-	*
-	*/
+
+    /**
+     * Counts all month owners
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsOwners($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9933,13 +10194,14 @@ class Spotter{
 
 		return $date_array;
 	}
-	
-	/**
-	* Counts all month owners
-	*
-	* @return Array the month list
-	*
-	*/
+
+    /**
+     * Counts all month owners
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsOwnersByAirlines($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -9981,12 +10243,13 @@ class Spotter{
 		return $date_array;
 	}
 
-	/**
-	* Counts all month pilot
-	*
-	* @return Array the month list
-	*
-	*/
+    /**
+     * Counts all month pilot
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsPilots($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10026,13 +10289,14 @@ class Spotter{
 
 		return $date_array;
 	}
-	
-	/**
-	* Counts all month pilot
-	*
-	* @return Array the month list
-	*
-	*/
+
+    /**
+     * Counts all month pilot
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsPilotsByAirlines($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10074,12 +10338,13 @@ class Spotter{
 		return $date_array;
 	}
 
-	/**
-	* Counts all month airline
-	*
-	* @return Array the month list
-	*
-	*/
+    /**
+     * Counts all month airline
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsAirlines($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10119,13 +10384,14 @@ class Spotter{
 
 		return $date_array;
 	}
-	
-	/**
-	* Counts all month aircraft
-	*
-	* @return Array the month list
-	*
-	*/
+
+    /**
+     * Counts all month aircraft
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsAircrafts($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10165,14 +10431,15 @@ class Spotter{
 
 		return $date_array;
 	}
-	
 
-	/**
-	* Counts all month aircraft
-	*
-	* @return Array the month list
-	*
-	*/
+
+    /**
+     * Counts all month aircraft
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsAircraftsByAirlines($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10214,12 +10481,13 @@ class Spotter{
 		return $date_array;
 	}
 
-	/**
-	* Counts all month real arrival
-	*
-	* @return Array the month list
-	*
-	*/
+    /**
+     * Counts all month real arrival
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsRealArrivals($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10259,14 +10527,15 @@ class Spotter{
 
 		return $date_array;
 	}
-	
 
-	/**
-	* Counts all month real arrival
-	*
-	* @return Array the month list
-	*
-	*/
+
+    /**
+     * Counts all month real arrival
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the month list
+     */
 	public function countAllMonthsRealArrivalsByAirlines($filters = array(),$sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10307,14 +10576,15 @@ class Spotter{
 
 		return $date_array;
 	}
-	
 
-	/**
-	* Counts all dates during the last year
-	*
-	* @return Array the date list
-	*
-	*/
+
+    /**
+     * Counts all dates during the last year
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the date list
+     */
 	public function countAllMonthsLastYear($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10357,15 +10627,15 @@ class Spotter{
 
 		return $date_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours
+     *
+     * @param $orderby
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHours($orderby,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10424,13 +10694,14 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	/**
-	* Counts all hours
-	*
-	* @return Array the hour list
-	*
-	*/
+
+    /**
+     * Counts all hours
+     *
+     * @param $orderby
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByAirlines($orderby, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10491,13 +10762,13 @@ class Spotter{
 	}
 
 
-
-	/**
-	* Counts all hours by airline
-	*
-	* @return Array the hour list
-	*
-	*/
+    /**
+     * Counts all hours by airline
+     *
+     * @param $airline_icao
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByAirline($airline_icao, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10540,16 +10811,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	
-	
-	/**
-	* Counts all hours by aircraft
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by aircraft
+     *
+     * @param $aircraft_icao
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByAircraft($aircraft_icao, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10589,14 +10859,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	/**
-	* Counts all hours by aircraft registration
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by aircraft registration
+     *
+     * @param $registration
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByRegistration($registration, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10636,14 +10907,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	/**
-	* Counts all hours by airport
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by airport
+     *
+     * @param $airport_icao
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByAirport($airport_icao, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10683,15 +10955,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by manufacturer
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by manufacturer
+     *
+     * @param $aircraft_manufacturer
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByManufacturer($aircraft_manufacturer,$filters =array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10731,15 +11003,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by date
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10779,15 +11051,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by a ident/callsign
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by a ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByIdent($ident, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10828,13 +11100,14 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	/**
-	* Counts all hours by a owner
-	*
-	* @return Array the hour list
-	*
-	*/
+
+    /**
+     * Counts all hours by a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByOwner($owner, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10875,13 +11148,14 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	/**
-	* Counts all hours by a pilot
-	*
-	* @return Array the hour list
-	*
-	*/
+
+    /**
+     * Counts all hours by a pilot
+     *
+     * @param $pilot
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByPilot($pilot, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10922,15 +11196,16 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by route
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by route
+     *
+     * @param $departure_airport_icao
+     * @param $arrival_airport_icao
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByRoute($departure_airport_icao, $arrival_airport_icao, $filters =array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -10971,14 +11246,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-	
-	
-	/**
-	* Counts all hours by country
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by country
+     *
+     * @param $country
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByCountry($country, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -11020,14 +11296,14 @@ class Spotter{
 	}
 
 
-
-
-	/**
-	* Counts all aircraft that have flown over
-	*
-	* @return Integer the number of aircrafts
-	*
-	*/
+    /**
+     * Counts all aircraft that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of aircrafts
+     */
 	public function countOverallAircrafts($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -11059,12 +11335,14 @@ class Spotter{
 		return $sth->fetchColumn();
 	}
 
-	/**
-	* Counts all flight that really arrival
-	*
-	* @return Integer the number of aircrafts
-	*
-	*/
+    /**
+     * Counts all flight that really arrival
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of aircrafts
+     */
 	public function countOverallArrival($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -11096,12 +11374,14 @@ class Spotter{
 		return $sth->fetchColumn();
 	}
 
-	/**
-	* Counts all pilots that have flown over
-	*
-	* @return Integer the number of pilots
-	*
-	*/
+    /**
+     * Counts all pilots that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of pilots
+     */
 	public function countOverallPilots($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -11132,12 +11412,14 @@ class Spotter{
 		return $sth->fetchColumn();
 	}
 
-	/**
-	* Counts all owners that have flown over
-	*
-	* @return Integer the number of owners
-	*
-	*/
+    /**
+     * Counts all owners that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of owners
+     */
 	public function countOverallOwners($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -11167,14 +11449,16 @@ class Spotter{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-	
-	
-	/**
-	* Counts all flights that have flown over
-	*
-	* @return Integer the number of flights
-	*
-	*/
+
+
+    /**
+     * Counts all flights that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of flights
+     */
 	public function countOverallFlights($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -11206,13 +11490,15 @@ class Spotter{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-	
-	/**
-	* Counts all military flights that have flown over
-	*
-	* @return Integer the number of flights
-	*
-	*/
+
+    /**
+     * Counts all military flights that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of flights
+     */
 	public function countOverallMilitaryFlights($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -11243,15 +11529,16 @@ class Spotter{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-	
-	
-	
-	/**
-	* Counts all airlines that have flown over
-	*
-	* @return Integer the number of airlines
-	*
-	*/
+
+
+    /**
+     * Counts all airlines that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of airlines
+     */
 	public function countOverallAirlines($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -11287,13 +11574,13 @@ class Spotter{
 		return $sth->fetchColumn();
 	}
 
-  
-	/**
-	* Counts all hours of today
-	*
-	* @return Array the hour list
-	*
-	*/
+
+    /**
+     * Counts all hours of today
+     *
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursFromToday($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -11331,13 +11618,15 @@ class Spotter{
 
 		return $hour_array;
 	}
-    
-	/**
-	* Gets all the spotter information based on calculated upcoming flights
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information based on calculated upcoming flights
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function getUpcomingFlights($limit = '', $sort = '', $filters = array())
 	{
 		global $global_query, $globalDBdriver, $globalTimezone;
@@ -11410,14 +11699,14 @@ class Spotter{
 		}
 		return $spotter_array;
 	}
-    
-    
-     /**
-	* Gets the Barrie Spotter ID based on the FlightAware ID
-	*
-	* @return Integer the Barrie Spotter ID
-q	*
-	*/
+
+
+    /**
+     * Gets the Barrie Spotter ID based on the FlightAware ID
+     *
+     * @param $flightaware_id
+     * @return Integer the Barrie Spotter ID
+     */
 	public function getSpotterIDBasedOnFlightAwareID($flightaware_id)
 	{
 		$flightaware_id = filter_var($flightaware_id,FILTER_SANITIZE_STRING);
@@ -11442,7 +11731,7 @@ q	*
 	*
 	* @param String $dateString the date string
 	* @param String $timezone the timezone of a user
-	* @return Array the time information
+	* @return array the time information
 	*
 	*/
 	public function parseDateString($dateString, $timezone = '')
@@ -11483,7 +11772,7 @@ q	*
 	* Parses the direction degrees to working
 	*
 	* @param Float $direction the direction in degrees
-	* @return Array the direction information
+	* @return array the direction information
 	*
 	*/
 	public function parseDirection($direction = 0)
@@ -11597,13 +11886,13 @@ q	*
 	}
 
 
-	/**
-	* Gets the aircraft registration from ModeS
-	*
-	* @param String $aircraft_modes the flight ModeS in hex
-	* @return String the aircraft registration
-	*
-	*/
+    /**
+     * Gets the aircraft registration from ModeS
+     *
+     * @param String $aircraft_modes the flight ModeS in hex
+     * @param string $source_type
+     * @return String the aircraft registration
+     */
 	public function getAircraftRegistrationBymodeS($aircraft_modes, $source_type = '')
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
@@ -12247,8 +12536,14 @@ q	*
 			}
 		}
 	}
-	
-	public function closestAirports($origLat,$origLon,$dist = 10) {
+
+    /**
+     * @param $origLat
+     * @param $origLon
+     * @param int $dist
+     * @return array
+     */
+    public function closestAirports($origLat, $origLon, $dist = 10) {
 		global $globalDBdriver;
 		$dist = number_format($dist*0.621371,2,'.',''); // convert km to mile
 /*

@@ -9,11 +9,13 @@ class SpotterArchive {
 		if ($this->db === null) die('Error: No DB connection. (SpotterArchive)');
 	}
 
-	/**
-	* Get SQL query part for filter used
-	* @param Array $filter the filter
-	* @return Array the SQL part
-	*/
+    /**
+     * Get SQL query part for filter used
+     * @param array $filter the filter
+     * @param bool $where
+     * @param bool $and
+     * @return string the SQL part
+     */
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
 		$filters = array();
@@ -158,12 +160,12 @@ class SpotterArchive {
 	}
 
 
-	/**
-	* Gets all the spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular callsign
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getLastArchiveSpotterDataByIdent($ident) {
 		$Spotter = new Spotter($this->db);
 		date_default_timezone_set('UTC');
@@ -178,12 +180,12 @@ class SpotterArchive {
 	}
 
 
-	/**
-	* Gets last the spotter information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets last the spotter information based on a particular id
+     *
+     * @param $id
+     * @return array the spotter information
+     */
 	public function getLastArchiveSpotterDataById($id) {
 		$Spotter = new Spotter($this->db);
 		date_default_timezone_set('UTC');
@@ -208,12 +210,12 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular id
+     *
+     * @param $id
+     * @return array the spotter information
+     */
 	public function getAllArchiveSpotterDataById($id) {
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -233,12 +235,12 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets coordinate & time spotter information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets coordinate & time spotter information based on a particular id
+     *
+     * @param $id
+     * @return array the spotter information
+     */
 	public function getCoordArchiveSpotterDataById($id) {
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -254,12 +256,14 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets coordinate & time spotter information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets coordinate & time spotter information based on a particular id
+     *
+     * @param $id
+     * @param $begindate
+     * @param $enddate
+     * @return array the spotter information
+     */
 	public function getCoordArchiveSpotterDataByIdDate($id,$begindate,$enddate) {
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -276,12 +280,12 @@ class SpotterArchive {
 	}
 
 
-	/**
-	* Gets altitude information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets altitude information based on a particular callsign
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getAltitudeArchiveSpotterDataByIdent($ident) {
 
 		date_default_timezone_set('UTC');
@@ -301,12 +305,12 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets altitude information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets altitude information based on a particular id
+     *
+     * @param $id
+     * @return array the spotter information
+     */
 	public function getAltitudeArchiveSpotterDataById($id) {
 
 		date_default_timezone_set('UTC');
@@ -326,12 +330,12 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets altitude & speed information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets altitude & speed information based on a particular id
+     *
+     * @param $id
+     * @return array the spotter information
+     */
 	public function getAltitudeSpeedArchiveSpotterDataById($id) {
 		date_default_timezone_set('UTC');
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -347,12 +351,12 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets altitude information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets altitude information based on a particular callsign
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getLastAltitudeArchiveSpotterDataByIdent($ident) {
 		date_default_timezone_set('UTC');
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
@@ -370,13 +374,14 @@ class SpotterArchive {
 	}
 
 
-
-	/**
-	 * Gets all the archive spotter information
-	 *
-	 * @return Array the spotter information
-	 *
-	 */
+    /**
+     * Gets all the archive spotter information
+     *
+     * @param $ident
+     * @param $flightaware_id
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getSpotterArchiveData($ident,$flightaware_id,$date) {
 		$Spotter = new Spotter($this->db);
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
@@ -400,7 +405,12 @@ class SpotterArchive {
 			die;
 		}
 	}
-	public function deleteSpotterArchiveTrackDataByID($id) {
+
+    /**
+     * Delete row in spotter_archive table based on flightaware_id
+     * @param $id flightaware_id
+     */
+    public function deleteSpotterArchiveTrackDataByID($id) {
 		global $globalArchiveKeepTrackMonths, $globalDBdriver;
 		$query = 'DELETE FROM spotter_archive WHERE spotter_archive.flightaware_id = :id';
 		try {
@@ -412,14 +422,17 @@ class SpotterArchive {
 		}
 	}
 
-	/**
-	    * Gets Minimal Live Spotter data
-	    *
-	    * @return Array the spotter information
-	    *
-	    */
+    /**
+     * Gets Minimal Live Spotter data
+     *
+     * @param $begindate
+     * @param $enddate
+     * @param array $filter
+     * @param int $part
+     * @return array the spotter information
+     */
 	public function getMinLiveSpotterData($begindate,$enddate,$filter = array(),$part = 0) {
-		global $globalDBdriver, $globalLiveInterval;
+		global $globalDBdriver;
 		date_default_timezone_set('UTC');
 		//$filter_query = $this->getFilter($filter,true,true);
 
@@ -455,16 +468,8 @@ class SpotterArchive {
 			          INNER JOIN aircraft a on spotter_archive.aircraft_icao = a.icao
 			          WHERE spotter_archive.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".'
 			          '.$filter_query.' ORDER BY flightaware_id'.$limit;
-			          
-			/*          
-			$query  = 'SELECT spotter_archive.flightaware_id, spotter_archive.date, spotter_archive.ident, spotter_archive.aircraft_icao, spotter_archive.departure_airport_icao as departure_airport, spotter_archive.arrival_airport_icao as arrival_airport, spotter_archive.latitude, spotter_archive.longitude, spotter_archive.altitude, spotter_archive.heading, spotter_archive.ground_speed, spotter_archive.squawk
-			          FROM spotter_archive
-			          WHERE spotter_archive.date BETWEEN '."'".$begindate."'".' AND '."'".$enddate."'".'
-			          '.$filter_query.' ORDER BY flightaware_id'.$limit;
-			*/          
-
 		}
-		//echo $query;
+
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
@@ -476,14 +481,16 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	    * Gets Minimal Live Spotter data
-	    *
-	    * @return Array the spotter information
-	    *
-	    */
+    /**
+     * Gets Minimal Live Spotter data
+     *
+     * @param $begindate
+     * @param $enddate
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getMinLiveSpotterDataPlayback($begindate,$enddate,$filter = array()) {
-		global $globalDBdriver, $globalLiveInterval;
+		global $globalDBdriver;
 		date_default_timezone_set('UTC');
 
 		//$filter_query = $this->getFilter($filter,true,true);
@@ -547,12 +554,14 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	   * Gets count Live Spotter data
-	   *
-	   * @return Array the spotter information
-	   *
-	   */
+    /**
+     * Gets count Live Spotter data
+     *
+     * @param $begindate
+     * @param $enddate
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getLiveSpotterCount($begindate,$enddate,$filter = array()) {
 		global $globalDBdriver, $globalLiveInterval;
 		date_default_timezone_set('UTC');
@@ -597,12 +606,36 @@ class SpotterArchive {
 
 	// Spotter_Archive_output
 
-	/**
-	* Gets all the spotter information
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information
+     *
+     * @param string $q
+     * @param string $registration
+     * @param string $aircraft_icao
+     * @param string $aircraft_manufacturer
+     * @param string $highlights
+     * @param string $airline_icao
+     * @param string $airline_country
+     * @param string $airline_type
+     * @param string $airport
+     * @param string $airport_country
+     * @param string $callsign
+     * @param string $departure_airport_route
+     * @param string $arrival_airport_route
+     * @param string $owner
+     * @param string $pilot_id
+     * @param string $pilot_name
+     * @param string $altitude
+     * @param string $date_posted
+     * @param string $limit
+     * @param string $sort
+     * @param string $includegeodata
+     * @param string $origLat
+     * @param string $origLon
+     * @param string $dist
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function searchSpotterData($q = '', $registration = '', $aircraft_icao = '', $aircraft_manufacturer = '', $highlights = '', $airline_icao = '', $airline_country = '', $airline_type = '', $airport = '', $airport_country = '', $callsign = '', $departure_airport_route = '', $arrival_airport_route = '', $owner = '',$pilot_id = '',$pilot_name = '',$altitude = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '', $filters=array()) {
 		global $globalTimezone, $globalDBdriver;
 		require_once(dirname(__FILE__).'/class.Translation.php');
@@ -617,7 +650,7 @@ class SpotterArchive {
 		$filter_query = $this->getFilter($filters);
 		if ($q != "") {
 			if (!is_string($q)) {
-				return false;
+				return array();
 			} else {
 
 				$q_array = explode(" ", $q);
@@ -888,17 +921,20 @@ class SpotterArchive {
 		try {
 			$sth = $this->db->prepare($query);
 			$sth->execute();
+			return '';
 		} catch(PDOException $e) {
 			return "error";
 		}
 	}
 
-	/**
-	* Gets all the spotter information based on the callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the callsign
+     *
+     * @param string $ident
+     * @param string $limit
+     * @param string $sort
+     * @return array the spotter information
+     */
 	public function getSpotterDataByIdent($ident = '', $limit = '', $sort = '') {
 		$global_query = "SELECT spotter_archive_output.* FROM spotter_archive_output";
 
@@ -911,7 +947,7 @@ class SpotterArchive {
 
 		if ($ident != "") {
 			if (!is_string($ident)) {
-				return false;
+				return array();
 			} else {
 				$additional_query = " AND spotter_archive_output.ident = :ident";
 				$query_values = array(':ident' => $ident);
@@ -945,12 +981,15 @@ class SpotterArchive {
 	}
 
 
-	/**
-	* Gets all the spotter information based on the owner
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the owner
+     *
+     * @param string $owner
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByOwner($owner = '', $limit = '', $sort = '', $filter = array()) {
 		$global_query = "SELECT spotter_archive_output.* FROM spotter_archive_output";
 
@@ -964,7 +1003,7 @@ class SpotterArchive {
 
 		if ($owner != "") {
 			if (!is_string($owner)) {
-				return false;
+				return array();
 			} else {
 				$additional_query = " AND (spotter_archive_output.owner_name = :owner)";
 				$query_values = array(':owner' => $owner);
@@ -997,12 +1036,15 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on the pilot
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the pilot
+     *
+     * @param string $pilot
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getSpotterDataByPilot($pilot = '', $limit = '', $sort = '', $filter = array()) {
 		$global_query = "SELECT spotter_archive_output.* FROM spotter_archive_output";
 
@@ -1045,12 +1087,14 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all number of flight over countries
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all number of flight over countries
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @return array the airline country list
+     */
 	public function countAllFlightOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '') {
 		global $globalDBdriver;
 		/*
@@ -1089,12 +1133,14 @@ class SpotterArchive {
 		return $flight_array;
 	}
 
-	/**
-	* Gets all number of flight over countries
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all number of flight over countries
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @return array the airline country list
+     */
 	public function countAllFlightOverCountriesByAirlines($limit = true,$olderthanmonths = 0,$sincedate = '') {
 		global $globalDBdriver;
 		/*
@@ -1134,15 +1180,15 @@ class SpotterArchive {
 		return $flight_array;
 	}
 
-	/**
-	* Gets all aircraft types that have flown over by owner
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft types that have flown over by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftTypesByOwner($owner,$filters = array())
 	{
-		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_archive_output.aircraft_icao, COUNT(spotter_archive_output.aircraft_icao) AS aircraft_icao_count, spotter_archive_output.aircraft_name, spotter_archive_output.aircraft_manufacturer 
@@ -1156,12 +1202,13 @@ class SpotterArchive {
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all airlines by owner
-	*
-	* @return Array the airline list
-	*
-	*/
+    /**
+     * Gets all airlines by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airline list
+     */
 	public function countAllAirlinesByOwner($owner,$filters = array())
 	{
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
@@ -1176,12 +1223,13 @@ class SpotterArchive {
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all arrival airports by country of the airplanes that have flown over based on a owner
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all arrival airports by country of the airplanes that have flown over based on a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportCountriesByOwner($owner, $filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -1195,12 +1243,13 @@ class SpotterArchive {
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all arrival airports of the airplanes that have flown over based on a owner
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all arrival airports of the airplanes that have flown over based on a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllArrivalAirportsByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -1225,12 +1274,13 @@ class SpotterArchive {
 		return $airport_array;
 	}
 
-	/**
-	* Gets all departure airports by country of the airplanes that have flown over based on owner
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all departure airports by country of the airplanes that have flown over based on owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportCountriesByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -1244,12 +1294,13 @@ class SpotterArchive {
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all departure airports of the airplanes that have flown over based on a owner
-	*
-	* @return Array the airport list
-	*
-	*/
+    /**
+     * Gets all departure airports of the airplanes that have flown over based on a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the airport list
+     */
 	public function countAllDepartureAirportsByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -1276,15 +1327,15 @@ class SpotterArchive {
 		return $airport_array;
 	}
 
-	/**
-	* Gets all aircraft manufacturer that have flown over by owner
-	*
-	* @return Array the aircraft manufacturer list
-	*
-	*/
+    /**
+     * Gets all aircraft manufacturer that have flown over by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the aircraft manufacturer list
+     */
 	public function countAllAircraftManufacturerByOwner($owner,$filters = array())
 	{
-		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
 		$query  = "SELECT DISTINCT spotter_archive_output.aircraft_manufacturer, COUNT(spotter_archive_output.aircraft_manufacturer) AS aircraft_manufacturer_count  
@@ -1298,15 +1349,15 @@ class SpotterArchive {
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets all aircraft registration that have flown over by owner
-	*
-	* @return Array the aircraft list
-	*
-	*/
+    /**
+     * Gets all aircraft registration that have flown over by owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the aircraft list
+     */
 	public function countAllAircraftRegistrationByOwner($owner,$filters = array())
 	{
-		global $globalDBdriver;
 		$filter_query = $this->getFilter($filters,true,true);
 		$Image = new Image($this->db);
 		$owner = filter_var($owner,FILTER_SANITIZE_STRING);
@@ -1340,12 +1391,13 @@ class SpotterArchive {
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all route combinations based on an owner
-	*
-	* @return Array the route list
-	*
-	*/
+    /**
+     * Gets all route combinations based on an owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the route list
+     */
 	public function countAllRoutesByOwner($owner,$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -1374,12 +1426,13 @@ class SpotterArchive {
 		return $routes_array;
 	}
 
-	/**
-	* Counts all hours by a owner
-	*
-	* @return Array the hour list
-	*
-	*/
+    /**
+     * Counts all hours by a owner
+     *
+     * @param $owner
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByOwner($owner, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1414,12 +1467,13 @@ class SpotterArchive {
 		return $hour_array;
 	}
 
-	/**
-	* Gets last spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets last spotter information based on a particular callsign
+     *
+     * @param $id
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getDateArchiveSpotterDataById($id,$date) {
 		$Spotter = new Spotter($this->db);
 		date_default_timezone_set('UTC');
@@ -1430,12 +1484,13 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular callsign
+     *
+     * @param $ident
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getDateArchiveSpotterDataByIdent($ident,$date) {
 		$Spotter = new Spotter($this->db);
 		date_default_timezone_set('UTC');
@@ -1446,12 +1501,15 @@ class SpotterArchive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on the airport
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the airport
+     *
+     * @param string $airport
+     * @param string $limit
+     * @param string $sort
+     * @param array $filters
+     * @return array the spotter information
+     */
 	public function getSpotterDataByAirport($airport = '', $limit = '', $sort = '',$filters = array()) {
 		global $global_query;
 		$Spotter = new Spotter($this->db);
@@ -1463,7 +1521,7 @@ class SpotterArchive {
 
 		if ($airport != "") {
 			if (!is_string($airport)) {
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND ((spotter_archive_output.departure_airport_icao = :airport) OR (spotter_archive_output.arrival_airport_icao = :airport))";
 				$query_values = array(':airport' => $airport);

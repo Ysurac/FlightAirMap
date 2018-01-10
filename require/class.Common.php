@@ -17,8 +17,8 @@ class Common {
 	* Get data from form result
 	* @param String $url form URL
 	* @param String $type type of submit form method (get or post)
-	* @param String|Array $data values form post method
-	* @param Array $headers header to submit with the form
+	* @param String|array $data values form post method
+	* @param array $headers header to submit with the form
 	* @return String the result
 	*/
 	public function getData($url, $type = 'get', $data = '', $headers = '',$cookie = '',$referer = '',$timeout = '',$useragent = '', $sizelimit = false, $async = false, $getheaders = false) {
@@ -177,7 +177,7 @@ class Common {
 	/**
 	* Convert a HTML table to an array
 	* @param String $data HTML page
-	* @return Array array of the tables in HTML page
+	* @return array array of the tables in HTML page
 	*/
 	public function table2array($data) {
 		if (!is_string($data)) return array();
@@ -214,7 +214,7 @@ class Common {
 	/**
 	* Convert <p> part of a HTML page to an array
 	* @param String $data HTML page
-	* @return Array array of the <p> in HTML page
+	* @return array array of the <p> in HTML page
 	*/
 	public function text2array($data) {
 		$html = str_get_html($data);
@@ -294,7 +294,7 @@ class Common {
 	* Check is distance realistic
 	* @param int $timeDifference the time between the reception of both messages
 	* @param float $distance distance covered
-	* @return whether distance is realistic
+	* @return bool whether distance is realistic
 	*/
 	public function withinThreshold ($timeDifference, $distance) {
 		$x = abs($timeDifference);
