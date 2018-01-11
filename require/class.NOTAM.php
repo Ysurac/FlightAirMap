@@ -990,6 +990,7 @@ class NOTAM {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -1007,6 +1008,7 @@ class NOTAM {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -1019,6 +1021,7 @@ class NOTAM {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -1052,6 +1055,7 @@ class NOTAM {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -1085,6 +1089,7 @@ class NOTAM {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -1108,6 +1113,7 @@ class NOTAM {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -1135,6 +1141,7 @@ class NOTAM {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function deleteNOTAM($id) {
@@ -1146,6 +1153,7 @@ class NOTAM {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 	public function deleteOldNOTAM() {
 		global $globalDBdriver;
@@ -1161,6 +1169,7 @@ class NOTAM {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 	public function deleteNOTAMbyRef($ref) {
 		$query = "DELETE FROM notam WHERE ref = :ref";
@@ -1171,6 +1180,7 @@ class NOTAM {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 	public function deleteAllNOTAM() {
 		$query = "DELETE FROM notam";
@@ -1180,6 +1190,7 @@ class NOTAM {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 	public function deleteAllNOTAMLocation() {
 		$query = "DELETE FROM notam";
@@ -1189,6 +1200,7 @@ class NOTAM {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function updateNOTAM() {

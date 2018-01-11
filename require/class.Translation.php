@@ -27,8 +27,8 @@ class Translation {
 	/**
 	* Change IATA to ICAO value for ident
 	* 
-	* @param String $ident ident
-	* @return String the icao
+	* @param string $ident ident
+	* @return string the icao
 	*/
 	public function ident2icao($ident) {
 		$Spotter = new Spotter();
@@ -52,7 +52,11 @@ class Translation {
 		return $icao;
 	}
 
-	public function getOperator($ident) {
+    /**
+     * @param $ident
+     * @return string
+     */
+    public function getOperator($ident) {
 		$query = "SELECT * FROM translation WHERE Operator = :ident LIMIT 1";
 		$query_values = array(':ident' => $ident);
 		try {
@@ -68,7 +72,13 @@ class Translation {
 		} else return $ident;
 	}
 
-	public function addOperator($ident,$correct_ident,$source) {
+    /**
+     * @param $ident
+     * @param $correct_ident
+     * @param $source
+     * @return string
+     */
+    public function addOperator($ident, $correct_ident, $source) {
 		$query = "INSERT INTO translation (Operator,Operator_correct,Source) VALUES (:ident,:correct_ident,:source)";
 		$query_values = array(':ident' => $ident,':correct_ident' => $correct_ident, ':source' => $source);
 		try {
@@ -79,7 +89,13 @@ class Translation {
 		}
 	}
 
-	public function updateOperator($ident,$correct_ident,$source) {
+    /**
+     * @param $ident
+     * @param $correct_ident
+     * @param $source
+     * @return string
+     */
+    public function updateOperator($ident, $correct_ident, $source) {
 		$query = "UPDATE translation SET Operator_correct = :correct_ident,Source = :source WHERE Operator = :ident";
 		$query_values = array(':ident' => $ident,':correct_ident' => $correct_ident, ':source' => $source);
 		try {
@@ -90,7 +106,12 @@ class Translation {
 		}
 	}
 
-	public function checkTranslation($ident,$web = false) {
+    /**
+     * @param $ident
+     * @param bool $web
+     * @return string
+     */
+    public function checkTranslation($ident, $web = false) {
 		global $globalTranslationSources, $globalTranslationFetch;
 		//if (!isset($globalTranslationSources)) $globalTranslationSources = array('planefinder');
 		$globalTranslationSources = array();

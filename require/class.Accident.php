@@ -40,10 +40,10 @@ class Accident {
 	* @param String $limit Limit
 	* @param String $type Set type accident or incident
 	* @param String $date get data for a date
-	* @return Array Return Accidents data in array
+	* @return array Return Accidents data in array
 	*/
 	public function getAccidentData($limit = '',$type = '',$date = '') {
-		global $globalURL, $globalDBdriver;
+		global $globalDBdriver;
 		$Image = new Image($this->db);
 		$Spotter = new Spotter($this->db);
 		$Translation = new Translation($this->db);
@@ -118,6 +118,7 @@ class Accident {
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$i = 0;
 		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
@@ -205,6 +206,7 @@ class Accident {
 			$sth->execute();
 		} catch(PDOException $e) {
 			echo "Error : ".$e->getMessage();
+			return array();
 		}
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
@@ -225,6 +227,7 @@ class Accident {
 			$sth->execute();
 		} catch(PDOException $e) {
 			echo "Error : ".$e->getMessage();
+			return array();
 		}
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
@@ -234,7 +237,7 @@ class Accident {
 	* @param String $file filename of the file to import
 	*/
 	public function import($file) {
-		global $globalTransaction, $globalDebug;
+		global $globalDebug;
 		if ($globalDebug) echo 'Import '.$file."\n";
 		$result = array();
 		if (file_exists($file)) {
@@ -361,6 +364,7 @@ class Accident {
 			echo $e->getMessage();
 		}
 		$sth_check->closeCursor();
+		return '';
 	}
 
 	/*
@@ -368,7 +372,6 @@ class Accident {
 	* @return Integer Number of accidents/incidents in table
 	*/
 	public static function check_accidents_nb() {
-		global $globalDBdriver;
 			$query = "SELECT COUNT(*) as nb FROM accidents";
 		try {
 			$Connection = new Connection();
@@ -418,6 +421,7 @@ class Accident {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 }

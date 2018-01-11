@@ -413,7 +413,6 @@ class SpotterLive {
 				if ($limit > 0) $query .= " LIMIT ".$limit;
 			}
 		}
-		$query_values = array();
 		$query_values = array(':id' => $id);
 		try {
 			$sth = $this->db->prepare($query);
@@ -501,7 +500,6 @@ class SpotterLive {
 	public function getMinLiveSpotterDatabyCoord($coord,$limit = 0, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalArchive,$globalMap2DAircraftsLimit;
-		$Spotter = new Spotter($this->db);
 		if (!isset($globalLiveInterval)) $globalLiveInterval = '200';
 		$filter_query = $this->getFilter($filter,true,true);
 

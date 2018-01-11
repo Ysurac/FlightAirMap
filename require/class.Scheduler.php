@@ -27,15 +27,16 @@ class Schedule {
 		if ($this->db === null) die('Error: No DB connection.');
 	}
 
-	/**
-	* Add schedule data to database
-	* @param String $ident aircraft ident
-	* @param String $departure_airport_icao departure airport icao
-	* @param String $departure_airport_time departure airport time
-	* @param String $arrival_airport_icao arrival airport icao
-	* @param String $arrival_airport_time arrival airport time
-	/ @param String $source source of data
-	*/
+    /**
+     * Add schedule data to database
+     * @param String $ident aircraft ident
+     * @param String $departure_airport_icao departure airport icao
+     * @param String $departure_airport_time departure airport time
+     * @param String $arrival_airport_icao arrival airport icao
+     * @param String $arrival_airport_time arrival airport time
+     * @param String $source source of data
+     * @return string
+     */
 	public function addSchedule($ident,$departure_airport_icao,$departure_airport_time,$arrival_airport_icao,$arrival_airport_time,$source = 'website') {
 		date_default_timezone_set('UTC');
 		$date = date("Y-m-d H:i:s",time());
@@ -112,6 +113,7 @@ class Schedule {
 				return "error : ".$e->getMessage();
 			}
 		}
+		return '';
 	}
 
 	/*
@@ -169,13 +171,13 @@ class Schedule {
 		return $row['nb'];
 	}
 
-	/**
-	* Get flight info from Air France
-	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
-	* @param String $carrier IATA code
-	* @return Flight departure and arrival airports and time
-	*/
+    /**
+     * Get flight info from Air France
+     * @param String $callsign The callsign
+     * @param String $date date we want flight number info
+     * @param String $carrier IATA code
+     * @return array departure and arrival airports and time
+     */
 	public function getAirFrance($callsign, $date = 'NOW',$carrier = 'AF') {
 		$Common = new Common();
 		$check_date = new Datetime($date);
@@ -210,12 +212,12 @@ class Schedule {
 		} else return array();
 	}
 
-	/**
-	* Get flight info from EasyJet
-	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
-	*/
+    /**
+     * Get flight info from EasyJet
+     * @param String $callsign The callsign
+     * @param String $date date we want flight number info
+     * @return array departure and arrival airports and time
+     */
 	private function getEasyJet($callsign, $date = 'NOW') {
 		global $globalTimezone;
 		$Common = new Common();
@@ -238,11 +240,11 @@ class Schedule {
 		} else return array();
 	}
 
-	/**
-	* Get flight info from Ryanair
-	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
-	*/
+    /**
+     * Get flight info from Ryanair
+     * @param String $callsign The callsign
+     * @return array Flight departure and arrival airports and time
+     */
 	private function getRyanair($callsign) {
 		$Common = new Common();
 		$numvol = preg_replace('/^[A-Z]*/','',$callsign);
@@ -266,8 +268,8 @@ class Schedule {
 
 	/**
 	* Get flight info from Swiss
-	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
+	* @param string $callsign The callsign
+	* @return array Flight departure and arrival airports and time
 	*/
 	private function getSwiss($callsign) {
 		$Common = new Common();
@@ -300,7 +302,7 @@ class Schedule {
 	* Get flight info from British Airways API
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getBritishAirways($callsign, $date = 'NOW') {
 		global $globalBritishAirwaysKey;
@@ -328,7 +330,7 @@ class Schedule {
 	* Get flight info from Lutfhansa API
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getLufthansa($callsign, $date = 'NOW') {
 		global $globalLufthansaKey;
@@ -360,9 +362,9 @@ class Schedule {
 
 	/**
 	* Get flight info from Transavia API
-	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @param string $callsign The callsign
+	* @param string $date date we want flight number info
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getTransavia($callsign, $date = 'NOW') {
 		global $globalTransaviaKey;
@@ -390,8 +392,8 @@ class Schedule {
 
 	/**
 	* Get flight info from Tunisair
-	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
+	* @param string $callsign The callsign
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getTunisair($callsign) {
 		$Common = new Common();
@@ -408,11 +410,12 @@ class Schedule {
 		return array();
 	}
 
-	/**
-	* Get flight info from Vueling
-	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
-	*/
+    /**
+     * Get flight info from Vueling
+     * @param String $callsign The callsign
+     * @param string $date
+     * @return array Flight departure and arrival airports and time
+     */
 	public function getVueling($callsign,$date = 'NOW') {
 		$Common = new Common();
 		$check_date = new Datetime($date);
@@ -437,7 +440,7 @@ class Schedule {
 	* Get flight info from Iberia
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getIberia($callsign, $date = 'NOW') {
 		$Common = new Common();
@@ -467,12 +470,13 @@ class Schedule {
 		return array();
 	}
 
-	/**
-	* Get flight info from Star Alliance
-	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
-	*/
+    /**
+     * Get flight info from Star Alliance
+     * @param String $callsign The callsign
+     * @param String $date date we want flight number info
+     * @param string $carrier
+     * @return array Flight departure and arrival airports and time
+     */
 
 	private function getStarAlliance($callsign, $date = 'NOW',$carrier = '') {
 		$Common = new Common();
@@ -507,7 +511,7 @@ class Schedule {
 	* Get flight info from Alitalia
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	private function getAlitalia($callsign, $date = 'NOW') {
 		$Common = new Common();
@@ -524,13 +528,14 @@ class Schedule {
 			$arrivalTime = $table[5];
 			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_alitalia');
 		}
+		return array();
 	}
 
 	/**
 	* Get flight info from Brussels airlines
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	private function getBrussels($callsign, $date = 'NOW') {
 		$Common = new Common();
@@ -551,13 +556,14 @@ class Schedule {
 			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_brussels');
 		    }
 		}
+		return array();
 	}
 
 	/**
 	* Get flight info from FlightRadar24
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 /*
 	public function getFlightRadar24($callsign, $date = 'NOW') {
@@ -590,7 +596,7 @@ class Schedule {
 	* Get flight info from Lufthansa
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 
 /*	private function getLufthansa($callsign, $date = 'NOW') {
@@ -621,7 +627,7 @@ class Schedule {
 	/**
 	* Get flight info from flytap
 	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	private function getFlyTap($callsign) {
 		$Common = new Common();
@@ -647,7 +653,7 @@ class Schedule {
 	/**
 	* Get flight info from flightmapper
 	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getFlightMapper($callsign) {
 		$Common = new Common();
@@ -690,7 +696,7 @@ class Schedule {
 	/**
 	* Get flight info from flightaware
 	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getFlightAware($callsign) {
 		global $globalFlightAwareUsername, $globalFlightAwarePassword;
@@ -746,7 +752,7 @@ class Schedule {
 	/**
 	* Get flight info from CostToTravel
 	* @param String $callsign The callsign
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	public function getCostToTravel($callsign) {
 		$Common = new Common();
@@ -771,9 +777,9 @@ class Schedule {
 
 	/**
 	* Get flight info from Air Canada
-	* @param String $callsign The callsign
-	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @param string $callsign The callsign
+	* @param string $date date we want flight number info
+	* @return array Flight departure and arrival airports and time
 	*/
 	private function getAirCanada($callsign,$date = 'NOW') {
 		$Common = new Common();
@@ -802,7 +808,7 @@ class Schedule {
 	* Get flight info from Vietnam Airlines
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	private function getVietnamAirlines($callsign, $date = 'NOW') {
 		$Common = new Common();
@@ -822,6 +828,7 @@ class Schedule {
 			$arrivalTime = $flight[23][1];
 			return array('DepartureAirportIATA' => $DepartureAirportIata,'DepartureTime' => $departureTime,'ArrivalAirportIATA' => $ArrivalAirportIata,'ArrivalTime' => $arrivalTime,'Source' => 'website_vietnamairlines');
 		}
+		return array();
 	}
 
 	/**
@@ -829,7 +836,7 @@ class Schedule {
 	* @param String $callsign The callsign
 	* @param String $date date we want flight number info
 	* @param String $carrier airline code
-	* @return Flight departure and arrival airports and time
+	* @return array Flight departure and arrival airports and time
 	*/
 	private function getAirBerlin($callsign, $date = 'NOW',$carrier = 'AB') {
 		$Common = new Common();
@@ -890,7 +897,7 @@ class Schedule {
 	 * Fetch schedules from ident
 	 * @param String $ident Flight ident
 	 * @param String $date Date
-	 * @return Array Schedules info
+	 * @return array Schedules info
 	*/
 	public function fetchSchedule($ident,$date = 'NOW') {
 		global $globalSchedulesSources, $globalSchedulesFetch, $globalOffline, $globalFlightAwareUsername;

@@ -14,6 +14,7 @@ require_once(dirname(__FILE__).'/libs/Predict/Predict/Time.php');
 require_once(dirname(__FILE__).'/libs/Predict/Predict/TLE.php');
 
 class Satellite {
+    /** @var $db PDOStatement  */
 	public $db;
 
 	public function __construct($dbc = null) {
@@ -132,15 +133,15 @@ class Satellite {
 		else return array();
 	}
 
-	/**
-	* Gets all launch site
-	*
-	* @return Array the launch site list
-	*
-	*/
+    /**
+     * Gets all launch site
+     *
+     * @param bool $limit
+     * @param array $filters
+     * @return array the launch site list
+     */
 	public function countAllLaunchSite($limit = true, $filters = array())
 	{
-		global $globalDBdriver;
 		//$filter_query = $this->getFilter($filters,true,true);
 		$filter_query = ' WHERE';
 		$query  = "SELECT DISTINCT satellite.launch_site AS launch_site, COUNT(satellite.launch_site) AS launch_site_count
@@ -164,12 +165,11 @@ class Satellite {
 	/**
 	* Gets all owners
 	*
-	* @return Array the owners list
+	* @return array the owners list
 	*
 	*/
 	public function countAllOwners($limit = true, $filters = array())
 	{
-		global $globalDBdriver;
 		//$filter_query = $this->getFilter($filters,true,true);
 		$filter_query = ' WHERE';
 		$query  = "SELECT DISTINCT satellite.owner AS owner_name, COUNT(satellite.owner) AS owner_count
@@ -190,12 +190,13 @@ class Satellite {
 		return $owner_array;
 	}
 
-	/**
-	* Gets all countries owners
-	*
-	* @return Array the countries list
-	*
-	*/
+    /**
+     * Gets all countries owners
+     *
+     * @param bool $limit
+     * @param array $filters
+     * @return array the countries list
+     */
 	public function countAllCountriesOwners($limit = true, $filters = array())
 	{
 		global $globalDBdriver;
@@ -219,12 +220,13 @@ class Satellite {
 		return $owner_array;
 	}
 
-	/**
-	* Counts all launch dates during the last year
-	*
-	* @return Array the launch date list
-	*
-	*/
+    /**
+     * Counts all launch dates during the last year
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the launch date list
+     */
 	public function countAllMonthsLastYear($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -264,12 +266,13 @@ class Satellite {
 		return $date_array;
 	}
 
-	/**
-	* Counts all dates during the last 10 years
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates during the last 10 years
+     *
+     * @param array $filters
+     * @param string $sincedate
+     * @return array the date list
+     */
 	public function countAllYears($filters = array(), $sincedate = '')
 	{
 		global $globalTimezone, $globalDBdriver;

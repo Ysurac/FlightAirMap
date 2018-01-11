@@ -90,6 +90,7 @@ class METAR {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*
@@ -344,6 +345,7 @@ class METAR {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*
@@ -359,6 +361,7 @@ class METAR {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*
@@ -372,6 +375,7 @@ class METAR {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*

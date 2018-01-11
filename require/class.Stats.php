@@ -38,6 +38,7 @@ class Stats {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function getLastStatsUpdate($type = 'last_update_stats') {
@@ -47,6 +48,7 @@ class Stats {
 			$sth->execute(array(':type' => $type));
 		} catch(PDOException $e) {
 			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;

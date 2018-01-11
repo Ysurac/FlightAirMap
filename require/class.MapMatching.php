@@ -141,7 +141,7 @@ class MapMatching {
 	* @return Array Modified data with new map matching coordinates
 	*/
 	public function FAMMapMatching($spotter_history_array) {
-		global $globalMapMatchingMaxPts, $globalGraphHopperKey;
+		global $globalMapMatchingMaxPts;
 		if (!isset($globalMapMatchingMaxPts)) $globalMapMatchingMaxPts = 100;
 		if (count($spotter_history_array) < 2) return $spotter_history_array;
 		$spotter_history_initial_array = array();

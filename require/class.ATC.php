@@ -142,6 +142,7 @@ class ATC {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*
@@ -173,6 +174,7 @@ class ATC {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*
@@ -188,6 +190,7 @@ class ATC {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*
@@ -204,6 +207,7 @@ class ATC {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*
@@ -218,6 +222,7 @@ class ATC {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	/*

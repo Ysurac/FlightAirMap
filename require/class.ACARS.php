@@ -100,14 +100,15 @@ class ACARS {
 	}
 
 
-	/**
-	* Parse ACARS data
-	*
-	* @param String ACARS data in acarsdec data
-	*
-	*/
+    /**
+     * Parse ACARS data
+     *
+     * @param String ACARS data in acarsdec data
+     *
+     * @return array
+     */
 	public function parse($data) {
-		global $globalDebug, $globalACARSArchive;
+		global $globalDebug;
 		//$Image = new Image($this->db);
 		//$Schedule = new Schedule($this->db);
 		//$Translation = new Translation($this->db);
@@ -785,16 +786,18 @@ class ACARS {
 		}
 	}
 
-	/**
-	* Add Live ACARS data in DB
-	*
-	* @param String $ident ident
-	* @param String $registration Registration of the aircraft
-	* @param String $label Label of the ACARS message
-	* @param String $block_id Block id of the ACARS message
-	* @param String $msg_no Number of the ACARS message
-	* @param String $message ACARS message
-	*/
+    /**
+     * Add Live ACARS data in DB
+     *
+     * @param String $ident ident
+     * @param String $registration Registration of the aircraft
+     * @param String $label Label of the ACARS message
+     * @param String $block_id Block id of the ACARS message
+     * @param String $msg_no Number of the ACARS message
+     * @param String $message ACARS message
+     * @param string $decode
+     * @return bool
+     */
 	public function addLiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
 		global $globalDebug;
 		date_default_timezone_set('UTC');
@@ -808,7 +811,8 @@ class ACARS {
 				$stht = $this->db->prepare($query_test);
 				$stht->execute($query_test_values);
 			} catch(PDOException $e) {
-				return "error : ".$e->getMessage();
+				echo "error : ".$e->getMessage();
+				return false;
 			}
 			if ($stht->fetchColumn() == 0) {
 				if ($globalDebug) echo "Add Live ACARS data...";
@@ -818,7 +822,8 @@ class ACARS {
 					$sth = $this->db->prepare($query);
 					$sth->execute($query_values);
 				} catch(PDOException $e) {
-					return "error : ".$e->getMessage();
+					echo "error : ".$e->getMessage();
+					return false;
 				}
 			} else {
 				if ($globalDebug) echo "Data already in DB...\n";
@@ -827,18 +832,21 @@ class ACARS {
 			if ($globalDebug) echo "Done\n";
 			return true;
 		}
+		return false;
 	}
 
-	/**
-	* Add Archive ACARS data in DB
-	*
-	* @param String $ident ident
-	* @param String $registration Registration of the aircraft
-	* @param String $label Label of the ACARS message
-	* @param String $block_id Block id of the ACARS message
-	* @param String $msg_no Number of the ACARS message
-	* @param String $message ACARS message
-	*/
+    /**
+     * Add Archive ACARS data in DB
+     *
+     * @param String $ident ident
+     * @param String $registration Registration of the aircraft
+     * @param String $label Label of the ACARS message
+     * @param String $block_id Block id of the ACARS message
+     * @param String $msg_no Number of the ACARS message
+     * @param String $message ACARS message
+     * @param string $decode
+     * @return string
+     */
 	public function addArchiveAcarsData($ident,$registration,$label,$block_id,$msg_no,$message,$decode = '') {
 		global $globalDebug;
 		date_default_timezone_set('UTC');
@@ -866,6 +874,7 @@ class ACARS {
 			}
 			if ($globalDebug) echo "Done\n";
 		}
+		return '';
 	}
 
 	/**
@@ -894,7 +903,7 @@ class ACARS {
 	/**
 	* List all Message title & label from DB
 	*
-	* @return Array Return ACARS data in array
+	* @return array Return ACARS data in array
 	*/
 	public function getAllTitleLabel() {
 		$query = "SELECT * FROM acars_label ORDER BY title";
@@ -915,7 +924,7 @@ class ACARS {
 	* Get Live ACARS data from DB
 	*
 	* @param String $ident
-	* @return Array Return ACARS data in array
+	* @return array Return ACARS data in array
 	*/
 	public function getLiveAcarsData($ident) {
 		$query = "SELECT * FROM acars_live WHERE ident = :ident ORDER BY acars_live_id DESC";
@@ -932,13 +941,15 @@ class ACARS {
 		else return array();
 	}
 
-	/**
-	* Get Latest ACARS data from DB
-	*
-	* @return Array Return ACARS data in array
-	*/
+    /**
+     * Get Latest ACARS data from DB
+     *
+     * @param string $limit
+     * @param string $label
+     * @return array Return ACARS data in array
+     */
 	public function getLatestAcarsData($limit = '',$label = '') {
-		global $globalURL, $globalDBdriver;
+		global $globalURL;
 		$Image = new Image($this->db);
 		$Spotter = new Spotter($this->db);
 		$Translation = new Translation($this->db);
@@ -966,7 +977,8 @@ class ACARS {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
-			return "error : ".$e->getMessage();
+			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$i = 0;
 		while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
@@ -1023,13 +1035,15 @@ class ACARS {
 		else return array();
 	}
 
-	/**
-	* Get Archive ACARS data from DB
-	*
-	* @return Array Return ACARS data in array
-	*/
+    /**
+     * Get Archive ACARS data from DB
+     *
+     * @param string $limit
+     * @param string $label
+     * @return array Return ACARS data in array
+     */
 	public function getArchiveAcarsData($limit = '',$label = '') {
-		global $globalURL, $globalDBdriver;
+		global $globalURL;
 		$Image = new Image($this->db);
 		$Spotter = new Spotter($this->db);
 		$Translation = new Translation($this->db);
@@ -1061,7 +1075,8 @@ class ACARS {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
-			return "error : ".$e->getMessage();
+			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$i=0;
 		$result = array();
@@ -1115,14 +1130,17 @@ class ACARS {
 		} else return array();
 	}
 
-	/**
-	* Add ModeS data to DB
-	*
-	* @param String $ident ident
-	* @param String $registration Registration of the aircraft
-	* @param String $icao
-	* @param String $ICAOTypeCode
-	*/
+    /**
+     * Add ModeS data to DB
+     *
+     * @param String $ident ident
+     * @param String $registration Registration of the aircraft
+     * @param String $icao
+     * @param String $ICAOTypeCode
+     * @param string $latitude
+     * @param string $longitude
+     * @return string
+     */
 	public function addModeSData($ident,$registration,$icao = '',$ICAOTypeCode = '',$latitude = '', $longitude = '') {
 		global $globalDebug, $globalDBdriver;
 		$ident = trim($ident);
@@ -1282,6 +1300,7 @@ class ACARS {
 			if ($globalDebug) echo " Can't find ModeS in spotter_output - ";
 		}
 		if ($globalDebug) echo "Done\n";
+		return '';
 	}
 }
 ?>

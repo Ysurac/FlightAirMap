@@ -95,29 +95,29 @@ class Marine{
 		return $filter_query;
 	}
 
-	/**
-	* Executes the SQL statements to get the spotter information
-	*
-	* @param String $query the SQL query
-	* @param array $params parameter of the query
-	* @param String $limitQuery the limit query
-	* @return array the spotter information
-	*
-	*/
+    /**
+     * Executes the SQL statements to get the spotter information
+     *
+     * @param String $query the SQL query
+     * @param array $params parameter of the query
+     * @param String $limitQuery the limit query
+     * @param bool $schedules
+     * @return array the spotter information
+     */
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
 	{
 		global $globalVM;
 		date_default_timezone_set('UTC');
 		if (!is_string($query))
 		{
-			return false;
+			return array();
 		}
 		
 		if ($limitQuery != "")
 		{
 			if (!is_string($limitQuery))
 			{
-				return false;
+				return array();
 			}
 		}
 
@@ -382,9 +382,7 @@ class Marine{
 		
 		date_default_timezone_set('UTC');
 		
-		$query_values = array();
 		$limit_query = '';
-		$additional_query = '';
 		$filter_query = $this->getFilter($filter,true,true);
 		if (!is_string($type))
 		{
@@ -1181,7 +1179,7 @@ class Marine{
      */
 	public function addMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $mmsi = '',$type = '',$typeid = '',$imo = '',$callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$format_source = '', $source_name = '', $captain_id = '',$captain_name = '',$race_id = '', $race_name = '', $distance = '',$race_rank = '', $race_time = '')
 	{
-		global $globalURL, $globalMarineImageFetch;
+		global $globalMarineImageFetch;
 		
 		//$Image = new Image($this->db);
 		$Common = new Common();
@@ -1685,13 +1683,12 @@ class Marine{
 	}
 
 
-
-	/**
-	* Counts all month
-	*
-	* @return array the month list
-	*
-	*/
+    /**
+     * Counts all month
+     *
+     * @param array $filters
+     * @return array the month list
+     */
 	public function countAllMonths($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -2194,14 +2191,14 @@ class Marine{
 
 		return $hour_array;
 	}
-    
-    
-     /**
-	* Gets the Barrie Spotter ID based on the FlightAware ID
-	*
-	* @return Integer the Barrie Spotter ID
-q	*
-	*/
+
+
+    /**
+     * Gets the Barrie Spotter ID based on the FlightAware ID
+     *
+     * @param $fammarine_id
+     * @return Integer the Barrie Spotter ID
+     */
 	public function getMarineIDBasedOnFamMarineID($fammarine_id)
 	{
 		$fammarine_id = filter_var($fammarine_id,FILTER_SANITIZE_STRING);
@@ -2353,7 +2350,7 @@ q	*
 	*/
 	public function getCountryFromLatitudeLongitude($latitude,$longitude)
 	{
-		global $globalDBdriver, $globalDebug;
+		global $globalDebug;
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
@@ -2394,7 +2391,7 @@ q	*
 	*/
 	public function getCountryFromISO2($iso2)
 	{
-		global $globalDBdriver, $globalDebug;
+		global $globalDebug;
 		$iso2 = filter_var($iso2,FILTER_SANITIZE_STRING);
 	
 		$Connection = new Connection($this->db);
@@ -2731,7 +2728,6 @@ q	*
      */
 	public function checkId($id)
 	{
-		global $globalDBdriver, $globalTimezone;
 		$query  = 'SELECT marine_output.ident, marine_output.fammarine_id FROM marine_output WHERE marine_output.fammarine_id = :id';
 		$query_data = array(':id' => $id);
 		$sth = $this->db->prepare($query);

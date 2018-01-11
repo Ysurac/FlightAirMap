@@ -20,11 +20,13 @@ class Tracker{
 		if ($this->db === null) die('Error: No DB connection. (Tracker)');
 	}
 
-	/**
-	* Get SQL query part for filter used
-	* @param Array $filter the filter
-	* @return Array the SQL part
-	*/
+    /**
+     * Get SQL query part for filter used
+     * @param array $filter the filter
+     * @param bool $where
+     * @param bool $and
+     * @return string the SQL part
+     */
 	
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
@@ -90,28 +92,28 @@ class Tracker{
 		return $filter_query;
 	}
 
-	/**
-	* Executes the SQL statements to get the tracker information
-	*
-	* @param String $query the SQL query
-	* @param Array $params parameter of the query
-	* @param String $limitQuery the limit query
-	* @return Array the tracker information
-	*
-	*/
+    /**
+     * Executes the SQL statements to get the tracker information
+     *
+     * @param String $query the SQL query
+     * @param array $params parameter of the query
+     * @param String $limitQuery the limit query
+     * @param bool $schedules
+     * @return array the tracker information
+     */
 	public function getDataFromDB($query, $params = array(), $limitQuery = '',$schedules = false)
 	{
 		date_default_timezone_set('UTC');
 		if (!is_string($query))
 		{
-			return false;
+			return array();
 		}
 		
 		if ($limitQuery != "")
 		{
 			if (!is_string($limitQuery))
 			{
-				return false;
+				return array();
 			}
 		}
 
@@ -207,15 +209,17 @@ class Tracker{
 		if ($num_rows == 0) return array();
 		$tracker_array[0]['query_number_rows'] = $num_rows;
 		return $tracker_array;
-	}	
-	
-	
-	/**
-	* Gets all the tracker information based on the latest data entry
-	*
-	* @return Array the tracker information
-	*
-	*/
+	}
+
+
+    /**
+     * Gets all the tracker information based on the latest data entry
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the tracker information
+     */
 	public function getLatestTrackerData($limit = '', $sort = '', $filter = array())
 	{
 		global $global_tracker_query;
@@ -272,12 +276,15 @@ class Tracker{
 		return $tracker_array;
 	}
 
-	/**
-	* Gets all the tracker information based on the callsign
-	*
-	* @return Array the tracker information
-	*
-	*/
+    /**
+     * Gets all the tracker information based on the callsign
+     *
+     * @param string $ident
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the tracker information
+     */
 	public function getTrackerDataByIdent($ident = '', $limit = '', $sort = '', $filter = array())
 	{
 		global $global_tracker_query;
@@ -292,7 +299,7 @@ class Tracker{
 		{
 			if (!is_string($ident))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query = " AND (tracker_output.ident = :ident)";
 				$query_values = array(':ident' => $ident);
@@ -386,14 +393,13 @@ class Tracker{
 	}
 
 
-
-	/**
-	* Gets all source name
-	*
-	* @param String type format of source
-	* @return Array list of source name
-	*
-	*/
+    /**
+     * Gets all source name
+     *
+     * @param String type format of source
+     * @param array $filters
+     * @return array list of source name
+     */
 	public function getAllSourceName($type = '',$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -422,12 +428,12 @@ class Tracker{
 	}
 
 
-	/**
-	* Gets a list of all idents/callsigns
-	*
-	* @return Array list of ident/callsign names
-	*
-	*/
+    /**
+     * Gets a list of all idents/callsigns
+     *
+     * @param array $filters
+     * @return array list of ident/callsign names
+     */
 	public function getAllIdents($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -492,16 +498,16 @@ class Tracker{
 
 		return $date_array;
 	}
-	
-	
-	/**
-	* Update ident tracker data
-	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @return String success or false
-	*
-	*/	
+
+
+    /**
+     * Update ident tracker data
+     *
+     * @param string $famtrackid
+     * @param String $ident the flight ident
+     * @param null $fromsource
+     * @return String success or false
+     */
 	public function updateIdentTrackerData($famtrackid = '', $ident = '',$fromsource = NULL)
 	{
 
@@ -518,15 +524,19 @@ class Tracker{
 		return "success";
 
 	}
-	/**
-	* Update latest tracker data
-	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @param String $arrival_airport_icao the arrival airport
-	* @return String success or false
-	*
-	*/	
+
+    /**
+     * Update latest tracker data
+     *
+     * @param string $famtrackid
+     * @param String $ident the flight ident
+     * @param string $latitude
+     * @param string $longitude
+     * @param string $altitude
+     * @param null $groundspeed
+     * @param string $date
+     * @return String success or false
+     */
 	public function updateLatestTrackerData($famtrackid = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $groundspeed = NULL, $date = '')
 	{
 		$query = 'UPDATE tracker_output SET ident = :ident, last_latitude = :last_latitude, last_longitude = :last_longitude, last_altitude = :last_altitude, last_seen = :last_seen, last_ground_speed = :last_ground_speed WHERE famtrackid = :famtrackid';
@@ -543,37 +553,25 @@ class Tracker{
 
 	}
 
-	/**
-	* Adds a new tracker data
-	*
-	* @param String $flightaware_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @param String $aircraft_icao the aircraft type
-	* @param String $departure_airport_icao the departure airport
-	* @param String $arrival_airport_icao the arrival airport
-	* @param String $latitude latitude of flight
-	* @param String $longitude latitude of flight
-	* @param String $waypoints waypoints of flight
-	* @param String $altitude altitude of flight
-	* @param String $heading heading of flight
-	* @param String $groundspeed speed of flight
-	* @param String $date date of flight
-	* @param String $departure_airport_time departure time of flight
-	* @param String $arrival_airport_time arrival time of flight
-	* @param String $squawk squawk code of flight
-	* @param String $route_stop route stop of flight
-	* @param String $highlight highlight or not
-	* @param String $ModeS ModesS code of flight
-	* @param String $registration registration code of flight
-	* @param String $pilot_id pilot id of flight (for virtual airlines)
-	* @param String $pilot_name pilot name of flight (for virtual airlines)
-	* @param String $verticalrate vertival rate of flight
-	* @return String success or false
-	*/
+    /**
+     * Adds a new tracker data
+     *
+     * @param string $famtrackid
+     * @param String $ident the flight ident
+     * @param String $latitude latitude of flight
+     * @param String $longitude latitude of flight
+     * @param String $altitude altitude of flight
+     * @param String $heading heading of flight
+     * @param String $groundspeed speed of flight
+     * @param String $date date of flight
+     * @param string $comment
+     * @param string $type
+     * @param string $format_source
+     * @param string $source_name
+     * @return String success or false
+     */
 	public function addTrackerData($famtrackid = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $comment = '', $type = '',$format_source = '', $source_name = '')
 	{
-		global $globalURL;
-		
 		//$Image = new Image($this->db);
 		$Common = new Common();
 		
@@ -677,17 +675,17 @@ class Tracker{
 		return "success";
 
 	}
-	
-  
-	/**
-	* Gets the aircraft ident within the last hour
-	*
-	* @return String the ident
-	*
-	*/
+
+
+    /**
+     * Gets the aircraft ident within the last hour
+     *
+     * @param $ident
+     * @return String the ident
+     */
 	public function getIdentFromLastHour($ident)
 	{
-		global $globalDBdriver, $globalTimezone;
+		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query  = "SELECT tracker_output.ident FROM tracker_output 
 								WHERE tracker_output.ident = :ident 
@@ -712,14 +710,14 @@ class Tracker{
 
 		return $ident_result;
 	}
-	
-	
-	/**
-	* Gets the aircraft data from the last 20 seconds
-	*
-	* @return Array the tracker data
-	*
-	*/
+
+
+    /**
+     * Gets the aircraft data from the last 20 seconds
+     *
+     * @param string $q
+     * @return array the tracker data
+     */
 	public function getRealTimeData($q = '')
 	{
 		global $globalDBdriver;
@@ -728,7 +726,7 @@ class Tracker{
 		{
 			if (!is_string($q))
 			{
-				return false;
+				return array();
 			} else {
 				$q_array = explode(" ", $q);
 				foreach ($q_array as $q_item){
@@ -752,12 +750,15 @@ class Tracker{
 		return $tracker_array;
 	}
 
-	/**
-	* Gets all number of flight over countries
-	*
-	* @return Array the airline country list
-	*
-	*/
+    /**
+     * Gets all number of flight over countries
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @return array the airline country list
+     */
 	public function countAllTrackerOverCountries($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array())
 	{
 		global $globalDBdriver, $globalArchive;
@@ -825,13 +826,19 @@ class Tracker{
 		}
 		return $flight_array;
 	}
-	
-	/**
-	* Gets all callsigns that have flown over
-	*
-	* @return Array the callsign list
-	*
-	*/
+
+    /**
+     * Gets all callsigns that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the callsign list
+     */
 	public function countAllCallsigns($limit = true, $olderthanmonths = 0, $sincedate = '',$filters = array(),$year = '', $month = '', $day = '')
 	{
 		global $globalDBdriver;
@@ -897,12 +904,12 @@ class Tracker{
 	}
 
 
-	/**
-	* Counts all dates
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDates($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -945,14 +952,14 @@ class Tracker{
 
 		return $date_array;
 	}
-	
-	
-	/**
-	* Counts all dates during the last 7 days
-	*
-	* @return Array the date list
-	*
-	*/
+
+
+    /**
+     * Counts all dates during the last 7 days
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesLast7Days($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -993,12 +1000,12 @@ class Tracker{
 		return $date_array;
 	}
 
-	/**
-	* Counts all dates during the last month
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates during the last month
+     *
+     * @param array $filters
+     * @return array the date list
+     */
 	public function countAllDatesLastMonth($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1040,13 +1047,12 @@ class Tracker{
 	}
 
 
-
-	/**
-	* Counts all month
-	*
-	* @return Array the month list
-	*
-	*/
+    /**
+     * Counts all month
+     *
+     * @param array $filters
+     * @return array the month list
+     */
 	public function countAllMonths($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1087,15 +1093,13 @@ class Tracker{
 		return $date_array;
 	}
 
-	
-	
 
-	/**
-	* Counts all dates during the last year
-	*
-	* @return Array the date list
-	*
-	*/
+    /**
+     * Counts all dates during the last year
+     *
+     * @param $filters
+     * @return array the date list
+     */
 	public function countAllMonthsLastYear($filters)
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1136,15 +1140,15 @@ class Tracker{
 
 		return $date_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours
+     *
+     * @param $orderby
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHours($orderby,$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1203,15 +1207,15 @@ class Tracker{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by date
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by date
+     *
+     * @param $date
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByDate($date, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1251,15 +1255,15 @@ class Tracker{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all hours by a ident/callsign
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours by a ident/callsign
+     *
+     * @param $ident
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursByIdent($ident, $filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1300,15 +1304,16 @@ class Tracker{
 
 		return $hour_array;
 	}
-	
-	
-	
-	/**
-	* Counts all trackers that have flown over
-	*
-	* @return Integer the number of trackers
-	*
-	*/
+
+
+    /**
+     * Counts all trackers that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of trackers
+     */
 	public function countOverallTracker($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -1341,13 +1346,15 @@ class Tracker{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-	
-	/**
-	* Counts all trackers type that have flown over
-	*
-	* @return Integer the number of flights
-	*
-	*/
+
+    /**
+     * Counts all trackers type that have flown over
+     *
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @return Integer the number of flights
+     */
 	public function countOverallTrackerTypes($filters = array(),$year = '',$month = '')
 	{
 		global $globalDBdriver;
@@ -1379,14 +1386,14 @@ class Tracker{
 		$sth->execute($query_values);
 		return $sth->fetchColumn();
 	}
-	
-  
-	/**
-	* Counts all hours of today
-	*
-	* @return Array the hour list
-	*
-	*/
+
+
+    /**
+     * Counts all hours of today
+     *
+     * @param array $filters
+     * @return array the hour list
+     */
 	public function countAllHoursFromToday($filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1424,14 +1431,14 @@ class Tracker{
 
 		return $hour_array;
 	}
-    
-    
-     /**
-	* Gets the Barrie Spotter ID based on the FlightAware ID
-	*
-	* @return Integer the Barrie Spotter ID
-q	*
-	*/
+
+
+    /**
+     * Gets the Barrie Spotter ID based on the FlightAware ID
+     *
+     * @param $famtrackid
+     * @return Integer the Barrie Spotter ID
+     */
 	public function getTrackerIDBasedOnFamTrackID($famtrackid)
 	{
 		$famtrackid = filter_var($famtrackid,FILTER_SANITIZE_STRING);
@@ -1456,7 +1463,7 @@ q	*
 	*
 	* @param String $dateString the date string
 	* @param String $timezone the timezone of a user
-	* @return Array the time information
+	* @return array the time information
 	*
 	*/
 	public function parseDateString($dateString, $timezone = '')
@@ -1494,7 +1501,7 @@ q	*
 	* Parses the direction degrees to working
 	*
 	* @param Float $direction the direction in degrees
-	* @return Array the direction information
+	* @return array the direction information
 	*
 	*/
 	public function parseDirection($direction = 0)
@@ -1583,7 +1590,7 @@ q	*
 	*/
 	public function getCountryFromLatitudeLongitude($latitude,$longitude)
 	{
-		global $globalDBdriver, $globalDebug;
+		global $globalDebug;
 		$latitude = filter_var($latitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 		$longitude = filter_var($longitude,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
 	
@@ -1591,17 +1598,8 @@ q	*
 		if (!$Connection->tableExists('countries')) return '';
 	
 		try {
-			/*
-			if ($globalDBdriver == 'mysql') {
-				//$query  = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(:latitude :longitude)'), ogc_geom) LIMIT 1";
-				$query = "SELECT name, iso2, iso3 FROM countries WHERE Within(GeomFromText('POINT(".$longitude.' '.$latitude.")'), ogc_geom) LIMIT 1";
-			}
-			*/
-			// This query seems to work both for MariaDB and PostgreSQL
 			$query = "SELECT name,iso2,iso3 FROM countries WHERE ST_Within(ST_GeomFromText('POINT(".$longitude." ".$latitude.")',4326), ogc_geom) LIMIT 1";
-		
 			$sth = $this->db->prepare($query);
-			//$sth->execute(array(':latitude' => $latitude,':longitude' => $longitude));
 			$sth->execute();
     
 			$row = $sth->fetch(PDO::FETCH_ASSOC);
@@ -1624,7 +1622,7 @@ q	*
 	*/
 	public function getCountryFromISO2($iso2)
 	{
-		global $globalDBdriver, $globalDebug;
+		global $globalDebug;
 		$iso2 = filter_var($iso2,FILTER_SANITIZE_STRING);
 	
 		$Connection = new Connection($this->db);
@@ -1648,12 +1646,18 @@ q	*
 	
 	}
 
-	/**
-	* Gets all vessels types that have flown over
-	*
-	* @return Array the vessel type list
-	*
-	*/
+    /**
+     * Gets all vessels types that have flown over
+     *
+     * @param bool $limit
+     * @param int $olderthanmonths
+     * @param string $sincedate
+     * @param array $filters
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @return array the vessel type list
+     */
 	public function countAllTrackerTypes($limit = true,$olderthanmonths = 0,$sincedate = '',$filters = array(),$year = '',$month = '',$day = '')
 	{
 		global $globalDBdriver;
@@ -1717,12 +1721,21 @@ q	*
 		return $tracker_array;
 	}
 
-	/**
-	* Gets all the tracker information
-	*
-	* @return Array the tracker information
-	*
-	*/
+    /**
+     * Gets all the tracker information
+     *
+     * @param string $q
+     * @param string $callsign
+     * @param string $date_posted
+     * @param string $limit
+     * @param string $sort
+     * @param string $includegeodata
+     * @param string $origLat
+     * @param string $origLon
+     * @param string $dist
+     * @param array $filters
+     * @return array the tracker information
+     */
 	public function searchTrackerData($q = '', $callsign = '', $date_posted = '', $limit = '', $sort = '', $includegeodata = '',$origLat = '',$origLon = '',$dist = '',$filters = array())
 	{
 		global $globalTimezone, $globalDBdriver;
@@ -1734,7 +1747,7 @@ q	*
 		{
 			if (!is_string($q))
 			{
-				return false;
+				return array();
 			} else {
 				$q_array = explode(" ", $q);
 				foreach ($q_array as $q_item){
@@ -1751,7 +1764,7 @@ q	*
 			$callsign = filter_var($callsign,FILTER_SANITIZE_STRING);
 			if (!is_string($callsign))
 			{
-				return false;
+				return array();
 			} else {
 				$additional_query .= " AND tracker_output.ident = :callsign";
 				$query_values = array_merge($query_values,array(':callsign' => $callsign));

@@ -279,8 +279,8 @@ class MarineArchive {
     /**
      * Gets altitude information based on a particular id
      *
+     * @param $id
      * @return array the spotter information
-     *
      */
     public function getAltitudeArchiveMarineDataById($id)
     {
@@ -404,7 +404,7 @@ class MarineArchive {
      */
     public function getMinLiveMarineData($begindate,$enddate,$filter = array())
     {
-        global $globalDBdriver, $globalLiveInterval;
+        global $globalDBdriver;
         date_default_timezone_set('UTC');
 
         $filter_query = '';
@@ -474,7 +474,7 @@ class MarineArchive {
      */
     public function getMinLiveMarineDataPlayback($begindate,$enddate,$filter = array())
     {
-        global $globalDBdriver, $globalLiveInterval;
+        global $globalDBdriver;
         date_default_timezone_set('UTC');
 
         $filter_query = '';
@@ -960,6 +960,7 @@ class MarineArchive {
         } catch(PDOException $e) {
             return "error";
         }
+        return '';
     }
 
     /**
@@ -985,10 +986,10 @@ class MarineArchive {
 	{
 	    if (!is_string($ident))
 	    {
-		return false;
-	    } else {
-		$additional_query = " AND (marine_archive_output.ident = :ident)";
-		$query_values = array(':ident' => $ident);
+            return array();
+        } else {
+            $additional_query = " AND (marine_archive_output.ident = :ident)";
+            $query_values = array(':ident' => $ident);
 	    }
 	}
 	

@@ -66,7 +66,7 @@ class Spotter{
 					'Z602' => 'CH60',
 					'G100' => 'ASTR');
 
-
+    /** @var $db PDOStatement */
 	public $db;
 	
 	public function __construct($dbc = null) {
@@ -994,14 +994,16 @@ class Spotter{
 		$spotter_array = $this->getDataFromDB($query, $query_values,$limit_query);
 		return $spotter_array;
 	}
-	
-	
-	/**
-	* Gets all the spotter information based on the latest data entry
-	*
-	* @return array the spotter information
-	*
-	*/
+
+
+    /**
+     * Gets all the spotter information based on the latest data entry
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getLatestSpotterData($limit = '', $sort = '', $filter = array())
 	{
 		global $global_query;
@@ -1754,8 +1756,6 @@ class Spotter{
      */
 	public function getSpotterDataByAirport($airport = '', $limit = '', $sort = '',$filters = array())
 	{
-		global $global_query;
-		
 		date_default_timezone_set('UTC');
 		$query_values = array();
 		$limit_query = '';
@@ -2121,12 +2121,13 @@ class Spotter{
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the highlight based on a aircraft registration
-	*
-	* @return String the highlight text
-	*
-	*/
+    /**
+     * Gets all the highlight based on a aircraft registration
+     *
+     * @param $registration
+     * @param array $filter
+     * @return String the highlight text
+     */
 	public function getHighlightByRegistration($registration,$filter = array())
 	{
 		global $global_query;
@@ -2394,15 +2395,15 @@ class Spotter{
 
 		return $waypoints_array;
 	}
-	
-	
-	/**
-	* Gets the airline info based on the icao code or iata code
-	*
-	* @param String $airline_icao the iata code of the airport
-	* @return array airport information
-	*
-	*/
+
+
+    /**
+     * Gets the airline info based on the icao code or iata code
+     *
+     * @param String $airline_icao the iata code of the airport
+     * @param null $fromsource
+     * @return array airport information
+     */
 	public function getAllAirlineInfo($airline_icao, $fromsource = NULL)
 	{
 		global $globalUseRealAirlines, $globalNoAirlines;
@@ -2465,14 +2466,14 @@ class Spotter{
 			return $result;
 		}
 	}
-	
-	/**
-	* Gets the airline info based on the airline name
-	*
-	* @param String $airline_name the name of the airline
-	* @return array airline information
-	*
-	*/
+
+    /**
+     * Gets the airline info based on the airline name
+     *
+     * @param String $airline_name the name of the airline
+     * @param null $fromsource
+     * @return array airline information
+     */
 	public function getAllAirlineInfoByName($airline_name, $fromsource = NULL)
 	{
 		global $globalUseRealAirlines, $globalNoAirlines;
@@ -2566,14 +2567,14 @@ class Spotter{
 		if (isset($result[0]['icao'])) return $result[0]['icao'];
 		else return '';
 	}
-	
-	/**
-	* Gets the aircraft info based on the aircraft modes
-	*
-	* @param String $aircraft_modes the aircraft ident (hex)
-	* @return String aircraft type
-	*
-	*/
+
+    /**
+     * Gets the aircraft info based on the aircraft modes
+     *
+     * @param String $aircraft_modes the aircraft ident (hex)
+     * @param string $source_type
+     * @return String aircraft type
+     */
 	public function getAllAircraftType($aircraft_modes,$source_type = '')
 	{
 		$aircraft_modes = filter_var($aircraft_modes,FILTER_SANITIZE_STRING);
@@ -2622,13 +2623,13 @@ class Spotter{
 		} else return '';
 	}
 
-	/**
-	* Gets the spotter_id and flightaware_id based on the aircraft registration
-	*
-	* @param String $registration the aircraft registration
-	* @return array spotter_id and flightaware_id
-	*
-	*/
+    /**
+     * Gets the spotter_id and flightaware_id based on the aircraft registration
+     *
+     * @param String $registration the aircraft registration
+     * @param bool $limit
+     * @return array spotter_id and flightaware_id
+     */
 	public function getAllIDByRegistration($registration, $limit = false)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
@@ -2690,14 +2691,14 @@ class Spotter{
 			return $row;
 		} else return array();
 	}
-	
-	/**
-	* Gets the aircraft info based on the aircraft registration
-	*
-	* @param String $registration the aircraft registration
-	* @return array aircraft information
-	*
-	*/
+
+    /**
+     * Gets the aircraft info based on the aircraft registration
+     *
+     * @param String $registration the aircraft registration
+     * @param bool $limit
+     * @return array aircraft information
+     */
 	public function getAircraftInfoByRegistration($registration, $limit = true)
 	{
 		$registration = filter_var($registration,FILTER_SANITIZE_STRING);
@@ -2847,14 +2848,14 @@ class Spotter{
 
 		return $aircraft_array;
 	}
-	
-	
-	/**
-	* Gets a list of all aircraft registrations
-	*
-	* @return array list of aircraft registrations
-	*
-	*/
+
+
+    /**
+     * Gets a list of all aircraft registrations
+     *
+     * @param array $filters
+     * @return array list of aircraft registrations
+     */
 	public function getAllAircraftRegistrations($filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -2873,13 +2874,13 @@ class Spotter{
 		return $aircraft_array;
 	}
 
-	/**
-	* Gets all source name
-	*
-	* @param String type format of source
-	* @return array list of source name
-	*
-	*/
+    /**
+     * Gets all source name
+     *
+     * @param String type format of source
+     * @param array $filters
+     * @return array list of source name
+     */
 	public function getAllSourceName($type = '',$filters = array())
 	{
 		$filter_query = $this->getFilter($filters,true,true);
@@ -3002,7 +3003,7 @@ class Spotter{
 		global $globalAirlinesSource,$globalVATSIM, $globalIVAO, $globalNoAirlines;
 		if (isset($globalNoAirlines) && $globalNoAirlines) return array();
 		$alliance = filter_var($alliance,FILTER_SANITIZE_STRING);
-		$filter_query = $this->getFilter($filters,true,true);
+		//$filter_query = $this->getFilter($filters,true,true);
 		if (isset($globalAirlinesSource) && $globalAirlinesSource != '') $forsource = $globalAirlinesSource;
 		elseif (isset($globalVATSIM) && $globalVATSIM) $forsource = 'vatsim';
 		elseif (isset($globalIVAO) && $globalIVAO) $forsource = 'ivao';
@@ -3629,12 +3630,12 @@ class Spotter{
 			$query  = "SELECT DISTINCT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) as date
 								FROM spotter_output
 								WHERE spotter_output.date <> '' 
-								ORDER BY spotter_output.date ASC LIMIT 0,100";
+								ORDER BY spotter_output.date ASC LIMIT 100 OFFSET 0";
 		} else {
 			$query  = "SELECT DISTINCT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') as date
 								FROM spotter_output
 								WHERE spotter_output.date <> '' 
-								ORDER BY spotter_output.date ASC LIMIT 0,100";
+								ORDER BY spotter_output.date ASC LIMIT 100 OFFSET 0";
 		}
 		
 		$sth = $this->db->prepare($query);
@@ -4218,7 +4219,7 @@ class Spotter{
      * Gets the aircraft data from the last 20 seconds
      *
      * @param string $q
-     * @return Array the spotter data
+     * @return array the spotter data
      */
 	public function getRealTimeData($q = '')
 	{
@@ -4228,7 +4229,7 @@ class Spotter{
 		{
 			if (!is_string($q))
 			{
-				return false;
+				return array();
 			} else {
 				$q_array = explode(" ", $q);
 				foreach ($q_array as $q_item){

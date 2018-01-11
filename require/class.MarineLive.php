@@ -9,6 +9,7 @@
 //$global_query = "SELECT marine_live.* FROM marine_live";
 
 class MarineLive {
+	/** @var $db PDO */
 	public $db;
 	static $global_query = "SELECT marine_live.* FROM marine_live";
 
@@ -19,11 +20,13 @@ class MarineLive {
 	}
 
 
-	/**
-	* Get SQL query part for filter used
-	* @param Array $filter the filter
-	* @return Array the SQL part
-	*/
+    /**
+     * Get SQL query part for filter used
+     * @param array $filter the filter
+     * @param bool $where
+     * @param bool $and
+     * @return string the SQL part
+     */
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
 		$filters = array();
@@ -102,12 +105,14 @@ class MarineLive {
 		return $filter_query;
 	}
 
-	/**
-	* Gets all the spotter information based on the latest data entry
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the latest data entry
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getLiveMarineData($limit = '', $sort = '', $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -149,12 +154,12 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets Minimal Live Spotter data
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets Minimal Live Spotter data
+     *
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getMinLiveMarineData($filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -183,12 +188,15 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets Minimal Live Spotter data since xx seconds
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets Minimal Live Spotter data since xx seconds
+     *
+     * @param array $coord
+     * @param array $filter
+     * @param bool $limit
+     * @param string $id
+     * @return array the spotter information
+     */
 	public function getMinLastLiveMarineData($coord = array(),$filter = array(), $limit = false, $id = '')
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalMap3DMarinesLimit, $globalArchive;
@@ -267,12 +275,14 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets Minimal Live Spotter data since xx seconds
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets Minimal Live Spotter data since xx seconds
+     *
+     * @param string $id
+     * @param array $filter
+     * @param bool $limit
+     * @return array the spotter information
+     */
 	public function getMinLastLiveMarineDataByID($id = '',$filter = array(), $limit = false)
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalMap3DMarinesLimit, $globalArchive;
@@ -331,12 +341,12 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets number of latest data entry
-	*
-	* @return String number of entry
-	*
-	*/
+    /**
+     * Gets number of latest data entry
+     *
+     * @param array $filter
+     * @return String number of entry
+     */
 	public function getLiveMarineCount($filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -360,12 +370,13 @@ class MarineLive {
 		return $result['nb'];
 	}
 
-	/**
-	* Gets all the spotter information based on the latest data entry and coord
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the latest data entry and coord
+     *
+     * @param $coord
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getLiveMarineDatabyCoord($coord, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -388,12 +399,13 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on the latest data entry and coord
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the latest data entry and coord
+     *
+     * @param $coord
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getMinLiveMarineDatabyCoord($coord, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalArchive;
@@ -461,74 +473,77 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on a user's latitude and longitude
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a user's latitude and longitude
+     *
+     * @param $lat
+     * @param $lng
+     * @param $radius
+     * @param $interval
+     * @return array the spotter information
+     */
 	public function getLatestMarineForLayar($lat, $lng, $radius, $interval)
 	{
 		$Marine = new Marine($this->db);
 		date_default_timezone_set('UTC');
 		if ($lat != '') {
 			if (!is_numeric($lat)) {
-				return false;
+				return array();
 			}
 		}
 		if ($lng != '')
 		{
 			if (!is_numeric($lng))
-                        {
-                                return false;
-                        }
-                }
+			{
+				return array();
+			}
+		}
 
-                if ($radius != '')
-                {
-                        if (!is_numeric($radius))
-                        {
-                                return false;
-                        }
-                }
+		if ($radius != '')
+		{
+			if (!is_numeric($radius))
+			{
+				return array();
+			}
+		}
 		$additional_query = '';
 		if ($interval != '')
-                {
-                        if (!is_string($interval))
-                        {
-                                //$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= marine_live.date ';
-			        return false;
-                        } else {
-                if ($interval == '1m')
-                {
-                    $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= marine_live.date ';
-                } else if ($interval == '15m'){
-                    $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) <= marine_live.date ';
-                } 
-            }
-                } else {
-         $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= marine_live.date ';   
-        }
+		{
+			if (!is_string($interval))
+			{
+				//$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= marine_live.date ';
+				return array();
+			} else {
+				if ($interval == '1m')
+				{
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= marine_live.date ';
+				} else if ($interval == '15m'){
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) <= marine_live.date ';
+				}
+			}
+		} else {
+			$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= marine_live.date ';
+		}
 
-                $query  = "SELECT marine_live.*, ( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:lng) ) + sin( radians(:lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM marine_live 
+		$query  = "SELECT marine_live.*, ( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:lng) ) + sin( radians(:lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM marine_live 
                    WHERE marine_live.latitude <> '' 
                                    AND marine_live.longitude <> '' 
                    ".$additional_query."
                    HAVING distance < :radius  
                                    ORDER BY distance";
 
-                $spotter_array = $Marine->getDataFromDB($query, array(':lat' => $lat, ':lng' => $lng,':radius' => $radius));
+		$spotter_array = $Marine->getDataFromDB($query, array(':lat' => $lat, ':lng' => $lng,':radius' => $radius));
 
-                return $spotter_array;
-        }
+		return $spotter_array;
+	}
 
-    
-        /**
-	* Gets all the spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information based on a particular callsign
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getLastLiveMarineDataByIdent($ident)
 	{
 		$Marine = new Marine($this->db);
@@ -542,12 +557,13 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets all the spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular callsign
+     *
+     * @param $ident
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getDateLiveMarineDataByIdent($ident,$date)
 	{
 		$Marine = new Marine($this->db);
@@ -559,12 +575,13 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on a particular MMSI
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular MMSI
+     *
+     * @param $mmsi
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getDateLiveMarineDataByMMSI($mmsi,$date)
 	{
 		$Marine = new Marine($this->db);
@@ -576,12 +593,12 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets last spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets last spotter information based on a particular callsign
+     *
+     * @param $id
+     * @return array the spotter information
+     */
 	public function getLastLiveMarineDataById($id)
 	{
 		$Marine = new Marine($this->db);
@@ -595,12 +612,13 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets last spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets last spotter information based on a particular callsign
+     *
+     * @param $id
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getDateLiveMarineDataById($id,$date)
 	{
 		$Marine = new Marine($this->db);
@@ -615,12 +633,13 @@ class MarineLive {
 	}
 
 
-        /**
-	* Gets all the spotter information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular id
+     *
+     * @param $id
+     * @param bool $liveinterval
+     * @return array the spotter information
+     */
 	public function getAllLiveMarineDataById($id,$liveinterval = false)
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -648,12 +667,12 @@ class MarineLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets all the spotter information based on a particular ident
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular ident
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getAllLiveMarineDataByIdent($ident)
 	{
 		date_default_timezone_set('UTC');
@@ -796,14 +815,15 @@ class MarineLive {
 */
 			return "success";
 		}
+		return 'error';
 	}
 
-	/**
-	* Deletes all info in the table for an ident
-	*
-	* @return String success or false
-	*
-	*/
+    /**
+     * Deletes all info in the table for an ident
+     *
+     * @param $ident
+     * @return String success or false
+     */
 	public function deleteLiveMarineDataByIdent($ident)
 	{
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
@@ -820,12 +840,12 @@ class MarineLive {
 		return "success";
 	}
 
-	/**
-	* Deletes all info in the table for an id
-	*
-	* @return String success or false
-	*
-	*/
+    /**
+     * Deletes all info in the table for an id
+     *
+     * @param $id
+     * @return String success or false
+     */
 	public function deleteLiveMarineDataById($id)
 	{
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -846,7 +866,7 @@ class MarineLive {
 	/**
 	* Gets the marine races
 	*
-	* @return Array all races
+	* @return array all races
 	*
 	*/
 	public function getAllRaces()
@@ -857,15 +877,15 @@ class MarineLive {
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	/**
-	* Gets the aircraft ident within the last hour
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Gets the aircraft ident within the last hour
+     *
+     * @param $ident
+     * @return String the ident
+     */
 	public function getIdentFromLastHour($ident)
 	{
-		global $globalDBdriver, $globalTimezone;
+		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT marine_live.ident FROM marine_live 
 				WHERE marine_live.ident = :ident 
@@ -890,15 +910,15 @@ class MarineLive {
 		return $ident_result;
         }
 
-	/**
-	* Check recent aircraft
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Check recent aircraft
+     *
+     * @param $ident
+     * @return String the ident
+     */
 	public function checkIdentRecent($ident)
 	{
-		global $globalDBdriver, $globalTimezone;
+		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT marine_live.ident, marine_live.fammarine_id FROM marine_live 
 				WHERE marine_live.ident = :ident 
@@ -923,15 +943,15 @@ class MarineLive {
 		return $ident_result;
         }
 
-	/**
-	* Check recent aircraft by id
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Check recent aircraft by id
+     *
+     * @param $id
+     * @return String the ident
+     */
 	public function checkIdRecent($id)
 	{
-		global $globalDBdriver, $globalTimezone;
+		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT marine_live.ident, marine_live.fammarine_id FROM marine_live 
 				WHERE marine_live.fammarine_id = :id 
@@ -956,15 +976,15 @@ class MarineLive {
 		return $ident_result;
         }
 
-	/**
-	* Check recent aircraft by mmsi
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Check recent aircraft by mmsi
+     *
+     * @param $mmsi
+     * @return String the ident
+     */
 	public function checkMMSIRecent($mmsi)
 	{
-		global $globalDBdriver, $globalTimezone;
+		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query  = 'SELECT marine_live.fammarine_id FROM marine_live 
 				WHERE marine_live.mmsi = :mmsi 
@@ -989,20 +1009,42 @@ class MarineLive {
 		return $ident_result;
         }
 
-	/**
-	* Adds a new spotter data
-	*
-	* @param String $fammarine_id the ID from flightaware
-	* @param String $ident the flight ident
-	* @param String $aircraft_icao the aircraft type
-	* @param String $departure_airport_icao the departure airport
-	* @param String $arrival_airport_icao the arrival airport
-	* @return String success or false
-	*
-	*/
+    /**
+     * Adds a new spotter data
+     *
+     * @param String $fammarine_id the ID from flightaware
+     * @param String $ident the flight ident
+     * @param string $latitude
+     * @param string $longitude
+     * @param string $heading
+     * @param string $groundspeed
+     * @param string $date
+     * @param bool $putinarchive
+     * @param string $mmsi
+     * @param string $type
+     * @param string $typeid
+     * @param string $imo
+     * @param string $callsign
+     * @param string $arrival_code
+     * @param string $arrival_date
+     * @param string $status
+     * @param string $statusid
+     * @param bool $noarchive
+     * @param string $format_source
+     * @param string $source_name
+     * @param string $over_country
+     * @param string $captain_id
+     * @param string $captain_name
+     * @param string $race_id
+     * @param string $race_name
+     * @param string $distance
+     * @param string $race_rank
+     * @param string $race_time
+     * @return String success or false
+     */
 	public function addLiveMarineData($fammarine_id = '', $ident = '', $latitude = '', $longitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $mmsi = '',$type = '',$typeid = '',$imo = '', $callsign = '',$arrival_code = '',$arrival_date = '',$status = '',$statusid = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '',$captain_id = '',$captain_name = '',$race_id = '', $race_name = '', $distance = '', $race_rank = '', $race_time = '')
 	{
-		global $globalURL, $globalArchive, $globalDebug;
+		global $globalArchive, $globalDebug;
 		$Common = new Common();
 		date_default_timezone_set('UTC');
 

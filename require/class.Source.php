@@ -71,7 +71,8 @@ class Source {
 			$sth = $this->db->prepare($query);
 			$sth->execute($query_values);
 		} catch(PDOException $e) {
-			return "error : ".$e->getMessage();
+			echo "error : ".$e->getMessage();
+			return array();
 		}
 		$all = $sth->fetchAll(PDO::FETCH_ASSOC);
 		return $all;
@@ -147,6 +148,7 @@ class Source {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function updateLocationDescByName($name,$source,$source_id = 0,$description = '') {
@@ -158,6 +160,7 @@ class Source {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function updateLocationByLocationID($name,$latitude,$longitude,$altitude,$city,$country,$source,$logo = 'antenna.png',$type = '',$source_id = 0, $location_id,$last_seen = '',$description = '') {
@@ -181,6 +184,7 @@ class Source {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function deleteLocationByType($type) {
@@ -192,6 +196,7 @@ class Source {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function deleteLocationBySource($source) {
@@ -203,6 +208,7 @@ class Source {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function deleteAllLocation() {
@@ -213,6 +219,7 @@ class Source {
 		} catch(PDOException $e) {
 			return "error : ".$e->getMessage();
 		}
+		return '';
 	}
 
 	public function deleteOldLocationByType($type) {

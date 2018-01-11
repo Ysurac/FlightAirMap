@@ -9,17 +9,16 @@
 require_once(dirname(__FILE__).'/settings.php');
 
 class Connection{
-	public $db = null;
+	/** @var $db PDO */
+	public $db;
 	public $dbs = array();
 	public $latest_schema = 55;
 
 	public function __construct($dbc = null,$dbname = null,$user = null,$pass = null) {
 		global $globalNoDB;
-		if (isset($globalNoDB) && $globalNoDB === TRUE) {
-			$this->db = null;
-		} else {
+		if (!isset($globalNoDB) || $globalNoDB === FALSE) {
 			if ($dbc === null) {
-				if ($this->db === null && $dbname === null) {
+				if (empty($this->db) && $dbname === null) {
 					if ($user === null && $pass === null) {
 						$this->createDBConnection();
 					} else {
@@ -47,13 +46,11 @@ class Connection{
 
 	public function db() {
 		global $globalNoDB;
-		if (isset($globalNoDB) && $globalNoDB === TRUE) {
-			return null;
-		} else {
-			if ($this->db === null) {
+		if (!isset($globalNoDB) || $globalNoDB === FALSE) {
+			if (empty($this->db)) {
 				$this->__construct();
 			}
-			if ($this->db === null) {
+			if (empty($this->db)) {
 				echo 'Can\'t connect to database. Check configuration and database status.';
 				die;
 			} else {
@@ -151,7 +148,7 @@ class Connection{
 
 	public function tableExists($table)
 	{
-		global $globalDBdriver, $globalDBname;
+		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query = "SHOW TABLES LIKE '".$table."'";
 		} else {
@@ -172,7 +169,7 @@ class Connection{
 
 	public function connectionExists()
 	{
-		global $globalDBdriver, $globalDBCheckConnection, $globalNoDB;
+		global $globalDBCheckConnection, $globalNoDB;
 		if (isset($globalDBCheckConnection) && $globalDBCheckConnection === FALSE) return true;
 		if (isset($globalNoDB) && $globalNoDB === TRUE) return true;
 		$query = "SELECT 1 + 1";
@@ -201,7 +198,7 @@ class Connection{
 	*/
 	public function indexExists($table,$index)
 	{
-		global $globalDBdriver, $globalDBname;
+		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			$query = "SELECT COUNT(*) as nb FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='".$table."' AND index_name='".$index."'";
 		} else {
@@ -264,6 +261,7 @@ class Connection{
 				$sth->execute(array(':database' => $globalDBname,':table' => $table,':name' => $name));
 			} catch(PDOException $e) {
 				echo "error : ".$e->getMessage()."\n";
+				return false;
 			}
 			$result = $sth->fetch(PDO::FETCH_ASSOC);
 			$sth->closeCursor();

@@ -19,11 +19,13 @@ class TrackerLive {
 	}
 
 
-	/**
-	* Get SQL query part for filter used
-	* @param Array $filter the filter
-	* @return Array the SQL part
-	*/
+    /**
+     * Get SQL query part for filter used
+     * @param array $filter the filter
+     * @param bool $where
+     * @param bool $and
+     * @return string the SQL part
+     */
 	public function getFilter($filter = array(),$where = false,$and = false) {
 		global $globalFilter, $globalStatsFilters, $globalFilterName, $globalDBdriver;
 		$filters = array();
@@ -96,12 +98,14 @@ class TrackerLive {
 		return $filter_query;
 	}
 
-	/**
-	* Gets all the spotter information based on the latest data entry
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the latest data entry
+     *
+     * @param string $limit
+     * @param string $sort
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getLiveTrackerData($limit = '', $sort = '', $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -142,12 +146,12 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets Minimal Live Spotter data
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets Minimal Live Spotter data
+     *
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getMinLiveTrackerData($filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -180,12 +184,14 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets Minimal Live Spotter data since xx seconds
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets Minimal Live Spotter data since xx seconds
+     *
+     * @param $coord
+     * @param array $filter
+     * @param bool $limit
+     * @return array the spotter information
+     */
 	public function getMinLastLiveTrackerData($coord,$filter = array(),$limit = false)
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalArchive, $globalMap3DTrackersLimit;
@@ -258,12 +264,12 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets number of latest data entry
-	*
-	* @return String number of entry
-	*
-	*/
+    /**
+     * Gets number of latest data entry
+     *
+     * @param array $filter
+     * @return String number of entry
+     */
 	public function getLiveTrackerCount($filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -287,12 +293,13 @@ class TrackerLive {
 		return $result['nb'];
 	}
 
-	/**
-	* Gets all the spotter information based on the latest data entry and coord
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the latest data entry and coord
+     *
+     * @param $coord
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getLiveTrackerDatabyCoord($coord, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -315,12 +322,13 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on the latest data entry and coord
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on the latest data entry and coord
+     *
+     * @param $coord
+     * @param array $filter
+     * @return array the spotter information
+     */
 	public function getMinLiveTrackerDatabyCoord($coord, $filter = array())
 	{
 		global $globalDBdriver, $globalLiveInterval, $globalArchive;
@@ -387,74 +395,77 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-	/**
-	* Gets all the spotter information based on a user's latitude and longitude
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a user's latitude and longitude
+     *
+     * @param $lat
+     * @param $lng
+     * @param $radius
+     * @param $interval
+     * @return array the spotter information
+     */
 	public function getLatestTrackerForLayar($lat, $lng, $radius, $interval)
 	{
 		$Tracker = new Tracker($this->db);
 		date_default_timezone_set('UTC');
 		if ($lat != '') {
 			if (!is_numeric($lat)) {
-				return false;
+				return array();
 			}
 		}
 		if ($lng != '')
 		{
 			if (!is_numeric($lng))
-                        {
-                                return false;
-                        }
-                }
+			{
+				return array();
+			}
+		}
 
-                if ($radius != '')
-                {
-                        if (!is_numeric($radius))
-                        {
-                                return false;
-                        }
-                }
+		if ($radius != '')
+		{
+			if (!is_numeric($radius))
+			{
+				return array();
+			}
+		}
 		$additional_query = '';
 		if ($interval != '')
-                {
-                        if (!is_string($interval))
-                        {
-                                //$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= tracker_live.date ';
-			        return false;
-                        } else {
-                if ($interval == '1m')
-                {
-                    $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= tracker_live.date ';
-                } else if ($interval == '15m'){
-                    $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) <= tracker_live.date ';
-                } 
-            }
-                } else {
-         $additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= tracker_live.date ';   
-        }
+		{
+			if (!is_string($interval))
+			{
+				//$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= tracker_live.date ';
+				return array();
+			} else {
+				if ($interval == '1m')
+				{
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= tracker_live.date ';
+				} else if ($interval == '15m'){
+					$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) <= tracker_live.date ';
+				}
+			}
+		} else {
+			$additional_query = ' AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MINUTE) <= tracker_live.date ';
+		}
 
-                $query  = "SELECT tracker_live.*, ( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:lng) ) + sin( radians(:lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM tracker_live 
+		$query  = "SELECT tracker_live.*, ( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(:lng) ) + sin( radians(:lat) ) * sin( radians( latitude ) ) ) ) AS distance FROM tracker_live 
                    WHERE tracker_live.latitude <> '' 
                                    AND tracker_live.longitude <> '' 
                    ".$additional_query."
                    HAVING distance < :radius  
                                    ORDER BY distance";
 
-                $spotter_array = $Tracker->getDataFromDB($query, array(':lat' => $lat, ':lng' => $lng,':radius' => $radius));
+		$spotter_array = $Tracker->getDataFromDB($query, array(':lat' => $lat, ':lng' => $lng,':radius' => $radius));
 
-                return $spotter_array;
-        }
+		return $spotter_array;
+	}
 
-    
-        /**
-	* Gets all the spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+
+    /**
+     * Gets all the spotter information based on a particular callsign
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getLastLiveTrackerDataByIdent($ident)
 	{
 		$Tracker = new Tracker($this->db);
@@ -468,12 +479,13 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets all the spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular callsign
+     *
+     * @param $ident
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getDateLiveTrackerDataByIdent($ident,$date)
 	{
 		$Tracker = new Tracker($this->db);
@@ -488,12 +500,12 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets last spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets last spotter information based on a particular callsign
+     *
+     * @param $id
+     * @return array the spotter information
+     */
 	public function getLastLiveTrackerDataById($id)
 	{
 		$Tracker = new Tracker($this->db);
@@ -507,12 +519,13 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets last spotter information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets last spotter information based on a particular callsign
+     *
+     * @param $id
+     * @param $date
+     * @return array the spotter information
+     */
 	public function getDateLiveTrackerDataById($id,$date)
 	{
 		$Tracker = new Tracker($this->db);
@@ -526,12 +539,12 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets altitude information based on a particular callsign
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets altitude information based on a particular callsign
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getAltitudeLiveTrackerDataByIdent($ident)
 	{
 
@@ -553,12 +566,13 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets all the spotter information based on a particular id
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular id
+     *
+     * @param $id
+     * @param bool $liveinterval
+     * @return array the spotter information
+     */
 	public function getAllLiveTrackerDataById($id,$liveinterval = false)
 	{
 		global $globalDBdriver, $globalLiveInterval;
@@ -588,12 +602,12 @@ class TrackerLive {
 		return $spotter_array;
 	}
 
-        /**
-	* Gets all the spotter information based on a particular ident
-	*
-	* @return Array the spotter information
-	*
-	*/
+    /**
+     * Gets all the spotter information based on a particular ident
+     *
+     * @param $ident
+     * @return array the spotter information
+     */
 	public function getAllLiveTrackerDataByIdent($ident)
 	{
 		date_default_timezone_set('UTC');
@@ -738,12 +752,12 @@ class TrackerLive {
 		}
 	}
 
-	/**
-	* Deletes all info in the table for an ident
-	*
-	* @return String success or false
-	*
-	*/
+    /**
+     * Deletes all info in the table for an ident
+     *
+     * @param $ident
+     * @return String success or false
+     */
 	public function deleteLiveTrackerDataByIdent($ident)
 	{
 		$ident = filter_var($ident, FILTER_SANITIZE_STRING);
@@ -760,12 +774,12 @@ class TrackerLive {
 		return "success";
 	}
 
-	/**
-	* Deletes all info in the table for an id
-	*
-	* @return String success or false
-	*
-	*/
+    /**
+     * Deletes all info in the table for an id
+     *
+     * @param $id
+     * @return String success or false
+     */
 	public function deleteLiveTrackerDataById($id)
 	{
 		$id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -783,12 +797,12 @@ class TrackerLive {
 	}
 
 
-	/**
-	* Gets the aircraft ident within the last hour
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Gets the aircraft ident within the last hour
+     *
+     * @param $ident
+     * @return String the ident
+     */
 	public function getIdentFromLastHour($ident)
 	{
 		global $globalDBdriver, $globalTimezone;
@@ -816,12 +830,12 @@ class TrackerLive {
 		return $ident_result;
         }
 
-	/**
-	* Check recent aircraft
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Check recent aircraft
+     *
+     * @param $ident
+     * @return String the ident
+     */
 	public function checkIdentRecent($ident)
 	{
 		global $globalDBdriver, $globalTimezone;
@@ -849,12 +863,12 @@ class TrackerLive {
 		return $ident_result;
         }
 
-	/**
-	* Check recent aircraft by id
-	*
-	* @return String the ident
-	*
-	*/
+    /**
+     * Check recent aircraft by id
+     *
+     * @param $id
+     * @return String the ident
+     */
 	public function checkIdRecent($id)
 	{
 		global $globalDBdriver, $globalTimezone;
@@ -882,17 +896,26 @@ class TrackerLive {
 		return $ident_result;
         }
 
-	/**
-	* Adds a new spotter data
-	*
-	* @param String $famtrackid the ID from flightaware
-	* @param String $ident the flight ident
-	* @param String $aircraft_icao the aircraft type
-	* @param String $departure_airport_icao the departure airport
-	* @param String $arrival_airport_icao the arrival airport
-	* @return String success or false
-	*
-	*/
+    /**
+     * Adds a new spotter data
+     *
+     * @param String $famtrackid the ID from flightaware
+     * @param String $ident the flight ident
+     * @param string $latitude
+     * @param string $longitude
+     * @param string $altitude
+     * @param string $heading
+     * @param string $groundspeed
+     * @param string $date
+     * @param bool $putinarchive
+     * @param string $comment
+     * @param string $type
+     * @param bool $noarchive
+     * @param string $format_source
+     * @param string $source_name
+     * @param string $over_country
+     * @return String success or false
+     */
 	public function addLiveTrackerData($famtrackid = '', $ident = '', $latitude = '', $longitude = '', $altitude = '', $heading = '', $groundspeed = '', $date = '', $putinarchive = false, $comment = '', $type = '',$noarchive = false,$format_source = '', $source_name = '', $over_country = '')
 	{
 		global $globalURL, $globalArchive, $globalDebug;
