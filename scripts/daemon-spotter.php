@@ -24,6 +24,13 @@ if (isset($globalMarine) && $globalMarine) {
 
 if (!isset($globalDebug)) $globalDebug = FALSE;
 
+if ($globalInstalled === FALSE) {
+    echo "This script MUST be run after install script. Use your web browser to run install/index.php";
+    sleep(5);
+    die();
+}
+
+
 // Check if schema is at latest version
 $Connection = new Connection();
 if ($Connection->connectionExists() === false) {
@@ -37,10 +44,6 @@ if ($Connection->latest() === false) {
 if (PHP_SAPI != 'cli') {
     echo "This script MUST be called from console, not a web browser.";
 //    exit();
-}
-if ($globalInstalled === FALSE) {
-    echo "This script MUST be run after install script. Use your web browser to run install/index.php";
-    die();
 }
 
 // This is to be compatible with old version of settings.php
@@ -269,8 +272,8 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'tsv';
         	if ($globalDebug) echo "Connect to tsv source (".$host.")...\n";
             }
-        } elseif (filter_var($host,FILTER_VALIDATE_URL) || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'sailaway')) {
-    		if ($globalSources[$id]['format'] == 'aisnmeahttp') {
+        } elseif (filter_var($host,FILTER_VALIDATE_URL) || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'sailaway') || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'acarsjson')) {
+    		if ($globalSources[$id]['format'] == 'aisnmeahttp' || $globalSources[$id]['format'] == 'acarsjson') {
     		    $idf = fopen($globalSources[$id]['host'],'r',false,$context);
     		    if ($idf !== false) {
     			$httpfeeds[$id] = $idf;
@@ -1586,6 +1589,43 @@ while ($i > 0) {
 		unset($buffer);
 	    }
 	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] === 'acarsjson') {
+        $arr = $httpfeeds;
+        $w = $e = null;
+        if (isset($arr[$id])) {
+            $nn = stream_select($arr,$w,$e,$timeout);
+            if ($nn > 0) {
+                foreach ($httpfeeds as $feed) {
+                    $buffer = stream_get_line($feed,2000,"\n");
+                    if ($buffer === FALSE) {
+                        connect_all($globalSources);
+                    }
+                    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
+                    $buffer = explode('\n',$buffer);
+                    foreach ($buffer as $line) {
+                        if ($line != '') {
+                            $line = json_decode($line, true);
+                            if (!empty($line)) {
+                                $ACARS->add($line['text'], array('registration' => str_replace('.', '', $line['tail']), 'ident' => $line['flight'], 'label' => $line['label'], 'block_id' => $line['block_id'], 'msg_no' => $line['msgno'], 'message' => $line['text']));
+                                $ACARS->deleteLiveAcarsData();
+                            }
+                        }
+                    }
+                }
+            } else {
+                $format = $value['format'];
+                if (isset($tt[$format])) $tt[$format]++;
+                else $tt[$format] = 0;
+                if ($tt[$format] > 30) {
+                    if ($globalDebug) echo 'Reconnect...'."\n";
+                    sleep(2);
+                    //$sourceeen[] = $value;
+                    //connect_all($sourceeen);
+                    //$sourceeen = array();
+                    connect_all($globalSources);
+                }
+            }
+        }
 	//} elseif ($value === 'sbs' || $value === 'tsv' || $value === 'raw' || $value === 'aprs' || $value === 'beast') {
 	} elseif ($value['format'] === 'sbs' || $value['format'] === 'tsv' || $value['format'] === 'raw' || $value['format'] === 'aprs' || $value['format'] === 'famaprs' || $value['format'] === 'beast' || $value['format'] === 'flightgearmp' || $value['format'] === 'flightgearsp' || $value['format'] === 'acars' || $value['format'] === 'acarssbs3' || $value['format'] === 'ais' || $value['format'] === 'vrstcp') {
 	    //$last_exec[$id]['last'] = time();
@@ -1629,7 +1669,7 @@ while ($i > 0) {
 			    // AVR format
 			    $data = $SBS->parse($buffer);
 			    if (is_array($data)) {
-				//print_r($data);
+				//if (!empty($data)) print_r($data);
 				$data['datetime'] = date('Y-m-d H:i:s');
 				$data['format_source'] = 'raw';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
@@ -1637,6 +1677,7 @@ while ($i > 0) {
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
 				//if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $SI->add($data);
 				$SI->add($data);
+				unset($data);
 			    }
 			} elseif ($format === 'ais') {
 			    $ais_data = $AIS->parse_line(trim($buffer));

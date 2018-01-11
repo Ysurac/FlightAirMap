@@ -123,7 +123,7 @@ class ACARS {
 		if ($n == 0) $n = sscanf($data,'AC%*c %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%6[0-9A-Z-],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%5[0-9A-Z],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
-		if ($n != 0) {
+		if ($n != 0 && ($registration != '' || $ident != '' || $label != '' || $block_id != '' || $msg_no != '')) {
 			$registration = str_replace('.','',$registration);
 			$result = array('registration' => $registration, 'ident' => $ident,'label' => $label, 'block_id' => $block_id,'msg_no' => $msg_no,'message' => $message);
 			if ($globalDebug) echo "Reg. : ".$registration." - Ident : ".$ident." - Label : ".$label." - Message : ".$message."\n";
@@ -741,12 +741,13 @@ class ACARS {
 	* @param String ACARS data in acarsdec data
 	*
 	*/
-	public function add($data) {
+	public function add($data,$message = array()) {
 		global $globalDebug, $globalACARSArchive;
 		$Image = new Image($this->db);
 		$Schedule = new Schedule($this->db);
 		$Translation = new Translation($this->db);
-		$message = $this->parse($data);
+
+		$message = array_merge($message,$this->parse($data));
 		if (isset($message['registration']) && $message['registration'] != '' && $message['ident'] != '' && $message['registration'] != '!') {
 			$ident = (string)$message['ident'];
 			$label = $message['label'];
