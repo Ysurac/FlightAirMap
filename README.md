@@ -78,7 +78,7 @@ Use install/index.php
 * run scripts/daemon-spotter.php
 
 ### ACARS (only messages from real flights)
-* You have to use acarsdec [http://sourceforge.net/projects/acarsdec/](http://sourceforge.net/projects/acarsdec/) : acarsdec -N 127.0.0.1:9999 -r 0 131.525 131.550 131.725
+* You have to use acarsdec [https://github.com/TLeconte/acarsdec](https://github.com/TLeconte/acarsdec) : acarsdec -N 127.0.0.1:9999 -r 0 131.525 131.550 131.725
 * run scripts/daemon-acars.php
 
 ### APRS (real flights)
