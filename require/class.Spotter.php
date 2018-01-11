@@ -1768,7 +1768,13 @@ class Spotter{
 			{
 				return array();
 			} else {
-				$additional_query .= " (spotter_output.departure_airport_icao = :airport OR spotter_output.arrival_airport_icao = :airport)";
+				$additional_query .= "(SELECT spotter_output.spotter_id,spotter_output.flightaware_id,spotter_output.ident,spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.real_altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.owner_name,spotter_output.verticalrate,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time,spotter_output.real_departure_airport_icao,spotter_output.real_departure_airport_time 
+				    FROM spotter_output
+				    ".$filter_query." spotter_output.departure_airport_icao = :airport 
+				  UNION 
+				    SELECT spotter_output.spotter_id,spotter_output.flightaware_id,spotter_output.ident,spotter_output.registration,spotter_output.airline_name,spotter_output.airline_icao,spotter_output.airline_country,spotter_output.airline_type,spotter_output.aircraft_icao,spotter_output.aircraft_name,spotter_output.aircraft_manufacturer,spotter_output.departure_airport_icao,spotter_output.departure_airport_name,spotter_output.departure_airport_city,spotter_output.departure_airport_country,spotter_output.departure_airport_time,spotter_output.arrival_airport_icao,spotter_output.arrival_airport_name,spotter_output.arrival_airport_city,spotter_output.arrival_airport_country,spotter_output.arrival_airport_time,spotter_output.route_stop,spotter_output.date,spotter_output.latitude,spotter_output.longitude,spotter_output.waypoints,spotter_output.altitude,spotter_output.real_altitude,spotter_output.heading,spotter_output.ground_speed,spotter_output.highlight,spotter_output.squawk,spotter_output.ModeS,spotter_output.pilot_id,spotter_output.pilot_name,spotter_output.owner_name,spotter_output.verticalrate,spotter_output.format_source,spotter_output.source_name,spotter_output.ground,spotter_output.last_ground,spotter_output.last_seen,spotter_output.last_latitude,spotter_output.last_longitude,spotter_output.last_altitude,spotter_output.last_ground_speed,spotter_output.real_arrival_airport_icao,spotter_output.real_arrival_airport_time,spotter_output.real_departure_airport_icao,spotter_output.real_departure_airport_time 
+				    FROM spotter_output 
+				    ".$filter_query." spotter_output.arrival_airport_icao = :airport) AS t";
 				$query_values = array(':airport' => $airport);
 			}
 		}
@@ -1782,8 +1788,7 @@ class Spotter{
 			
 			if ($limit_array[0] >= 0 && $limit_array[1] >= 0)
 			{
-				//$limit_query = " LIMIT ".$limit_array[0].",".$limit_array[1];
-				$limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
+			    $limit_query = " LIMIT ".$limit_array[1]." OFFSET ".$limit_array[0];
 			}
 		}
 		
@@ -1792,11 +1797,9 @@ class Spotter{
 			$search_orderby_array = $this->getOrderBy();
 			$orderby_query = $search_orderby_array[$sort]['sql'];
 		} else {
-			$orderby_query = " ORDER BY spotter_output.date DESC";
+			$orderby_query = " ORDER BY date DESC";
 		}
-
-		//$query = $global_query.$filter_query." spotter_output.ident <> '' ".$additional_query." AND (spotter_output.departure_airport_icao <> 'NA' AND spotter_output.arrival_airport_icao <> 'NA') ".$orderby_query;
-		$query = $global_query.$filter_query." ".$additional_query." ".$orderby_query;
+        $query = "SELECT * FROM ".$additional_query." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 
 		return $spotter_array;
