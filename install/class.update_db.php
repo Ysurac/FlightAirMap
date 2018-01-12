@@ -1739,7 +1739,7 @@ class update_db {
 				
 				$owner_code = trim(substr($data,49,5));
 				
-				if (!isset($satcat_sources[$owner_code]) && $satcat_sources[$owner_code] != 'TBD') {
+				if (!isset($satcat_sources[$owner_code]) && $owner_code != 'TBD') {
 					if ($globalDebug) echo $data.'owner_code: '.$owner_code."\n";
 				}
 				if (!isset($satcat_launch_site[trim(substr($data,68,5))])) {
