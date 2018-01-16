@@ -607,6 +607,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="planefinderclient" <?php if (isset($source['format']) && $source['format'] == 'planefinderclient') print 'selected'; ?>>Planefinder client</option>
 										<option value="aprs" <?php if (isset($source['format']) && $source['format'] == 'aprs') print 'selected'; ?>>APRS</option>
 										<option value="deltadbtxt" <?php if (isset($source['format']) && $source['format'] == 'deltadbtxt') print 'selected'; ?>>Radarcape deltadb.txt</option>
+                                        <option value="radarcapejson" <?php if (isset($source['format']) && $source['format'] == 'radarcapejson') print 'selected'; ?>>Radarcape json</option>
 										<option value="vatsimtxt" <?php if (isset($source['format']) && $source['format'] == 'vatsimtxt') print 'selected'; ?>>Vatsim</option>
 										<option value="aircraftlistjson" <?php if (isset($source['format']) && $source['format'] == 'aircraftlistjson') print 'selected'; ?>>Virtual Radar Server AircraftList.json</option>
 										<option value="vrstcp" <?php if (isset($source['format']) && $source['format'] == 'vrstcp') print 'selected'; ?>>Virtual Radar Server TCP</option>
@@ -664,6 +665,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="planefinderclient">Planefinder client</option>
 										<option value="aprs">APRS</option>
 										<option value="deltadbtxt">Radarcape deltadb.txt</option>
+                                        <option value="radarcapejson">Radarcape json</option>
 										<option value="vatsimtxt">Vatsim</option>
 										<option value="aircraftlistjson">Virtual Radar Server AircraftList.json</option>
 										<option value="vrstcp">Virtual Radar Server TCP</option>

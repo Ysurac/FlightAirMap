@@ -451,36 +451,71 @@ while ($i > 0) {
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
 	    )
 	) {
-	    //$buffer = $Common->getData($hosts[$id]);
-	    $buffer = $Common->getData($value['host']);
-	    if ($buffer != '') $reset = 0;
-    	    $buffer=trim(str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),'\n',$buffer));
-	    $buffer = explode('\n',$buffer);
-	    foreach ($buffer as $line) {
-    		if ($line != '' && count($line) > 7) {
-    		    $line = explode(',', $line);
-	            $data = array();
-	            $data['hex'] = $line[1]; // hex
-	            $data['ident'] = $line[2]; // ident
-	            if (isset($line[3])) $data['altitude'] = $line[3]; // altitude
-	            if (isset($line[4])) $data['speed'] = $line[4]; // speed
-	            if (isset($line[5])) $data['heading'] = $line[5]; // heading
-	            if (isset($line[6])) $data['latitude'] = $line[6]; // lat
-	            if (isset($line[7])) $data['longitude'] = $line[7]; // long
-	            $data['verticalrate'] = ''; // vertical rate
-	            //if (isset($line[9])) $data['squawk'] = $line[9]; // squawk
-	            $data['emergency'] = ''; // emergency
-		    $data['datetime'] = date('Y-m-d H:i:s');
-		    $data['format_source'] = 'deltadbtxt';
-    		    $data['id_source'] = $id_source;
-		    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
-		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-		    if (isset($value['sourcestats'])) $data['sourcestats'] = $value['sourcestats'];
-    		    $SI->add($data);
-		    unset($data);
-    		}
-    	    }
-    	    $last_exec[$id]['last'] = time();
+        //$buffer = $Common->getData($hosts[$id]);
+        $buffer = $Common->getData($value['host']);
+        if ($buffer != '') $reset = 0;
+        $buffer = trim(str_replace(array("\r\n", "\r", "\n", "\\r", "\\n", "\\r\\n"), '\n', $buffer));
+        $buffer = explode('\n', $buffer);
+        foreach ($buffer as $line) {
+            if ($line != '' && count($line) > 7) {
+                $line = explode(',', $line);
+                $data = array();
+                $data['hex'] = $line[1]; // hex
+                $data['ident'] = $line[2]; // ident
+                if (isset($line[3])) $data['altitude'] = $line[3]; // altitude
+                if (isset($line[4])) $data['speed'] = $line[4]; // speed
+                if (isset($line[5])) $data['heading'] = $line[5]; // heading
+                if (isset($line[6])) $data['latitude'] = $line[6]; // lat
+                if (isset($line[7])) $data['longitude'] = $line[7]; // long
+                $data['verticalrate'] = ''; // vertical rate
+                //if (isset($line[9])) $data['squawk'] = $line[9]; // squawk
+                $data['emergency'] = ''; // emergency
+                $data['datetime'] = date('Y-m-d H:i:s');
+                $data['format_source'] = 'deltadbtxt';
+                $data['id_source'] = $id_source;
+                if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+                if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+                if (isset($value['sourcestats'])) $data['sourcestats'] = $value['sourcestats'];
+                $SI->add($data);
+                unset($data);
+            }
+        }
+        $last_exec[$id]['last'] = time();
+    } elseif ($value['format'] === 'radarcapejson' &&
+            (
+                (isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) ||
+                (!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch))
+            )
+        ) {
+            //$buffer = $Common->getData($hosts[$id]);
+            $buffer = $Common->getData($value['host']);
+            if ($buffer != '') {
+                $all_data = json_decode($buffer,true);
+                foreach ($all_data as $line) {
+                    $data = array();
+                    $data['datetime'] = date('Y-m-d H:i:s',$line['tim']);
+                    $data['hex'] = $line['hex']; // hex
+                    $data['ident'] = $line['fli']; // ident
+                    $data['altitude'] = $line['alt']; // altitude
+                    $data['speed'] = $line['spd']; // speed
+                    $data['heading'] = $line['trk']; // heading
+                    $data['latitude'] = $line['lat']; // lat
+                    $data['longitude'] = $line['lon']; // long
+                    $data['verticalrate'] = $line['vrt']; // vertical rate
+                    $data['squawk'] = $line['squ']; // squawk
+                    $data['ground'] = $line['gda']; // ground
+                    //$data['emergency'] = ''; // emergency
+                    $data['datetime'] = date('Y-m-d H:i:s');
+                    $data['format_source'] = 'radarcapejson';
+                    $data['id_source'] = $id_source;
+                    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+                    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+                    if (isset($value['sourcestats'])) $data['sourcestats'] = $value['sourcestats'];
+                    $SI->add($data);
+                    unset($data);
+                }
+            }
+            $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] === 'aisnmeatxt' && 
 	    (
 		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
