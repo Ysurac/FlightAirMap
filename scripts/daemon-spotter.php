@@ -493,7 +493,7 @@ while ($i > 0) {
                 $all_data = json_decode($buffer,true);
                 foreach ($all_data as $line) {
                     $data = array();
-                    $data['datetime'] = date('Y-m-d H:i:s',$line['tim']);
+                    $data['datetime'] = date('Y-m-d H:i:s',$line['uti']);
                     $data['hex'] = $line['hex']; // hex
                     $data['ident'] = $line['fli']; // ident
                     $data['altitude'] = $line['alt']; // altitude
