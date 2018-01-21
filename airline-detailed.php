@@ -113,7 +113,7 @@ if (!isset($_GET['airline'])){
 					print '<div><span class="label">'._("Type").'</span>'.ucwords($airline_info[0]['type']).'</div>';
 					if (isset($airline_info[0]['home_link']) && $airline_info[0]['home_link'] != '') print '<div><a href="'.$airline_info[0]['home_link'].'"><i class="fa fa-home"></i></a></div>';
 					if (isset($airline_info[0]['wikipedia_link']) && $airline_info[0]['wikipedia_link'] != '') print '<div><a href="'.$airline_info[0]['wikipedia_link'].'"><i class="fa fa-wikipedia-w"></i></a></div>';
-					if ($airline_info[0]['ban_eu'] == 1) print '<div><img src="'.$globalURL.'/images/baneu.png" alt="'._("This airline is banned in Europe").'" title="'._("This airline is banned in Europe").'" /></div>';
+					if (isset($airline_info[0]['ban_eu']) && $airline_info[0]['ban_eu'] == 1) print '<div><img src="'.$globalURL.'/images/baneu.png" alt="'._("This airline is banned in Europe").'" title="'._("This airline is banned in Europe").'" /></div>';
 					print '</div>';
 				
 				} else {
