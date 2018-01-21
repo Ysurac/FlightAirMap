@@ -2071,7 +2071,7 @@ class Spotter{
 		} else {
 			$filter_query = $this->getFilter($filters,false,false);
 		}
-		$query .= $filter_query." ".$additional_query." ".$orderby_query;
+		$query .= $filter_query." ".substr($additional_query,4)." ".$orderby_query;
 		$spotter_array = $this->getDataFromDB($query, $query_values, $limit_query);
 		return $spotter_array;
 	}
