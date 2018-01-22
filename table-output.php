@@ -546,7 +546,7 @@ if (strtolower($current_page) == "search")
 		}
 		if ($showDuration && $type == 'marine' && isset($globalVM) && $globalVM === TRUE) {
 			print '<th class="duration"><span class="nomobile">'._("Race duration").'</span><span class="mobile">'._("Race duration").'</span></th>';
-		} else {
+		} elseif ($showDuration) {
 			print '<th class="duration"><span class="nomobile">'._("Spotted duration").'</span><span class="mobile">'._("Duration").'</span></th>';
 		}
 		if (strtolower($current_page) == "date")
