@@ -504,13 +504,16 @@ while ($i > 0) {
                     $data['verticalrate'] = $line['vrt']; // vertical rate
                     $data['squawk'] = $line['squ']; // squawk
                     $data['ground'] = $line['gda']; // ground
+                    $data['registration'] = $line['reg'];
                     //$data['emergency'] = ''; // emergency
                     $data['datetime'] = date('Y-m-d H:i:s');
                     $data['format_source'] = 'radarcapejson';
                     $data['id_source'] = $id_source;
                     if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
+                    elseif($line['src'] == 'M') $data['source_name'] = 'MLAT';
                     if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
                     if (isset($value['sourcestats'])) $data['sourcestats'] = $value['sourcestats'];
+
                     $SI->add($data);
                     unset($data);
                 }
@@ -2045,7 +2048,7 @@ while ($i > 0) {
     				$data['format_source'] = 'sbs';
 				if (isset($globalSources[$nb]['name']) && $globalSources[$nb]['name'] != '') $data['source_name'] = $globalSources[$nb]['name'];
 				elseif ($line[0] == 'MLAT') $data['source_name'] = 'MLAT';
-    				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
+				if (isset($globalSources[$nb]['sourcestats'])) $data['sourcestats'] = $globalSources[$nb]['sourcestats'];
 				if (isset($globalSources[$nb]['noarchive']) && $globalSources[$nb]['noarchive'] === TRUE) $data['noarchive'] = true;
     				$data['id_source'] = $id_source;
     				if (($data['latitude'] === '' && $data['longitude'] === '') || (is_numeric($data['latitude']) && is_numeric($data['longitude']))) $send = $SI->add($data);
