@@ -509,8 +509,10 @@ while ($i > 0) {
                     $data['datetime'] = date('Y-m-d H:i:s');
                     $data['format_source'] = 'radarcapejson';
                     $data['id_source'] = $id_source;
-                    if (isset($value['name']) && $value['name'] != '') $data['source_name'] = $value['name'];
-                    elseif($line['src'] == 'M') $data['source_name'] = 'MLAT';
+                    if (isset($value['name']) && $value['name'] != '') {
+                        if (isset($line['src']) && !$line['src'] == 'M') $data['source_name'] = $value['name'].'_MLAT';
+                        else $data['source_name'] = $value['name'];
+                    } elseif (isset($line['src']) && $line['src'] == 'M') $data['source_name'] = 'MLAT';
                     if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
                     if (isset($value['sourcestats'])) $data['sourcestats'] = $value['sourcestats'];
 
