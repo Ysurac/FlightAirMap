@@ -3812,24 +3812,25 @@ class Spotter{
 	public function updateLatestScheduleSpotterData($flightaware_id = '', $departure_airport_icao = '', $departure_airport_time = '', $arrival_airport_icao = '',$arrival_airport_time = '')
 	{
 		$departure_airport_array = $this->getAllAirportInfo($departure_airport_icao);
-		$departure_airport_name = $departure_airport_array[0]['name'];
-		$departure_airport_city = $departure_airport_array[0]['city'];
-		$departure_airport_country = $departure_airport_array[0]['country'];
+        $arrival_airport_array = $this->getAllAirportInfo($arrival_airport_icao);
+		if (isset($departure_airport_array[0]['name']) && isset($arrival_airport_name = $arrival_airport_array[0]['name'])) {
+            $departure_airport_name = $departure_airport_array[0]['name'];
+            $departure_airport_city = $departure_airport_array[0]['city'];
+            $departure_airport_country = $departure_airport_array[0]['country'];
 
-		$arrival_airport_array = $this->getAllAirportInfo($arrival_airport_icao);
-		$arrival_airport_name = $arrival_airport_array[0]['name'];
-		$arrival_airport_city = $arrival_airport_array[0]['city'];
-		$arrival_airport_country = $arrival_airport_array[0]['country'];
+            $arrival_airport_name = $arrival_airport_array[0]['name'];
+            $arrival_airport_city = $arrival_airport_array[0]['city'];
+            $arrival_airport_country = $arrival_airport_array[0]['country'];
 
-		$query = 'UPDATE spotter_output SET departure_airport_icao = :departure_airport_icao, departure_airport_name = :departure_airport_name, departure_airport_city = :departure_airport_city, departure_airport_country = :departure_airport_country, departure_airport_time = :departure_airport_time, arrival_airport_icao = :arrival_airport_icao, arrival_airport_city = :arrival_airport_city, arrival_airport_name = :arrival_airport_name, arrival_airport_country = :arrival_airport_country, arrival_airport_time = :arrival_airport_time WHERE flightaware_id = :flightaware_id';
-		$query_values = array(':flightaware_id' => $flightaware_id,':departure_airport_icao' => $departure_airport_icao,':departure_airport_time' => $departure_airport_time,':arrival_airport_icao' => $arrival_airport_icao,':arrival_airport_time' => $arrival_airport_time,':departure_airport_name' => $departure_airport_name,':departure_airport_city' => $departure_airport_city,':departure_airport_country' => $departure_airport_country, ':arrival_airport_name' => $arrival_airport_name, ':arrival_airport_city' => $arrival_airport_city, ':arrival_airport_country' => $arrival_airport_country);
-		try {
-			$sth = $this->db->prepare($query);
-			$sth->execute($query_values);
-		} catch (PDOException $e) {
-			return "error : ".$e->getMessage();
-		}
-		
+            $query = 'UPDATE spotter_output SET departure_airport_icao = :departure_airport_icao, departure_airport_name = :departure_airport_name, departure_airport_city = :departure_airport_city, departure_airport_country = :departure_airport_country, departure_airport_time = :departure_airport_time, arrival_airport_icao = :arrival_airport_icao, arrival_airport_city = :arrival_airport_city, arrival_airport_name = :arrival_airport_name, arrival_airport_country = :arrival_airport_country, arrival_airport_time = :arrival_airport_time WHERE flightaware_id = :flightaware_id';
+            $query_values = array(':flightaware_id' => $flightaware_id, ':departure_airport_icao' => $departure_airport_icao, ':departure_airport_time' => $departure_airport_time, ':arrival_airport_icao' => $arrival_airport_icao, ':arrival_airport_time' => $arrival_airport_time, ':departure_airport_name' => $departure_airport_name, ':departure_airport_city' => $departure_airport_city, ':departure_airport_country' => $departure_airport_country, ':arrival_airport_name' => $arrival_airport_name, ':arrival_airport_city' => $arrival_airport_city, ':arrival_airport_country' => $arrival_airport_country);
+            try {
+                $sth = $this->db->prepare($query);
+                $sth->execute($query_values);
+            } catch (PDOException $e) {
+                return "error : " . $e->getMessage();
+            }
+        }
 		return "success";
 	}
 
