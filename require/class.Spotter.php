@@ -3813,7 +3813,7 @@ class Spotter{
 	{
 		$departure_airport_array = $this->getAllAirportInfo($departure_airport_icao);
         $arrival_airport_array = $this->getAllAirportInfo($arrival_airport_icao);
-		if (isset($departure_airport_array[0]['name']) && isset($arrival_airport_name = $arrival_airport_array[0]['name'])) {
+		if (isset($departure_airport_array[0]['name']) && isset($arrival_airport_array[0]['name'])) {
             $departure_airport_name = $departure_airport_array[0]['name'];
             $departure_airport_city = $departure_airport_array[0]['city'];
             $departure_airport_country = $departure_airport_array[0]['country'];
