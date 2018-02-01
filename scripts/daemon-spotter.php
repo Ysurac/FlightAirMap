@@ -1646,7 +1646,7 @@ while ($i > 0) {
                         if ($line != '') {
                             $line = json_decode($line, true);
                             if (!empty($line)) {
-                                $ACARS->add($line['text'], array('registration' => str_replace('.', '', $line['tail']), 'ident' => $line['flight'], 'label' => $line['label'], 'block_id' => $line['block_id'], 'msg_no' => $line['msgno'], 'message' => $line['text']));
+                                $ACARS->add(isset($line['text']) ? $line['text'] : '', array('registration' => str_replace('.', '', $line['tail']), 'ident' => $line['flight'], 'label' => $line['label'], 'block_id' => $line['block_id'], 'msg_no' => $line['msgno'], 'message' => (isset($line['text']) ? $line['text'] : '')));
                                 $ACARS->deleteLiveAcarsData();
                             }
                         }
