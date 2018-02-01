@@ -67,9 +67,9 @@ if (!isset($_GET['airline'])){
 		if (!empty($alliances)) {
 			foreach ($alliances as $al) {
 				if ($alliance && str_replace('_',' ',str_replace('alliance_','',$airline)) == $al['alliance']) {
-					print '<option value="'.str_replace(' ','_',$al['alliance']).'" selected>'.$al['alliance'].'</option>';
+					print '<option value="alliance_'.str_replace(' ','_',$al['alliance']).'" selected>'.$al['alliance'].'</option>';
 				} else {
-					print '<option value="'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
+					print '<option value="alliance_'.str_replace(' ','_',$al['alliance']).'">'.$al['alliance'].'</option>';
 				}
 			}
 			print '<option disabled>───────────────</option>';
