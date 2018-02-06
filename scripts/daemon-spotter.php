@@ -809,7 +809,7 @@ while ($i > 0) {
 				$mission_user = $mission['usrname'];
 				$mission_name = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle']));
 				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
-					if (isset($sailaway_authcookie) && $sailaway_authcookie != '') $racebuffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMission.pl?misnr='.$mission['misnr'],'get','','',$sailaway_authcookie);
+					if (isset($sailaway_authcookie) && $sailaway_authcookie != '') $racebuffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMission.pl?misnr='.$mission['misnr'],'get','','',$sailaway_authcookie);
 					else $racebuffer = '';
 					$bufferm = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
 				} else {
