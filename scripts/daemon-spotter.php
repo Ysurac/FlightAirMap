@@ -789,7 +789,7 @@ while ($i > 0) {
 	    )
 	) {
 	    if (isset($globalSailaway['email']) && $globalSailaway['email'] != '' && isset($globalSailaway['password']) && $globalSailaway['password'] != '') {
-		$authsailaway = $Common->getData('https://sailaway.world/cgi-bin/sailaway/weblogin.pl','post',array('submitlogin' => 'Login','email' => $globalSailaway['email'],'pwd' => $globalSailaway['password'], 'page' => 'http://sailaway.world/cgi-bin/sailaway/missions.pl'),'','','','','',false,false,true);
+		$authsailaway = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/weblogin.pl','post',array('submitlogin' => 'Login','email' => $globalSailaway['email'],'pwd' => $globalSailaway['password'], 'page' => 'http://sailaway.world/cgi-bin/sailaway/missions.pl'),'','','','','',false,false,true);
 		//echo $authsailaway;
 		preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $authsailaway, $setcookie);
 		if (isset($setcookie[1][0])) {
@@ -800,7 +800,7 @@ while ($i > 0) {
 	    if ($globalDebug) echo '! Download... ';
 	    for ($i =0; $i <= 1; $i++) {
 		if ($globalDebug) echo 'Racetype: '.$i.' ';
-		$buffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMissions.pl?race=1&tutorial=0&hist=1&racetype='.$i);
+		$buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMissions.pl?race=1&tutorial=0&hist=1&racetype='.$i);
 	    if ($globalDebug) echo 'done'."\n";
 	    if ($buffer != '') {
 		$all_data = json_decode($buffer,true);
@@ -811,7 +811,7 @@ while ($i > 0) {
 				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
 					if (isset($sailaway_authcookie) && $sailaway_authcookie != '') $racebuffer = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetMission.pl?misnr='.$mission['misnr'],'get','','',$sailaway_authcookie);
 					else $racebuffer = '';
-					$bufferm = $Common->getData('https://sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
+					$bufferm = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
 				} else {
 					$bufferm = '';
 					$racebuffer = '';
