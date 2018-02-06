@@ -117,8 +117,8 @@ if (strtolower($current_page) == "index")
 <?php
 		} else {
 ?>
-<link rel="stylesheet" href="https://cesiumjs.org/releases/1.41/Build/Cesium/Widgets/widgets.css" />
-<script src="https://cesiumjs.org/releases/1.41/Build/Cesium/Cesium.js"></script>
+<link rel="stylesheet" href="https://cesiumjs.org/releases/1.42/Build/Cesium/Widgets/widgets.css" />
+<script src="https://cesiumjs.org/releases/1.42/Build/Cesium/Cesium.js"></script>
 <?php
 		}
 ?>
