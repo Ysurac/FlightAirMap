@@ -164,6 +164,7 @@ function connect_all($hosts) {
     if ($globalDebug) echo 'Connect to all...'."\n";
     foreach ($hosts as $id => $value) {
 	$host = $value['host'];
+	$udp = false;
 	$globalSources[$id]['last_exec'] = 0;
 	// Here we check type of source(s)
 	if (filter_var($host,FILTER_VALIDATE_URL) && (!isset($globalSources[$id]['format']) || strtolower($globalSources[$id]['format']) == 'auto')) {
@@ -291,9 +292,10 @@ function connect_all($hosts) {
 		$hostn = $globalSources[$id]['host'];
 	    }
 	    $Common = new Common();
-	    if (!isset($globalSources[$id]['format']) || ($globalSources[$id]['format'] != 'acars' && $globalSources[$id]['format'] != 'flightgearsp')) {
+	    if (!isset($globalSources[$id]['format']) || ($globalSources[$id]['format'] != 'acarsjsonudp' && $globalSources[$id]['format'] != 'acars' && $globalSources[$id]['format'] != 'flightgearsp')) {
         	$s = $Common->create_socket($hostn,$port, $errno, $errstr);
     	    } else {
+    		$udp = true;
         	$s = $Common->create_socket_udp($hostn,$port, $errno, $errstr);
 	    }
 	    if ($s) {
@@ -323,7 +325,8 @@ function connect_all($hosts) {
 		    } else $globalSources[$id]['format'] = 'sbs';
 		    //if ($globalDebug) echo 'Connection in progress to '.$host.'('.$formats[$id].')....'."\n";
 		}
-		if ($globalDebug) echo 'Connection in progress to '.$hostn.':'.$port.' ('.$globalSources[$id]['format'].')....'."\n";
+		if ($globalDebug && $udp) echo 'Listening in UDP from '.$hostn.':'.$port.' ('.$globalSources[$id]['format'].')....'."\n";
+		elseif ($globalDebug) echo 'Connection in progress to '.$hostn.':'.$port.' ('.$globalSources[$id]['format'].')....'."\n";
             } else {
 		if ($globalDebug) echo 'Connection failed to '.$hostn.':'.$port.' : '.$errno.' '.$errstr."\n";
 		sleep(10);
@@ -1667,7 +1670,7 @@ while ($i > 0) {
             }
         }
 	//} elseif ($value === 'sbs' || $value === 'tsv' || $value === 'raw' || $value === 'aprs' || $value === 'beast') {
-	} elseif ($value['format'] === 'sbs' || $value['format'] === 'tsv' || $value['format'] === 'raw' || $value['format'] === 'aprs' || $value['format'] === 'famaprs' || $value['format'] === 'beast' || $value['format'] === 'flightgearmp' || $value['format'] === 'flightgearsp' || $value['format'] === 'acars' || $value['format'] === 'acarssbs3' || $value['format'] === 'ais' || $value['format'] === 'vrstcp') {
+	} elseif ($value['format'] === 'sbs' || $value['format'] === 'tsv' || $value['format'] === 'raw' || $value['format'] === 'aprs' || $value['format'] === 'famaprs' || $value['format'] === 'beast' || $value['format'] === 'flightgearmp' || $value['format'] === 'flightgearsp' || $value['format'] === 'acars' || $value['format'] === 'acarsjsonudp' || $value['format'] === 'acarssbs3' || $value['format'] === 'ais' || $value['format'] === 'vrstcp') {
 	    //$last_exec[$id]['last'] = time();
 	    //$read = array( $sockets[$id] );
 	    $read = $sockets;
@@ -1773,6 +1776,14 @@ while ($i > 0) {
 			    $ACARS->add(trim($buffer));
 			    socket_sendto($r, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
 			    $ACARS->deleteLiveAcarsData();
+			} elseif ($format === 'acarsjsonudp') {
+			    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
+                            $line = json_decode(trim($buffer), true);
+                            if (!empty($line)) {
+                                $ACARS->add(isset($line['text']) ? $line['text'] : '', array('registration' => str_replace('.', '', $line['tail']), 'ident' => $line['flight'], 'label' => $line['label'], 'block_id' => $line['block_id'], 'msg_no' => $line['msgno'], 'message' => (isset($line['text']) ? $line['text'] : '')));
+                                $ACARS->deleteLiveAcarsData();
+                            }
+			    socket_sendto($r, "OK " . $buffer , 100 , 0 , $remote_ip , $remote_port);
 			} elseif ($format === 'flightgearmp') {
 			    if (substr($buffer,0,1) != '#') {
 				$data = array();

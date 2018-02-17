@@ -619,7 +619,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="flightgearsp" <?php if (isset($source['format']) && $source['format'] == 'flightgearsp') print 'selected'; ?>>FlightGear Singleplayer</option>
 										<option value="acars" <?php if (isset($source['format']) && $source['format'] == 'acars') print 'selected'; ?>>ACARS from acarsdec/acarsdeco2 over UDP</option>
 										<option value="acarssbs3" <?php if (isset($source['format']) && $source['format'] == 'acarssbs3') print 'selected'; ?>>ACARS SBS-3 over TCP</option>
-                                        <option value="acarsjson" <?php if (isset($source['format']) && $source['format'] == 'acarsjson') print 'selected'; ?>>ACARS from acarsdec json and vdlm2dec</option>
+										<option value="acarsjson" <?php if (isset($source['format']) && $source['format'] == 'acarsjson') print 'selected'; ?>>ACARS from acarsdec json and vdlm2dec</option>
+										<option value="acarsjsonudp" <?php if (isset($source['format']) && $source['format'] == 'acarsjsonudp') print 'selected'; ?>>ACARS from acarsdec json and vdlm2dec over UDP</option>
 										<option value="ais" <?php if (isset($source['format']) && $source['format'] == 'ais') print 'selected'; ?>>NMEA AIS over TCP</option>
 										<option value="airwhere" <?php if (isset($source['format']) && $source['format'] == 'airwhere') print 'selected'; ?>>AirWhere website</option>
 										<option value="hidnseek_callback" <?php if (isset($source['format']) && $source['format'] == 'hidnseek_callback') print 'selected'; ?>>HidnSeek Callback</option>
@@ -677,7 +678,8 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="flightgearsp">FlightGear Singleplayer</option>
 										<option value="acars">ACARS from acarsdec/acarsdeco2 over UDP</option>
 										<option value="acarssbs3">ACARS SBS-3 over TCP</option>
-                                        <option value="acarsjson">ACARS from acarsdec json and vdlm2dec</option>
+										<option value="acarsjson">ACARS from acarsdec json and vdlm2dec</option>
+										<option value="acarsjsonudp">ACARS from acarsdec json and vdlm2dec over UDP</option>
 										<option value="ais">NMEA AIS over TCP</option>
 										<option value="airwhere">AirWhere website</option>
 										<option value="hidnseek_callback">HidnSeek Callback</option>
