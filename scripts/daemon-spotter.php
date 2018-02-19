@@ -1780,6 +1780,7 @@ while ($i > 0) {
 			    if ($globalDebug) echo 'ACARS : '.$buffer."\n";
                             $line = json_decode(trim($buffer), true);
                             if (!empty($line)) {
+				$line = array_merge(array('text' => '','tail' => '','label' => '','block_id' => '','flight' => '','msgno' => ''),$line);
                                 $ACARS->add(isset($line['text']) ? $line['text'] : '', array('registration' => str_replace('.', '', $line['tail']), 'ident' => $line['flight'], 'label' => $line['label'], 'block_id' => $line['block_id'], 'msg_no' => $line['msgno'], 'message' => (isset($line['text']) ? $line['text'] : '')));
                                 $ACARS->deleteLiveAcarsData();
                             }

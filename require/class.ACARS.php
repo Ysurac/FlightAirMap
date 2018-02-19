@@ -119,7 +119,7 @@ class ACARS {
 		$ident = '';
 		$message = '';
 		$result = array();
-		$n = sscanf($data,'(null) %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		$n = sscanf($data,'%*[0-9a-z.] %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n == 0) $n = sscanf($data,'AC%*c %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%6[0-9A-Z-],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%5[0-9A-Z],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
