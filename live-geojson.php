@@ -392,6 +392,9 @@ $output = '{';
 								} elseif (isset($spotter_item['type']) && $spotter_item['type']  == 'Caribbean Rose') {
 									if ($compress) $output .= '"as": "carib.png",';
 									else $output .= '"aircraft_shadow": "carib.png",';
+								} elseif (isset($spotter_item['type']) && $spotter_item['type']  == 'Nordic Folkboat') {
+									if ($compress) $output .= '"as": "nordic.png",';
+									else $output .= '"aircraft_shadow": "nordic.png",';
 								} else {
 									if ($compress) $output .= '"as": "ship.png",';
 									else $output .= '"aircraft_shadow": "ship.png",';
