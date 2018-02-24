@@ -702,10 +702,10 @@ class MarineLive {
 		global $globalDBdriver;
 		if ($globalDBdriver == 'mysql') {
 			//$query  = "DELETE FROM marine_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 30 MINUTE) >= marine_live.date";
-			$query  = 'DELETE FROM marine_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 9 HOUR) >= marine_live.date';
+			$query  = 'DELETE FROM marine_live WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 12 HOUR) >= marine_live.date';
             		//$query  = "DELETE FROM marine_live WHERE marine_live.id IN (SELECT marine_live.id FROM marine_live INNER JOIN (SELECT l.fammarine_id, max(l.date) as maxdate FROM marine_live l GROUP BY l.fammarine_id) s on marine_live.fammarine_id = s.fammarine_id AND marine_live.date = s.maxdate AND DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) >= marine_live.date)";
 		} else {
-			$query  = "DELETE FROM marine_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '9 HOURS' >= marine_live.date";
+			$query  = "DELETE FROM marine_live WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '12 HOURS' >= marine_live.date";
 		}
         
     		try {
