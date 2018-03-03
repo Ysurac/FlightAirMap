@@ -787,8 +787,7 @@ while ($i > 0) {
     	    $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] === 'sailaway' && 
 	    (
-		(isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalSources[$id]['minfetch'])) || 
-		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > $globalMinFetch*3))
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > 5*60))
 	    )
 	) {
 	    if (isset($globalSailaway['email']) && $globalSailaway['email'] != '' && isset($globalSailaway['password']) && $globalSailaway['password'] != '') {
@@ -898,9 +897,11 @@ while ($i > 0) {
 						}
 					}
 				}
+				sleep(5);
 			}
 		}
 	    }
+	    sleep(5);
 	    }
     	    $last_exec[$id]['last'] = time();
 	//} elseif (($value === 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value === 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
