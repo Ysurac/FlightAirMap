@@ -813,7 +813,7 @@ while ($i > 0) {
 				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
 					if (isset($sailaway_authcookie) && $sailaway_authcookie != '') {
 						$racebuffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMission.pl?misnr='.$mission['misnr'],'get','','',$sailaway_authcookie);
-						sleep(10);
+						sleep(30);
 					} else $racebuffer = '';
 					$bufferm = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
 				} else {
@@ -899,7 +899,7 @@ while ($i > 0) {
 						}
 					}
 				}
-				sleep(10);
+				sleep(30);
 			}
 		}
 	    }
