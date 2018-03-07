@@ -517,7 +517,8 @@ var MapTerrain = getCookie('MapTerrain');
 ?>
 function worldterrain() {
 	viewer.terrainProvider = Cesium.createWorldTerrain({ 
-		requestWaterMask : true 
+		requestWaterMask : true,
+		requestVertexNormals : true
 	});
 }
 function stkterrain() {
