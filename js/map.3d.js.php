@@ -515,6 +515,11 @@ var MapTerrain = getCookie('MapTerrain');
 <?php
 	}
 ?>
+function worldterrain() {
+	viewer.terrainProvider = Cesium.createWorldTerrain({ 
+		requestWaterMask : true 
+	});
+}
 function stkterrain() {
 	var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
 		url : 'https://assets.agi.com/stk-terrain/world',
@@ -552,7 +557,9 @@ function displayMiniMap() {
 	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit({ text: '(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'}));
 }
 
-if (MapTerrain == 'stk' || MapTerrain == '') {
+if (MapTerrain == 'world' || MapTerrain == '') {
+	worldterrain();
+} else if (MapTerrain == 'stk') {
 	stkterrain();
 } else if (MapTerrain == 'articdem') {
 	articterrain();

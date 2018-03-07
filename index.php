@@ -437,7 +437,8 @@ require_once('header.php');
 ?>
 		    <li><?php echo _("Type of Terrain:"); ?>
 			<select  class="selectpicker" onchange="terrainType(this);">
-			    <option value="stk"<?php if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'stk') print ' selected'; ?>>stk terrain</option>
+			    <option value="world"<?php if (!isset($_COOKIE['MapTerrain']) || $_COOKIE['MapTerrain'] == 'world') print ' selected'; ?>>world terrain</option>
+			    <option value="stk"<?php if (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'stk') print ' selected'; ?>>stk terrain</option>
 			    <option value="ellipsoid"<?php if (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'ellipsoid') print ' selected';?>>ellipsoid</option>
 			    <option value="vrterrain"<?php if (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'vrterrain') print ' selected';?>>vr terrain</option>
 			    <option value="articdem"<?php if (isset($_COOKIE['MapTerrain']) && $_COOKIE['MapTerrain'] == 'articdem') print ' selected';?>>ArticDEM</option>

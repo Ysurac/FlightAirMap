@@ -15,7 +15,7 @@ require_once('header.php');
 	if ($globalName == 'FlightAirMap') {
 ?>
     <p>This is an open source project displaying <u>most</u> (mostly <a href="http://en.wikipedia.org/wiki/Instrument_flight_rules" target="_blank">IFR</a>) flights that have flown near this site area.
-    <?php if ($globalADSBHUB) { ?> Some ADS-B sources come from <a href="http://www.adsbhub.net">ADSBHUB.net</a>.<?php } ?>
+    <?php if (isset($globalADSBHUB) && $globalADSBHUB) { ?> Some ADS-B sources come from <a href="http://www.adsbhub.net">ADSBHUB.net</a>.<?php } ?>
     <a name="history"></a>
 		<h3>History</h3>
 
