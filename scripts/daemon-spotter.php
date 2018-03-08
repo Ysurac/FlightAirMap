@@ -2027,7 +2027,7 @@ while ($i > 0) {
 				*/
 				//elseif ($line === false && $globalDebug) echo 'Ignored ('.$buffer.")\n";
 				elseif ($line === true && $globalDebug) echo '!! Failed : '.$buffer."!!\n";
-				if (isset($globalSources[$nb]['last_weather_clean']) && time()-$globalSources[$nb]['last_weather_clean'] > 60*5) {
+				if (isset($Source) && isset($globalSources[$nb]['last_weather_clean']) && time()-$globalSources[$nb]['last_weather_clean'] > 60*5) {
 					$Source->deleteOldLocationByType('lightning');
 					$Source->deleteOldLocationByType('wx');
 					$globalSources[$nb]['last_weather_clean'] = time();
