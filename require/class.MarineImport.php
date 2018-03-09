@@ -134,7 +134,7 @@ class MarineImport {
 	
 	// SBS format is CSV format
 	if(is_array($line) && (isset($line['mmsi']) || isset($line['id']))) {
-	    //print_r($line);
+	    print_r($line);
   	    if (isset($line['mmsi']) || isset($line['id'])) {
 
 		
@@ -330,7 +330,7 @@ class MarineImport {
 			$speed = $distance/(time() - $this->all_tracked[$id]['time_last_coord']);
 			$speed = $speed*3.6;
 			if ($speed < 1000) $this->all_tracked[$id] = array_merge($this->all_tracked[$id],array('speed' => round($speed,2)));
-  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_tracked[$id]['hex']." : ".$speed." - distance : ".$distance."\n";
+  			if ($globalDebug) echo "ø Calculated Speed for ".$this->all_tracked[$id]['id']." : ".$speed." - distance : ".$distance."\n";
 		    }
 		}
 
@@ -460,7 +460,7 @@ class MarineImport {
 			    if($recent_ident == "" && (($this->all_tracked[$id]['latitude'] != '' && $this->all_tracked[$id]['longitude'] != '') || (isset($globalVM) && $globalVM)))
 			    {
 				if ($globalDebug) {
-					if ($this->all_tracked[$id]['mmsi'] == '') echo "\o/ Add ".$this->all_tracked[$id]['mmsi']." in archive DB : ";
+					if ($this->all_tracked[$id]['mmsi'] != '') echo "\o/ Add ".$this->all_tracked[$id]['mmsi']." in archive DB : ";
 					else echo "\o/ Add ".$this->all_tracked[$id]['ident']." in archive DB : ";
 				}
 				//adds the spotter data for the archive
@@ -470,7 +470,7 @@ class MarineImport {
 					if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 					    $timeelapsed = microtime(true);
 					    $Marine = new Marine($this->db);
-					    if (isset($globalVM) && $globalVM && $this->all_tracked[$id]['race_begin'] != '') {
+					    if (isset($globalVM) && $globalVM && ($this->all_tracked[$id]['race_begin'] != '' || $this->all_tracked[$id]['format_source'] == 'sailaway')) {
 						$result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['race_begin'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'], $this->all_tracked[$id]['status'], $this->all_tracked[$id]['status_id'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['captain_id'],$this->all_tracked[$id]['captain_name'],$this->all_tracked[$id]['race_id'],$this->all_tracked[$id]['race_name'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time']);
 					    } else {
 						$result = $Marine->addMarineData($this->all_tracked[$id]['id'], $this->all_tracked[$id]['ident'], $this->all_tracked[$id]['latitude'], $this->all_tracked[$id]['longitude'], $this->all_tracked[$id]['heading'], $this->all_tracked[$id]['speed'], $this->all_tracked[$id]['datetime'], $this->all_tracked[$id]['mmsi'], $this->all_tracked[$id]['type'],$this->all_tracked[$id]['typeid'],$this->all_tracked[$id]['imo'],$this->all_tracked[$id]['callsign'],$this->all_tracked[$id]['arrival_code'],$this->all_tracked[$id]['arrival_date'], $this->all_tracked[$id]['status'], $this->all_tracked[$id]['status_id'],$this->all_tracked[$id]['format_source'],$this->all_tracked[$id]['source_name'],$this->all_tracked[$id]['captain_id'],$this->all_tracked[$id]['captain_name'],$this->all_tracked[$id]['race_id'],$this->all_tracked[$id]['race_name'],$this->all_tracked[$id]['distance'],$this->all_tracked[$id]['race_rank'],$this->all_tracked[$id]['race_time']);
@@ -512,7 +512,7 @@ class MarineImport {
 				$this->all_tracked[$id]['addedMarine'] = 1;
 				//print_r($this->all_tracked[$id]);
 				if ($this->last_delete == 0 || time() - $this->last_delete > 1800) {
-				    if ($globalDebug) echo "---- Deleting Live Marine data older than 9 hours...";
+				    if ($globalDebug) echo "---- Deleting Live Marine data older than 12 hours...";
 				    //MarineLive->deleteLiveMarineDataNotUpdated();
 				    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 					$MarineLive = new MarineLive($this->db);
@@ -554,7 +554,7 @@ class MarineImport {
 			echo 'DATA : ident : '.$this->all_tracked[$id]['ident'].' - type : '.$this->all_tracked[$id]['type'].' - Latitude : '.$this->all_tracked[$id]['latitude'].' - Longitude : '.$this->all_tracked[$id]['longitude'].' - Heading : '.$this->all_tracked[$id]['heading'].' - Speed : '.$this->all_tracked[$id]['speed']."\n";
 		    }
 		    $ignoreImport = false;
-		    if ((isset($globalVM) && $globalVM) && $this->all_tracked[$id]['status'] != 'Racing') $ignoreImport = true;
+		    if ((isset($globalVM) && $globalVM) && $this->all_tracked[$id]['status'] == 'sailawayfull' && $this->all_tracked[$id]['status'] != 'Racing') $ignoreImport = true;
 		    if (!$ignoreImport) {
 			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
 				if ($globalDebug) echo "\o/ Add ".$this->all_tracked[$id]['ident']." from ".$this->all_tracked[$id]['format_source']." in Live DB : ";

@@ -273,7 +273,7 @@ function connect_all($hosts) {
         	$globalSources[$id]['format'] = 'tsv';
         	if ($globalDebug) echo "Connect to tsv source (".$host.")...\n";
             }
-        } elseif (filter_var($host,FILTER_VALIDATE_URL) || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'sailaway') || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'acarsjson')) {
+        } elseif (filter_var($host,FILTER_VALIDATE_URL) || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'sailaway') || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'sailawayfull') || (isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'acarsjson')) {
     		if ($globalSources[$id]['format'] == 'aisnmeahttp' || $globalSources[$id]['format'] == 'acarsjson') {
     		    $idf = fopen($globalSources[$id]['host'],'r',false,$context);
     		    if ($idf !== false) {
@@ -281,6 +281,7 @@ function connect_all($hosts) {
         		if ($globalDebug) echo "Connected to ".$globalSources[$id]['format']." source (".$host.")...\n";
     		    } elseif ($globalDebug) echo "Can't connect to ".$globalSources[$id]['host']."\n";
     		} elseif ($globalDebug && isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'sailaway') echo "Connect to ".$globalSources[$id]['format']." source (sailaway)...\n";
+    		elseif ($globalDebug && isset($globalSources[$id]['format']) && $globalSources[$id]['format'] == 'sailawayfull') echo "Connect to ".$globalSources[$id]['format']." source (sailawayfull)...\n";
     		elseif ($globalDebug) echo "Connect to ".$globalSources[$id]['format']." source (".$host.")...\n";
         } elseif (!filter_var($host,FILTER_VALIDATE_URL)) {
 	    $hostport = explode(':',$host);
@@ -785,7 +786,7 @@ while ($i > 0) {
 		}
     	    }
     	    $last_exec[$id]['last'] = time();
-	} elseif ($value['format'] === 'sailaway' && 
+	} elseif ($value['format'] === 'sailawayfull' && 
 	    (
 		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > 5*60))
 	    )
@@ -886,7 +887,7 @@ while ($i > 0) {
 									$data['race_name'] = $mission_name;
 								}
 								//$data['callsign'] = trim(substr($line,100,7);
-								$data['format_source'] = 'sailaway';
+								$data['format_source'] = 'sailawayfull';
 								$data['id_source'] = $id_source;
 								if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 								//print_r($data);
@@ -904,6 +905,52 @@ while ($i > 0) {
 		}
 	    }
 	    sleep(5);
+	    }
+    	    $last_exec[$id]['last'] = time();
+	} elseif ($value['format'] === 'sailaway' && 
+	    (
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > 5*60))
+	    )
+	) {
+	    /*
+	    if (isset($globalSailaway['email']) && $globalSailaway['email'] != '' && isset($globalSailaway['password']) && $globalSailaway['password'] != '') {
+		$authsailaway = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/weblogin.pl','post',array('submitlogin' => 'Login','email' => $globalSailaway['email'],'pwd' => $globalSailaway['password'], 'page' => 'http://sailaway.world/cgi-bin/sailaway/missions.pl'),'','','','','',false,false,true);
+		//echo $authsailaway;
+		preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $authsailaway, $setcookie);
+		if (isset($setcookie[1][0])) {
+		    $sailaway_authcookie = $setcookie[1][0];
+		    echo $sailaway_authcookie."\n";
+		}
+	    }
+	    */
+	    if (!isset($globalSailaway['key']) || $globalSailaway['key'] == '') {
+		echo 'Sailaway API key MUST be defined';
+		exit(0);
+	    }
+	    if ($globalDebug) echo '! Download... ';
+	    $buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/TrackAllBoats.pl?key='.$globalSailaway['key']);
+	    if ($buffer != '') {
+		$data = json_decode($buffer,true);
+		//print_r($race_data);
+		if (isset($data['boats'])) {
+		    foreach ($data['boats'] as $sail) {
+			$data = array();
+			$data['id'] = $sail['ubtnr'];
+			$data['datetime'] = date('Y-m-d H:i:s');
+			$data['last_update'] = date('Y-m-d H:i:s');
+			$data['latitude'] = $sail['ubtlat'];
+			$data['longitude'] = $sail['ubtlon'];
+			$data['type_id'] = 36;
+			$data['heading'] = $sail['ubtheading'];
+			$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($sail['ubtname'])));
+			$data['captain_name'] = $sail['usrname'];
+			$data['format_source'] = 'sailaway';
+			$data['id_source'] = $id_source;
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+			$MI->add($data);
+			unset($data);
+		    }
+		}
 	    }
     	    $last_exec[$id]['last'] = time();
 	//} elseif (($value === 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value === 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {

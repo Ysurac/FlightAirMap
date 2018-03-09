@@ -535,10 +535,16 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				<p>
 					<label for="sailawayemail">Sailaway email</label>
 					<input type="text" name="sailawayemail" id="sailawayemail" value="<?php if (isset($globalSailaway['email'])) print $globalSailaway['email']; ?>" />
+					<p class="help-block">Only needed for Sailaway full format</p>
 				</p>
 				<p>
 					<label for="sailawaypassword">Sailaway password</label>
 					<input type="text" name="sailawaypassword" id="sailawaypassword" value="<?php if (isset($globalSailaway['password'])) print $globalSailaway['password']; ?>" />
+					<p class="help-block">Only needed for Sailaway full format</p>
+				</p>
+				<p>
+					<label for="sailawaykey">Sailaway API key</label>
+					<input type="text" name="sailawaykey" id="sailawaykey" value="<?php if (isset($globalSailaway['key'])) print $globalSailaway['key']; ?>" />
 				</p>
 			</div>
 
@@ -626,6 +632,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="hidnseek_callback" <?php if (isset($source['format']) && $source['format'] == 'hidnseek_callback') print 'selected'; ?>>HidnSeek Callback</option>
 										<option value="blitzortung" <?php if (isset($source['format']) && $source['format'] == 'blitzortung') print 'selected'; ?>>Blitzortung</option>
 										<option value="sailaway" <?php if (isset($source['format']) && $source['format'] == 'sailaway') print 'selected'; ?>>Sailaway</option>
+										<option value="sailawayfull" <?php if (isset($source['format']) && $source['format'] == 'sailawayfull') print 'selected'; ?>>Sailaway with missions, races,...</option>
 									</select>
 								</td>
 								<td>
@@ -666,7 +673,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="planefinderclient">Planefinder client</option>
 										<option value="aprs">APRS</option>
 										<option value="deltadbtxt">Radarcape deltadb.txt</option>
-                                        <option value="radarcapejson">Radarcape json</option>
+										<option value="radarcapejson">Radarcape json</option>
 										<option value="vatsimtxt">Vatsim</option>
 										<option value="aircraftlistjson">Virtual Radar Server AircraftList.json</option>
 										<option value="vrstcp">Virtual Radar Server TCP</option>
@@ -685,6 +692,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 										<option value="hidnseek_callback">HidnSeek Callback</option>
 										<option value="blitzortung">Blitzortung</option>
 										<option value="sailaway">Sailaway</option>
+										<option value="sailawayfull">Sailaway with missions, races,...</option>
 									</select>
 								</td>
 								<td>
@@ -1341,7 +1349,8 @@ if (isset($_POST['dbtype'])) {
 	
 	$sailawayemail = filter_input(INPUT_POST,'sailawayemail',FILTER_SANITIZE_STRING);
 	$sailawaypass = filter_input(INPUT_POST,'sailawaypassword',FILTER_SANITIZE_STRING);
-	$settings = array_merge($settings,array('globalSailaway' => array('email' => $sailawayemail,'password' => $sailawaypass)));
+	$sailawaykey = filter_input(INPUT_POST,'sailawaykey',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalSailaway' => array('email' => $sailawayemail,'password' => $sailawaypass,'key' => $sailawaykey)));
 	
 	$source_name = $_POST['source_name'];
 	$source_latitude = $_POST['source_latitude'];

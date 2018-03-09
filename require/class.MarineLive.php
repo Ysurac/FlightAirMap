@@ -1118,7 +1118,9 @@ class MarineLive {
 		$race_id = filter_var($race_id,FILTER_SANITIZE_STRING);
 		$race_name = filter_var($race_name,FILTER_SANITIZE_STRING);
 		$race_rank = filter_var($race_rank,FILTER_SANITIZE_NUMBER_INT);
+		if ($race_rank == '') $race_rank = NULL;
 		$race_time = filter_var($race_time,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+		if ($race_time == '') $race_time = NULL;
 		if ($typeid == '') $typeid = NULL;
 		if ($statusid == '') $statusid = NULL;
 		if ($distance == '') $distance = NULL;
