@@ -928,30 +928,34 @@ while ($i > 0) {
 		exit(0);
 	    }
 	    if ($globalDebug) echo '! Download... ';
-	    $buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/TrackAllBoats.pl?key='.$globalSailaway['key']);
+	    $buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/TrackAllBoats.pl?key='.$globalSailaway['key'],'get','','','','',30);
 	    if ($buffer != '') {
 		$data = json_decode($buffer,true);
-		//print_r($race_data);
+		//print_r($data);
 		if (isset($data['boats'])) {
 		    foreach ($data['boats'] as $sail) {
 			$data = array();
 			$data['id'] = $sail['ubtnr'];
 			$data['datetime'] = date('Y-m-d H:i:s');
-			$data['last_update'] = date('Y-m-d H:i:s');
+			if ($sail['online'] == '1') $data['last_update'] = date('Y-m-d H:i:s');
 			$data['latitude'] = $sail['ubtlat'];
 			$data['longitude'] = $sail['ubtlon'];
 			$data['type_id'] = 36;
 			$data['heading'] = $sail['ubtheading'];
 			$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($sail['ubtname'])));
 			$data['captain_name'] = $sail['usrname'];
+			$allboats = array('Sailaway Cruiser 38','Mini Transat','Caribbean Rose','52&#39; Cruising Cat','50&#39; Performance Cruiser','Nordic Folkboat');
+			$boattype = $sail['ubtbtpnr'];
+			$data['type'] = $allboats[$boattype-1];
+			$data['speed'] = round($sail['ubtspeed']*3.6,2);
 			$data['format_source'] = 'sailaway';
 			$data['id_source'] = $id_source;
 			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
 			$MI->add($data);
 			unset($data);
 		    }
-		}
-	    }
+		} elseif ($globalDebug) echo 'Error in JSON parsing';
+	    } elseif ($globalDebug) echo 'Empty result !'."\n";
     	    $last_exec[$id]['last'] = time();
 	//} elseif (($value === 'whazzup' && (time() - $last_exec['whazzup'] > $globalMinFetch)) || ($value === 'vatsimtxt' && (time() - $last_exec['vatsimtxt'] > $globalMinFetch))) {
 	} elseif (
