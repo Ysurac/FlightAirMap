@@ -389,7 +389,7 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 }
 ?>
 <?php
-if (isset($globalPubHeader) print $globalPubHeader;
+if (isset($globalPubHeader)) print $globalPubHeader;
 ?>
 
 <meta property="og:title" content="<?php print $title; ?> | <?php print $globalName; ?>"/>
