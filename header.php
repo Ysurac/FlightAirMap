@@ -388,6 +388,9 @@ if (isset($globalCustomCSS) && $globalCustomCSS != '') {
 <?php
 }
 ?>
+<?php
+if (isset($globalPubHeader) print $globalPubHeader;
+?>
 
 <meta property="og:title" content="<?php print $title; ?> | <?php print $globalName; ?>"/>
 <meta property="og:url" content="<?php print $globalURL.$_SERVER['REQUEST_URI']; ?>"/>

@@ -1,7 +1,7 @@
 </section>
 <div class="pub onmap">
 <?php
-	if (isset($globalPub)) print $globalPub;
+	if (isset($globalPubFooter)) print $globalPubFooter;
 ?>
 </div>
 <footer class="container">
