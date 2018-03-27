@@ -126,7 +126,7 @@ class MarineImport {
     }
 
     public function add($line) {
-	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked, $globalNoImport, $globalNoDB, $globalServerAPRS,$APRSMarine, $globalLiveInterval, $globalVM;
+	global $globalFork, $globalDistanceIgnore, $globalDaemon, $globalDebug, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAllTracked, $globalNoImport, $globalNoDB, $globalServerAPRS,$APRSMarine, $globalLiveInterval, $globalVM, $globalOnlyID;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.02';
 	date_default_timezone_set('UTC');
 	$dataFound = false;
@@ -134,7 +134,7 @@ class MarineImport {
 	
 	// SBS format is CSV format
 	if(is_array($line) && (isset($line['mmsi']) || isset($line['id']))) {
-	    print_r($line);
+	    //print_r($line);
   	    if (isset($line['mmsi']) || isset($line['id'])) {
 
 		
@@ -427,7 +427,7 @@ class MarineImport {
 		if ($dataFound === true && (isset($this->all_tracked[$id]['mmsi']) || isset($this->all_tracked[$id]['id']))) {
 		    $this->all_tracked[$id]['lastupdate'] = time();
 		    if ($this->all_tracked[$id]['addedMarine'] == 0 || (isset($globalVM) && $globalVM)) {
-		        if (!isset($globalDistanceIgnore['latitude']) || $this->all_tracked[$id]['longitude'] == ''  || $this->all_tracked[$id]['latitude'] == '' || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
+		        if ((!isset($globalDistanceIgnore['latitude']) || $this->all_tracked[$id]['longitude'] == ''  || $this->all_tracked[$id]['latitude'] == '' || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) && (!isset($globalOnlyID) || in_array($id,$globalOnlyID))) {
 			    if (!isset($this->all_tracked[$id]['forcenew']) || $this->all_tracked[$id]['forcenew'] == 0) {
 				if (!isset($globalNoDB) || $globalNoDB !== TRUE) {
 				    if ($globalDebug) echo "Check if vessel is already in DB...";
@@ -556,7 +556,7 @@ class MarineImport {
 		    $ignoreImport = false;
 		    if ((isset($globalVM) && $globalVM) && $this->all_tracked[$id]['status'] == 'sailawayfull' && $this->all_tracked[$id]['status'] != 'Racing') $ignoreImport = true;
 		    if (!$ignoreImport) {
-			if (!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) {
+			if ((!isset($globalDistanceIgnore['latitude']) || (isset($globalDistanceIgnore['latitude']) && $Common->distance($this->all_tracked[$id]['latitude'],$this->all_tracked[$id]['longitude'],$globalDistanceIgnore['latitude'],$globalDistanceIgnore['longitude']) < $globalDistanceIgnore['distance'])) && (!isset($globalOnlyID) || in_array($id,$globalOnlyID))) {
 				if ($globalDebug) echo "\o/ Add ".$this->all_tracked[$id]['ident']." from ".$this->all_tracked[$id]['format_source']." in Live DB : ";
 				if (!isset($globalNoImport) || $globalNoImport !== TRUE) {
 				    if (!isset($globalNoDB) || $globalNoDB !== TRUE) {

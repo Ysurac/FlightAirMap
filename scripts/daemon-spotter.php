@@ -946,7 +946,7 @@ while ($i > 0) {
 			$data['captain_name'] = $sail['usrname'];
 			$allboats = array('Sailaway Cruiser 38','Mini Transat','Caribbean Rose','52&#39; Cruising Cat','50&#39; Performance Cruiser','Nordic Folkboat');
 			$boattype = $sail['ubtbtpnr'];
-			$data['type'] = $allboats[$boattype-1];
+			if (isset($allboats[$boattype-1])) $data['type'] = $allboats[$boattype-1];
 			$data['speed'] = round($sail['ubtspeed']*3.6,2);
 			$data['format_source'] = 'sailaway';
 			$data['id_source'] = $id_source;
