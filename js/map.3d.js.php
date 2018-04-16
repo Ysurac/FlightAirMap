@@ -363,11 +363,11 @@ function update_locationsLayer() {
 <?php
 	if (isset($globalMapUseBbox) && $globalMapUseBbox) {
 ?>
-	var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox());
+	var loc_geojson = Cesium.Resource.fetchJson("<?php print $globalURL; ?>/location-geojson.php?coord="+bbox());
 <?php
 	} else {
 ?>
-	var loc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/location-geojson.php");
+	var loc_geojson = Cesium.Resource.fetchJson("<?php print $globalURL; ?>/location-geojson.php");
 <?php
 	}
 ?>
@@ -399,7 +399,7 @@ function update_tsk() {
 			break;
 		}
 	}
-	var tsk_geojson = Cesium.loadJson("<?php print $globalURL; ?>/tsk-geojson.php?tsk=<?php print filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL); ?>");
+	var tsk_geojson = Cesium.Resource.fetchJson("<?php print $globalURL; ?>/tsk-geojson.php?tsk=<?php print filter_input(INPUT_GET,'tsk',FILTER_SANITIZE_URL); ?>");
 	tsk_geojson.then(function(geojsondata) {
 		tsk = new Cesium.CustomDataSource('tsk');
 		for (var i =0;i < geojsondata.features.length; i++) {
@@ -468,6 +468,8 @@ var viewer = new Cesium.Viewer('live-map', {
 	geocoder : false,
 	fullscreenButton : false,
 	scene3DOnly: true,
+	requestRenderMode : true,
+	shouldAnimate : true,
 	showRenderLoopErrors: false
 });
 

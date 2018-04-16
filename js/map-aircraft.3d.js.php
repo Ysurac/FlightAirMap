@@ -68,9 +68,9 @@ function update_atcLayer() {
 		}
 	}
 
-	var atc_geojson = Cesium.loadJson("<?php print $globalURL; ?>/atc-geojson.php");
+	var atc_geojson = Cesium.Resource.fetchJson("<?php print $globalURL; ?>/atc-geojson.php");
 	atc_geojson.then(function(geojsondata) {
-		atc = new Cesium.CustomDataSource('atc');
+		var atc = new Cesium.CustomDataSource('atc');
 		for (var i =0;i < geojsondata.features.length; i++) {
 			data = geojsondata.features[i].properties;
 			//console.log('id : '+data.ref);
@@ -281,7 +281,7 @@ function displayData(data) {
 
 		var orientation = new Cesium.VelocityOrientationProperty(entity.position)
 		entity.orientation = orientation;
-		
+		console.log(entity);
 		//var hpRoll = new Cesium.HeadingPitchRoll();
 		//entity.modelMatrix = Cesium.Transforms.aircraftHeadingPitchRollToFixedFrame(entity.position,hpRoll);
 	}
@@ -422,7 +422,7 @@ function addNOTAM() {
 		} else {
 			url = "<?php print $globalURL; ?>/notam-geojson.php?scope="+getCookie('notamscope')+"&coord="+bbox_value;
 		}
-		var notamdata = Cesium.loadJson(url);
+		var notamdata = Cesium.Resource.fetchJson(url);
 		notamdata.then(function (geojsondata) {
 			deleteNOTAM();
 			//console.log(geojsondata.features);
@@ -478,7 +478,7 @@ function addAirspace() {
 		} else {
 			url = "<?php print $globalURL; ?>/airspace-geojson.php?scope="+getCookie('airspacecope')+"&coord="+bbox_value;
 		}
-		var airspacedata = Cesium.loadJson(url);
+		var airspacedata = Cesium.Resource.fetchJson(url);
 		airspacedata.then(function (geojsondata) {
 			deleteAirspace();
 			airspace = new Cesium.CustomDataSource('airspace');

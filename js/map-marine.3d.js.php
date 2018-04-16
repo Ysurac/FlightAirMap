@@ -163,7 +163,7 @@ function update_raceLayer(raceid) {
 		}
 	}
 
-	var race_geojson = Cesium.loadJson("<?php print $globalURL; ?>/races-geojson.php?race_id="+raceid);
+	var race_geojson = Cesium.Resource.fetchJson("<?php print $globalURL; ?>/races-geojson.php?race_id="+raceid);
 	race_geojson.then(function(geojsondata) {
 	race = new Cesium.CustomDataSource('atc');
 	for (var i =0;i < geojsondata.features.length; i++) {

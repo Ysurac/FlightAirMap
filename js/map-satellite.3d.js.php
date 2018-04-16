@@ -88,7 +88,7 @@ function updateSat() {
 }
 
 function updateISS() {
-	var issdata = Cesium.loadJson('https://api.wheretheiss.at/v1/satellites/25544');
+	var issdata = Cesium.Resource.fetchJson('https://api.wheretheiss.at/v1/satellites/25544');
 	issdata.then(function (data) {
 		var altitude = Math.round(data.altitude*10000)/10;
 		var entity = viewer.entities.getById('iss');
