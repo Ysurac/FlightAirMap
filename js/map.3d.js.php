@@ -557,7 +557,7 @@ function vrtheworldterrain() {
 }
 function displayMiniMap() {
 	CesiumMiniMap(viewer, {osm: true});
-	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit({ text: '(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'}));
+	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'));
 }
 
 if (MapTerrain == 'world' || MapTerrain == '') {
