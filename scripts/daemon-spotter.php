@@ -788,124 +788,83 @@ while ($i > 0) {
     	    $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] === 'sailawayfull' && 
 	    (
-		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > 5*60))
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > 10*60))
 	    )
 	) {
-	    if (isset($globalSailaway['email']) && $globalSailaway['email'] != '' && isset($globalSailaway['password']) && $globalSailaway['password'] != '') {
-		$authsailaway = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/weblogin.pl','post',array('submitlogin' => 'Login','email' => $globalSailaway['email'],'pwd' => $globalSailaway['password'], 'page' => 'http://sailaway.world/cgi-bin/sailaway/missions.pl'),'','','','','',false,false,true);
-		//echo $authsailaway;
-		preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $authsailaway, $setcookie);
-		if (isset($setcookie[1][0])) {
-		    $sailaway_authcookie = $setcookie[1][0];
-		}
+	    if (!isset($globalSailaway['key']) || $globalSailaway['key'] == '') {
+		echo 'Sailaway API key MUST be defined';
+		exit(0);
 	    }
+	    $sailawayoption = array('key' => $globalSailaway['key']);
+	    if (isset($globalSailaway['usrnr'])) $sailawayoption = array_merge($sailawayoption,array('usrnr' => $globalSailaway['usrnr']));
+	    if (isset($globalSailaway['ubtnr'])) $sailawayoption = array_merge($sailawayoption,array('ubtnr' => $globalSailaway['ubtnr']));
 
-	    if ($globalDebug) echo '! Download... ';
-	    for ($i =0; $i <= 1; $i++) {
-		if ($globalDebug) echo 'Racetype: '.$i.' ';
-		$buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMissions.pl?race=1&tutorial=0&hist=1&racetype='.$i);
-	    if ($globalDebug) echo 'done'."\n";
-	    if ($buffer != '') {
-		$all_data = json_decode($buffer,true);
-		if (isset($all_data['missions'])) {
+	    for ($i = 0; $i <= 1; $i++) {
+		if ($globalDebug) echo '! Download... ';
+		$buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMissions.pl?race='.$i.'&tutorial=0&hist=1&racetype=2&challengetype=2');
+		if ($globalDebug) echo 'done'."\n";
+		if ($buffer != '') {
+		    $all_data = json_decode($buffer,true);
+		    if (isset($all_data['missions'])) {
 			foreach ($all_data['missions'] as $mission) {
 				$mission_user = $mission['usrname'];
 				$mission_name = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle']));
-				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
-					if (isset($sailaway_authcookie) && $sailaway_authcookie != '') {
-						$racebuffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMission.pl?misnr='.$mission['misnr'],'get','','',$sailaway_authcookie);
-						sleep(30);
-					} else $racebuffer = '';
-					$bufferm = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetLeaderboard.pl?misnr='.$mission['misnr']);
-				} else {
+				if (!(!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race'])))) {
 					$bufferm = '';
 					$racebuffer = '';
 				}
 				if ($racebuffer != '') {
-					$race_data = json_decode($racebuffer,true);
-					//print_r($race_data);
 					unset($racebuffer);
-					if (isset($race_data['mission'])) {
-					    $datar = array();
-					    $datar['id'] = $mission['misnr'];
-					    $datar['desc'] = $race_data['mission']['misdescr'];
-					    $datar['creator'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($race_data['mission']['usrname'])));
-					    $datar['name'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($race_data['mission']['mistitle'])));
-					    $datar['startdate'] = $race_data['mission']['misstartdatetime'];
-					    $markers = array();
-					    foreach ($race_data['mission']['course'] as $course) {
-						$markers[] = array('lat' => $course['miclat'],'lon' => $course['miclon'],'name' => $course['micname'],'type' => $course['mictype']);
-					    }
-					    $datar['markers'] = json_encode($markers);
-					    //print_r($datar);
-					    $MI->race_add($datar);
+					$datar = array();
+					$datar['id'] = $mission['misnr'];
+					$datar['desc'] = $race_data['mission']['misdescr'];
+					$datar['creator'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($race_data['mission']['usrname'])));
+					$datar['name'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle'])));
+					$datar['startdate'] = $mission['misstartdatetime'];
+					/*
+					$markers = array();
+					foreach ($race_data['mission']['course'] as $course) {
+					    $markers[] = array('lat' => $course['miclat'],'lon' => $course['miclon'],'name' => $course['micname'],'type' => $course['mictype']);
 					}
+					$datar['markers'] = json_encode($markers);
+					//print_r($datar);
+					*/
+					$MI->race_add($datar);
 				}
-				if ($bufferm != '') {
-					$mission_data = json_decode($bufferm,true);
-					unset($bufferm);
-					if (isset($mission_data['leaderboard'][0]['results'])) {
-						foreach ($mission_data['leaderboard'][0]['results'] as $sail) {
-							//print_r($sail);
-							//print_r($bufferm);
-							//if ($sail['status'] == 'Racing') {
-								//print_r($sail);
-								$data = array();
-								//$data['mmsi'] = (int)substr($line,0,9);
-								//$data['id'] = $sail['misnr'].'-'.$sail['usrnr'].'-'.$sail['ubtnr'];
-								$data['id'] = $sail['misnr'].'-'.$sail['usrnr'];
-								$data['datetime'] = date('Y-m-d H:i:s');
-								$data['race_begin'] = date('Y-m-d H:i:s',strtotime($mission_data['leaderboard'][0]['misstart']));
-								$data['last_update'] = date('Y-m-d H:i:s');
-								$data['status'] = $sail['status'];
-								$data['type'] = $sail['btptype'];
-								$data['type_id'] = 36;
-								if (isset($sail['pos'])) {
-									$pos = $Common->convertDecLatLong($sail['pos']);
-									$data['latitude'] = $pos['latitude'];
-									$data['longitude'] = $pos['longitude'];
-								}
-								if ($sail['status'] == 'Racing' && $sail['resultdescr'] != '-') {
-									$resultdescr = explode(',',$sail['resultdescr']);
-									if (count($resultdescr) > 2) {
-										$data['speed'] = round(str_replace(array('Spd: ','kn.'),'',trim($resultdescr[2]))*1.852,2);
-										$data['heading'] = str_replace(array('Hdg: ','°'),'',trim($resultdescr[1]));
-										if (isset($resultdescr[3])) {
-											$data['distance'] = round(str_replace('nm.','',trim(explode(' ',$resultdescr[3])[1]))*1.852,3);
-										}
-									}
-								}
-								$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($sail['ubtname'])));
-								$data['captain_id'] = $sail['usrnr'];
-								$data['captain_name'] = $sail['usrname'];
-								$data['race_id'] = $sail['misnr'];
-								if ($sail['rank'] != 'DNF') $data['race_rank'] = $sail['rank'];
-								$data['race_time'] = $sail['racetime'];
-								if ($mission_user != '') {
-									$data['race_name'] = $mission_name.' ('.$mission_user.')';
-								} else {
-									$data['race_name'] = $mission_name;
-								}
-								//$data['callsign'] = trim(substr($line,100,7);
-								$data['format_source'] = 'sailawayfull';
-								$data['id_source'] = $id_source;
-								if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
-								//print_r($data);
-								//if ($data['race_id'] == '48') print_r($data);
-								//echo 'Add...'."\n";
-								$MI->add($data);
-								unset($data);
-							//}
-							//} else echo $sail['status']."\n";
-						}
-					}
-				}
-				sleep(30);
 			}
+		    }
 		}
+		sleep(10*60);
 	    }
-	    sleep(5);
-	    }
+	    $buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/TrackAllBoats.pl?'.http_build_query($sailawayoption),'get','','','','',30);
+	    if ($buffer != '') {
+		$data = json_decode($buffer,true);
+		//print_r($data);
+		if (isset($data['boats'])) {
+		    foreach ($data['boats'] as $sail) {
+			$data = array();
+			$data['id'] = $sail['ubtnr'];
+			$data['datetime'] = date('Y-m-d H:i:s');
+			if ($sail['online'] == '1') $data['last_update'] = date('Y-m-d H:i:s');
+			$data['latitude'] = $sail['ubtlat'];
+			$data['longitude'] = $sail['ubtlon'];
+			$data['type_id'] = 36;
+			$data['heading'] = $sail['ubtheading'];
+			$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($sail['ubtname'])));
+			$data['captain_name'] = $sail['usrname'];
+			$allboats = array('Sailaway Cruiser 38','Mini Transat','Caribbean Rose','52&#39; Cruising Cat','50&#39; Performance Cruiser','Nordic Folkboat');
+			$boattype = $sail['ubtbtpnr'];
+			if (isset($allboats[$boattype-1])) $data['type'] = $allboats[$boattype-1];
+			$data['speed'] = round($sail['ubtspeed']*3.6,2);
+			$data['format_source'] = 'sailaway';
+			$data['id_source'] = $id_source;
+			if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
+			$MI->add($data);
+			unset($data);
+		    }
+		} elseif ($globalDebug) echo 'Error in JSON parsing';
+	    } elseif ($globalDebug) echo 'Empty result !'."\n";
+
     	    $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] === 'sailaway' && 
 	    (
