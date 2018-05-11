@@ -817,8 +817,8 @@ while ($i > 0) {
 					//$datar['creator'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['usrname'])));
 					$datar['creator'] = '';
 					$datar['name'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle'])));
-					if (isset($mission['misstart'])) $datar['startdate'] = $mission['misstart'];
-					else $datar['startdate'] = '01/01/1970';
+					if (isset($mission['misstart'])) $datar['startdate'] = date('Y-m-d H:i:s',strtotime($mission['misstart']));
+					else $datar['startdate'] = '1970-01-01 00:00:00';
 					/*
 					$markers = array();
 					foreach ($race_data['mission']['course'] as $course) {
