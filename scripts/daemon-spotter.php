@@ -801,7 +801,7 @@ while ($i > 0) {
 
 	    for ($i = 0; $i <= 1; $i++) {
 		if ($globalDebug) echo '! Download... ';
-		$buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMissions.pl?race='.$i.'&tutorial=0&hist=1&racetype=2&challengetype=2');
+		$buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/GetMissions.pl?'.http_build_query($sailawayoption).'&race='.$i.'&tutorial=0&hist=1&racetype=2&challengetype=2','get','','','','',30);
 		if ($globalDebug) echo 'done'."\n";
 		if ($buffer != '') {
 		    $all_data = json_decode($buffer,true);
@@ -809,18 +809,16 @@ while ($i > 0) {
 			foreach ($all_data['missions'] as $mission) {
 				$mission_user = $mission['usrname'];
 				$mission_name = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle']));
-				if (!(!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race'])))) {
-					$bufferm = '';
-					$racebuffer = '';
-				}
-				if ($racebuffer != '') {
-					unset($racebuffer);
+				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
+					print_r($mission);
 					$datar = array();
 					$datar['id'] = $mission['misnr'];
-					$datar['desc'] = $race_data['mission']['misdescr'];
-					$datar['creator'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($race_data['mission']['usrname'])));
+					$datar['desc'] = $mission['misdescr'];
+					//$datar['creator'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['usrname'])));
+					$datar['creator'] = '';
 					$datar['name'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle'])));
-					$datar['startdate'] = $mission['misstartdatetime'];
+					if (isset($mission['misstart'])) $datar['startdate'] = $mission['misstart'];
+					else $datar['startdate'] = '01/01/1970';
 					/*
 					$markers = array();
 					foreach ($race_data['mission']['course'] as $course) {
@@ -829,11 +827,14 @@ while ($i > 0) {
 					$datar['markers'] = json_encode($markers);
 					//print_r($datar);
 					*/
+					$datar['markers'] = '';
 					$MI->race_add($datar);
+					unset($datar);
 				}
 			}
 		    }
 		}
+		if ($globalDebug) echo '=== Wait... ===';
 		sleep(10*60);
 	    }
 	    $buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/TrackAllBoats.pl?'.http_build_query($sailawayoption),'get','','','','',30);
