@@ -810,7 +810,7 @@ while ($i > 0) {
 				$mission_user = $mission['usrname'];
 				$mission_name = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($mission['mistitle']));
 				if (!isset($globalFilter['sailway']['race']) || (isset($globalFilter['sailway']['race']) && in_array($mission['misnr'],$globalFilter['sailway']['race']))) {
-					print_r($mission);
+					//print_r($mission);
 					$datar = array();
 					$datar['id'] = $mission['misnr'];
 					$datar['desc'] = $mission['misdescr'];
