@@ -407,9 +407,11 @@ class METAR {
 					$pieces = preg_split('/\s/',$line);
 					if ($pieces[0] == 'METAR') $pos++;
 					if (strlen($pieces[$pos]) != 4) $pos++;
-					$location = $pieces[$pos];
-					//if ($location == 'LFLL') echo 'location: '.$location.' - date: '.$date.' - data: '.$line."\n";
-					echo $this->addMETAR($location,$line,$date);
+					if (isset($pieces[$pos])) {
+						$location = $pieces[$pos];
+						//if ($location == 'LFLL') echo 'location: '.$location.' - date: '.$date.' - data: '.$line."\n";
+						echo $this->addMETAR($location,$line,$date);
+					}
 				}
 			}
 			fclose($handle);
