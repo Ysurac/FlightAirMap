@@ -1089,6 +1089,12 @@ class SpotterImport {
 				$SpotterLive->db = null;
 				//SpotterLive->deleteLiveSpotterData();
 				if ($globalDebug) echo " Done\n";
+				if ($globalDebug) echo "---- Deleting old APRS data...";
+				$Spotter = new Spotter($this->db);
+				$Spotter->deleteOldAPRSData();
+				$Spotter->db = null;
+				//SpotterLive->deleteLiveSpotterData();
+				if ($globalDebug) echo " Done\n";
 				$this->last_delete_hourly = time();
 			    } else {
 				$this->del();

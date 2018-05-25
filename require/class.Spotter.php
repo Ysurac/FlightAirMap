@@ -12569,6 +12569,29 @@ class Spotter{
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
+	
+	/**
+	* Deletes old aprs data
+	*
+	* @return String success or false
+	*
+	*/
+	public function deleteOldAPRSData()
+	{
+		global $globalDBdriver;
+		if ($globalDBdriver == 'mysql') {
+			$query  = "DELETE FROM spotter_output WHERE DATE_SUB(UTC_TIMESTAMP(),INTERVAL 23 HOUR) >= spotter_output.date AND format_source = 'aprs'";
+		} else {
+			$query  = "DELETE FROM spotter_output WHERE NOW() AT TIME ZONE 'UTC' - INTERVAL '23 HOURS' >= spotter_ouput.date AND format_source = 'aprs'";
+		}
+		try {
+			$sth = $this->db->prepare($query);
+			$sth->execute();
+		} catch(PDOException $e) {
+			return "error";
+		}
+		return "success";
+	}
 }
 /*
 $Spotter = new Spotter();
