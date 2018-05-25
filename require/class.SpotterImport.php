@@ -233,7 +233,7 @@ class SpotterImport {
     }
 
     public function add($line) {
-	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate, $globalLiveInterval, $GeoidClass, $globalArchive;
+	global $globalPilotIdAccept, $globalAirportAccept, $globalAirlineAccept, $globalAirlineIgnore, $globalAirportIgnore, $globalFork, $globalDistanceIgnore, $globalDaemon, $globalSBS1update, $globalDebug, $globalIVAO, $globalVATSIM, $globalphpVMS, $globalCoordMinChange, $globalDebugTimeElapsed, $globalCenterLatitude, $globalCenterLongitude, $globalBeta, $globalSourcesupdate, $globalAirlinesSource, $globalVAM, $globalAllFlights, $globalServerAPRS, $APRSSpotter, $globalNoImport, $globalNoDB, $globalVA, $globalAircraftMaxUpdate, $globalAircraftMinUpdate, $globalLiveInterval, $GeoidClass, $globalArchive, $globalAPRSdelete;
 	//if (!isset($globalDebugTimeElapsed) || $globalDebugTimeElapsed == '') $globalDebugTimeElapsed = FALSE;
 	if (!isset($globalCoordMinChange) || $globalCoordMinChange == '') $globalCoordMinChange = '0.01';
 	if (!isset($globalAircraftMaxUpdate) || $globalAircraftMaxUpdate == '') $globalAircraftMaxUpdate = 3000;
@@ -1089,12 +1089,13 @@ class SpotterImport {
 				$SpotterLive->db = null;
 				//SpotterLive->deleteLiveSpotterData();
 				if ($globalDebug) echo " Done\n";
-				if ($globalDebug) echo "---- Deleting old APRS data...";
-				$Spotter = new Spotter($this->db);
-				$Spotter->deleteOldAPRSData();
-				$Spotter->db = null;
-				//SpotterLive->deleteLiveSpotterData();
-				if ($globalDebug) echo " Done\n";
+				if (isset($globalAPRSdelete) && $globalAPRSdelete) {
+					if ($globalDebug) echo "---- Deleting old APRS data...";
+					$Spotter = new Spotter($this->db);
+					$Spotter->deleteOldAPRSData();
+					$Spotter->db = null;
+					if ($globalDebug) echo " Done\n";
+				}
 				$this->last_delete_hourly = time();
 			    } else {
 				$this->del();
