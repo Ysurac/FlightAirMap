@@ -6,14 +6,14 @@ $Spotter = new Spotter();
 if (isset($_GET['start_date'])) {
 	//for the date manipulation into the query
 	if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
-		$start_date = $_GET['start_date'].":00";
-		$end_date = $_GET['end_date'].":00";
+		$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
+		$end_date = date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
 		$sql_date = $start_date.",".$end_date;
 	} else if($_GET['start_date'] != ""){
-		$start_date = $_GET['start_date'].":00";
+		$start_date = date("Y-m-d",strtotime($_GET['start_date']))." 00:00:00";
 		$sql_date = $start_date;
 	} else if($_GET['start_date'] == "" && $_GET['end_date'] != ""){
-		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".$_GET['end_date'].":00";
+		$end_date = date("Y-m-d H:i:s", strtotime("2014-04-12")).",".date("Y-m-d",strtotime($_GET['end_date']))." 00:00:00";
 		$sql_date = $end_date;
 	} else $sql_date = '';
 } else $sql_date = '';
