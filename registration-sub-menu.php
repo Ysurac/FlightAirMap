@@ -15,7 +15,7 @@ if ($spotter_array[0]['registration'] != "")
 </span>
 <div class="sub-menu sub-menu-container">
 	<ul class="nav nav-pills">
-		<li><a href="<?php print $globalURL; ?>/registration/<?php print $_GET['registration']; ?>" <?php if (strtolower($current_page) == "registration-detailed"){ print 'class="active"'; } ?>><?php echo _("Detailed"); ?></a></li>
+		<li><a href="<?php print $globalURL; ?>/registration/<?php print $registration; ?>" <?php if (strtolower($current_page) == "registration-detailed"){ print 'class="active"'; } ?>><?php echo _("Detailed"); ?></a></li>
 		<li class="dropdown">
 		    <a class="dropdown-toggle <?php if(strtolower($current_page) == "registration-statistics-departure-airport" || strtolower($current_page) == "registration-statistics-departure-airport-country" || strtolower($current_page) == "registration-statistics-arrival-airport" || strtolower($current_page) == "registration-statistics-arrival-airport-country"){ print 'active'; } ?>" data-toggle="dropdown" href="#">
 		      <?php _("Airport"); ?> <span class="caret"></span>
