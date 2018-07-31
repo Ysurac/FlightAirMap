@@ -853,7 +853,7 @@ while ($i > 0) {
 			$data['heading'] = $sail['ubtheading'];
 			$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($sail['ubtname'])));
 			$data['captain_name'] = $sail['usrname'];
-			$allboats = array('Sailaway Cruiser 38','Mini Transat','Caribbean Rose','52&#39; Cruising Cat','50&#39; Performance Cruiser','Nordic Folkboat');
+			$allboats = array('Sailaway Cruiser 38','Mini Transat','Caribbean Rose','52&#39; Cruising Cat','50&#39; Performance Cruiser','Nordic Folkboat','32&#39; Offshore Racer');
 			$boattype = $sail['ubtbtpnr'];
 			if (isset($allboats[$boattype-1])) $data['type'] = $allboats[$boattype-1];
 			$data['speed'] = round($sail['ubtspeed']*3.6,2);
@@ -869,7 +869,7 @@ while ($i > 0) {
     	    $last_exec[$id]['last'] = time();
 	} elseif ($value['format'] === 'sailaway' && 
 	    (
-		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > 5*60))
+		(!isset($globalSources[$id]['minfetch']) && (time() - $last_exec[$id]['last'] > 10*60))
 	    )
 	) {
 	    /*
@@ -907,7 +907,7 @@ while ($i > 0) {
 			$data['heading'] = $sail['ubtheading'];
 			$data['ident'] = trim(preg_replace('/[\x00-\x1F\x7F-\xFF]/', '',$Common->remove_accents($sail['ubtname'])));
 			$data['captain_name'] = $sail['usrname'];
-			$allboats = array('Sailaway Cruiser 38','Mini Transat','Caribbean Rose','52&#39; Cruising Cat','50&#39; Performance Cruiser','Nordic Folkboat');
+			$allboats = array('Sailaway Cruiser 38','Mini Transat','Caribbean Rose','52&#39; Cruising Cat','50&#39; Performance Cruiser','Nordic Folkboat','32&#39; Offshore Racer');
 			$boattype = $sail['ubtbtpnr'];
 			if (isset($allboats[$boattype-1])) $data['type'] = $allboats[$boattype-1];
 			$data['speed'] = round($sail['ubtspeed']*3.6,2);
@@ -1451,7 +1451,8 @@ while ($i > 0) {
 		foreach ($all_data as $line) {
 	    	    $data = array();
 	    	    //$data['id'] = $line['id']; // id not usable
-	    	    if (isset($line['pilotid'])) $data['id'] = $line['pilotid'].$line['flightnum'];
+	    	    if (isset($line['pilotid']) && isset($line['registration'])) $data['id'] = $line['pilotid'].$line['flightnum'].trim($line['registration']);
+	    	    elseif (isset($line['pilotid'])) $data['id'] = $line['pilotid'].$line['flightnum'];
 	    	    $data['hex'] = substr(str_pad(bin2hex($line['flightnum']),6,'000000',STR_PAD_LEFT),-6); // hex
 	    	    if (isset($line['pilotname'])) $data['pilot_name'] = $line['pilotname'];
 	    	    if (isset($line['pilotid'])) $data['pilot_id'] = $line['pilotid'];
@@ -1476,7 +1477,7 @@ while ($i > 0) {
 	    	    $data['arrival_airport_icao'] = $line['arricao'];
     		    $data['arrival_airport_time'] = $line['arrtime'];
     		    if (isset($line['registration'])) {
-    			$data['registration'] = $line['registration'];
+    			$data['registration'] = trim($line['registration']);
     			//if (isset($line['aircraft'])) $data['id'] = $line['aircraft'];
     		    } else $data['registration'] = $line['aircraft'];
 		    if (isset($value['noarchive']) && $value['noarchive'] === TRUE) $data['noarchive'] = true;
