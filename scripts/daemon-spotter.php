@@ -2157,8 +2157,6 @@ while ($i > 0) {
 			//connect_all($hosts);
 			$aprs_connect = 0;
 			if ($reset%5 === 0) sleep(20);
-			if ($reset%10 === 0) sleep(100);
-			if ($reset%20 === 0) sleep(200);
 			if ($reset > 100) exit('Too many attempts...');
 			if ($globalDebug) echo "Restart all connections...";
 			connect_all($globalSources);
