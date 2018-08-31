@@ -549,7 +549,7 @@ class SpotterImport {
 			if ((isset($timediff) && !isset($timediff_archive)) || (isset($this->all_flights[$id]['archive_latitude']) && isset($this->all_flights[$id]['archive_longitude']) && isset($this->all_flights[$id]['livedb_latitude']) && isset($this->all_flights[$id]['livedb_longitude']))) {
 			    if ((isset($timediff_archive) && $timediff_archive > $globalAircraftMaxUpdate)
 				|| (isset($line['format_source']) && $line['format_source'] == 'airwhere') 
-				|| !$Common->checkLine($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'],$line['latitude'],$line['longitude'])) {
+				|| ((isset($this->all_flights[$id]['archive_latitude']) && isset($this->all_flights[$id]['archive_longitude']) && isset($this->all_flights[$id]['livedb_latitude']) && isset($this->all_flights[$id]['livedb_longitude'])&& !$Common->checkLine($this->all_flights[$id]['archive_latitude'],$this->all_flights[$id]['archive_longitude'],$this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'],$line['latitude'],$line['longitude']))) {
 				$this->all_flights[$id]['archive_latitude'] = $line['latitude'];
 				$this->all_flights[$id]['archive_longitude'] = $line['longitude'];
 				$this->all_flights[$id]['putinarchive'] = true;
