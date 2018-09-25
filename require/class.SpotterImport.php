@@ -406,7 +406,7 @@ class SpotterImport {
 		if (isset($line['ident']) && trim($line['ident']) != '' && $line['ident'] != '????????' && $line['ident'] != '00000000' && ($this->all_flights[$id]['ident'] != trim($line['ident'])) && preg_match('/^[a-zA-Z0-9]+$/', $line['ident'])) {
 
 		    if ($this->all_flights[$id]['addedSpotter'] == 1) {
-			if ($globalVA !== TRUE && $globalIVAO !== TRUE && $globalVATSIM !== TRUE && $globalphpVMS !== TRUE && $globalVAM !== TRUE && $this->all_flights[$id]['lastupdate'] < time() - 1600) {
+			if ($globalVA !== TRUE && $globalIVAO !== TRUE && $globalVATSIM !== TRUE && $globalphpVMS !== TRUE && $globalVAM !== TRUE && $this->all_flights[$id]['lastupdate'] < time() - 800) {
 				if ($globalDebug) echo '---!!!! New ident, reset aircraft data...'."\n";
 				$this->all_flights[$id] = array_merge($this->all_flights[$id],array('addedSpotter' => 0));
 				$this->all_flights[$id] = array_merge($this->all_flights[$id],array('forcenew' => 1));
