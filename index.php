@@ -57,28 +57,28 @@ require_once('header.php');
 <?php
     if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
-<script src="<?php echo $globalURL; ?>/js/map.3d.js.php<?php if (isset($tsk)) print '?tsk='.$tsk; ?>"></script>
-<script src="<?php echo $globalURL; ?>/js/meuusjs.1.0.3.min.js"></script>
-<script src="<?php echo $globalURL; ?>/js/map.3d.weather.js"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/map.3d.js.php<?php if (isset($tsk)) print '?tsk='.$tsk; ?>"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/meuusjs.1.0.3.min.js"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/map.3d.weather.js"></script>
 <?php
 	if (!isset($globalAircraft) || $globalAircraft) {
 ?>
-<script src="<?php echo $globalURL; ?>/js/map-aircraft.3d.js.php"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/map-aircraft.3d.js.php"></script>
 <?php
 	}
 	if (!isset($globalSatellite) || $globalSatellite) {
 ?>
-<script src="<?php echo $globalURL; ?>/js/map-satellite.3d.js.php"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/map-satellite.3d.js.php"></script>
 <?php
 	}
 	if (isset($globalTracker) && $globalTracker) {
 ?>
-<script src="<?php echo $globalURL; ?>/js/map-tracker.3d.js.php"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/map-tracker.3d.js.php"></script>
 <?php
 	}
 	if (isset($globalMarine) && $globalMarine) {
 ?>
-<script src="<?php echo $globalURL; ?>/js/map-marine.3d.js.php"></script>
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/map-marine.3d.js.php"></script>
 <?php
 	}
     }

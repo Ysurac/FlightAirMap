@@ -58,8 +58,8 @@ if (isset($_POST['removefilters'])) {
 <link rel="shortcut icon" type="image/x-icon" href="<?php print $globalURL; ?>/favicon.ico">
 <link rel="apple-touch-icon" href="<?php print $globalURL; ?>/images/touch-icon.png">
 <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <script type="text/javascript" src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script type="text/javascript" src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/js/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/jquery-ui.min.css" />
@@ -84,7 +84,7 @@ if (strtolower($current_page) == "about")
 {
 ?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
-<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 <?php
 }
 ?>
@@ -92,7 +92,7 @@ if (strtolower($current_page) == "about")
 if (strtolower($current_page) == "search")
 {
 ?>
-<script src="<?php print $globalURL; ?>/js/search.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/search.js"></script>
 <?php
 }
 ?>
@@ -102,9 +102,9 @@ if (strtolower($current_page) == "index")
 ?>
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
-<script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/jquery-sidebar.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.common.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery-sidebar.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map.common.js"></script>
 <?php 
 	if ((!isset($_COOKIE['MapFormat']) && isset($globalMap3Ddefault) && $globalMap3Ddefault) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] == '3d')) {
 ?>
@@ -113,34 +113,34 @@ if (strtolower($current_page) == "index")
 		// || isset($globalOffline) && $globalOffline) {
 ?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/js/Cesium/Widgets/widgets.css" />
-<script src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/Cesium/Cesium.js"></script>
 <?php
 		} else {
 ?>
-<link rel="stylesheet" href="https://cesiumjs.org/releases/1.44/Build/Cesium/Widgets/widgets.css" />
-<script src="https://cesiumjs.org/releases/1.44/Build/Cesium/Cesium.js"></script>
+<link rel="stylesheet" href="https://cesiumjs.org/releases/1.47/Build/Cesium/Widgets/widgets.css" />
+<script type="text/javascript" src="https://cesiumjs.org/releases/1.47/Build/Cesium/Cesium.js"></script>
 <?php
 		}
 ?>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/cesium-minimap.css" />
-<script src="<?php print $globalURL; ?>/js/cesium-minimap.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/cesium-minimap.js"></script>
 <?php
 	} else {
 ?>
 
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
-<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-velocity.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-velocity.min.js"></script>
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-velocity.min.css" />
-<script src="<?php print $globalURL; ?>/js/leaflet.textpath.js"></script>
-<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
-<script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-terminator.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet.textpath.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-terminator.js"></script>
 
 <?php
 		if (isset($_COOKIE['Map2DBuildings']) && $_COOKIE['Map2DBuildings'] == 'true') {
 ?>
-<script src="<?php print $globalURL; ?>/js/OSMBuildings-Leaflet.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/OSMBuildings-Leaflet.js"></script>
 <?php
 		}
 ?>
@@ -148,8 +148,8 @@ if (strtolower($current_page) == "index")
 		if ($globalMapProvider == 'MapboxGL' || (isset($_COOKIE['MapType']) && $_COOKIE['MapType'] == 'MapboxGL')) {
 ?>
 <link href="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.css" rel='stylesheet' />
-<script src="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-mapbox-gl.js"></script>
+<script type="text/javascript" src="https://cdn.osmbuildings.org/mapbox-gl/0.40.0/mapbox-gl.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-mapbox-gl.js"></script>
 <?php
 		}
 ?>
@@ -157,31 +157,31 @@ if (strtolower($current_page) == "index")
 <?php
 		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
-<script src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
-<!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
-<script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
+<!--<script type="text/javascript" src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Hybrid' || $MapType == 'MapQuest-Aerial')) {
 ?>
-<!--<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
-<script src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
+<!--<script type="text/javascript" src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
+<script type="text/javascript" src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
 ?>
-<script src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
 <?php
 		}
 ?>
@@ -189,7 +189,7 @@ if (strtolower($current_page) == "index")
 		if ($MapType == 'Yandex') {
 ?>
 <script src="https://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
 <?php
 		}
 	}
@@ -197,40 +197,40 @@ if (strtolower($current_page) == "index")
 <?php 
 	if ((!isset($_COOKIE['MapFormat']) && (!isset($globalMap3Ddefault) || !$globalMap3Ddefault)) || (isset($_COOKIE['MapFormat']) && $_COOKIE['MapFormat'] != '3d')) {
 ?>
-<script src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-playback.js"></script>
 <?php 
 		if (isset($_POST['archive'])) {
 ?>
 <!--
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.timedimension.control.min.css" />
-<script src="<?php print $globalURL; ?>/js/iso8601.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet.timedimension.src.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/iso8601.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet.timedimension.src.js"></script>
 -->
-<script src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?>&archive&begindate=<?php print strtotime($_POST['start_date']); ?>&enddate=<?php print strtotime($_POST['end_date']); ?>&archivespeed=<?php print $_POST['archivespeed']; ?>"></script>
 <?php
 		} else {
 ?>
-<script src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?><?php if (isset($tsk)) print '&tsk='.$tsk; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map.2d.js.php?<?php print time(); ?><?php if (isset($tsk)) print '&tsk='.$tsk; ?>"></script>
 <?php
 		}
 		if (!isset($globalAircraft) || $globalAircraft) {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?<?php print time(); ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?<?php print time(); ?>"></script>
 <?php
 		}
 		if (isset($globalTracker) && $globalTracker) {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-tracker.2d.js.php?<?php print time(); ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-tracker.2d.js.php?<?php print time(); ?>"></script>
 <?php
 		}
 		if (isset($globalMarine) && $globalMarine) {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-marine.2d.js.php?<?php print time(); ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-marine.2d.js.php?<?php print time(); ?>"></script>
 <?php
 		}
 		if (isset($globalSatellite) && $globalSatellite) {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-satellite.2d.js.php?<?php print time(); ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-satellite.2d.js.php?<?php print time(); ?>"></script>
 <?php
 		}
 	}
@@ -245,67 +245,67 @@ if ((strtolower($current_page) == "ident-detailed" && isset($ident) && isset($gl
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
 <link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
-<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
-<script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
-<script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.common.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.2d.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map.common.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map.2d.js.php?ident=<?php print $ident; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
 <?php
 		if (!isset($type) || $type == 'aircraft') {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
 <?php
 		} elseif (isset($type) && $type == 'marine') {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-marine.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-marine.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
 <?php
 		} elseif (isset($type) && $type == 'tracker') {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-tracker.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-tracker.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
 <?php
 		} elseif (isset($type) && $type == 'satellite') {
 ?>
-<script src="<?php print $globalURL; ?>/js/map-satellite.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-satellite.2d.js.php?<?php print time(); ?>&ident=<?php print $ident; ?>"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
-<script src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
-<!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
-<script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
+<!--<script type="text/javascript" src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Hybrid' || $MapType == 'MapQuest-Aerial')) {
 ?>
-<!--<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
-<script src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
+<!--<script type="text/javascript" src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
+<script type="text/javascript" src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
 ?>
-<script src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
 <?php
 		}
 ?>
 <?php
 		if ($MapType == 'Yandex') {
 ?>
-<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
+<script type="text/javascript" src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
 <?php
 		}
 ?>
@@ -318,49 +318,49 @@ if (strtolower($current_page) == "flightid-overview" && isset($globalArchive) &&
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/style-map.css?<?php print date("H"); ?>" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
 <link type="text/css" rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet-sidebar.css" />
-<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
-<script src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
-<script src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
-<script src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.common.js"></script>
-<script src="<?php print $globalURL; ?>/js/map.2d.js.php?flightaware_id=<?php print $flightaware_id; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
-<script src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?flightaware_id=<?php print $flightaware_id; ?>&<?php print time(); ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/Marker.Rotate.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/MovingMarker.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/jquery.idle.min.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map.common.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map.2d.js.php?flightaware_id=<?php print $flightaware_id; ?><?php if(isset($latitude)) print '&latitude='.$latitude; ?><?php if(isset($longitude)) print '&longitude='.$longitude; ?>&<?php print time(); ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/map-aircraft.2d.js.php?flightaware_id=<?php print $flightaware_id; ?>&<?php print time(); ?>"></script>
 <?php
 		if (isset($globalGoogleAPIKey) && $globalGoogleAPIKey != '' && ($MapType == 'Google-Roadmap' || $MapType == 'Google-Satellite' || $MapType == 'Google-Hybrid' || $MapType == 'Google-Terrain')) {
 ?>
-<script src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3&key=<?php print $globalGoogleAPIKey; ?>"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Google.js"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalBingMapKey) && $globalBingMapKey != '') {
 ?>
-<!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
-<script src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
+<!--<script type="text/javascript" src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>-->
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Bing.js"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalMapQuestKey) && $globalMapQuestKey != '' && ($MapType == 'MapQuest-OSM' || $MapType == 'MapQuest-Hybrid' || $MapType == 'MapQuest-Aerial')) {
 ?>
-<!--<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
-<script src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
+<!--<script type="text/javascript" src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>-->
+<script type="text/javascript" src="https://open.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=<?php print $globalMapQuestKey; ?>"></script>
 <?php
 		}
 ?>
 <?php
 		if (isset($globalHereappId) && $globalHereappId != '' && isset($globalHereappCode) && $globalHereappCode != '') {
 ?>
-<script src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Here.js"></script>
 <?php
 		}
 ?>
 <?php
 		if ($MapType == 'Yandex') {
 ?>
-<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
-<script src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
+<script type="text/javascript" src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=en_US" type="text/javascript"></script>
+<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet-Yandex.js"></script>
 <?php
 		}
 ?>
@@ -748,7 +748,7 @@ if (isset($globalPubHeader)) print $globalPubHeader;
 	</form>
 	</div>
   	<div class="social">
-  		<!-- I'm not sociable -->
+  		<!-- I'm not sociable '-->
   	</div>
     </div><!--/.nav-collapse -->
   </div>
@@ -781,7 +781,7 @@ if ((strpos(strtolower($current_page),'airport-') !== false && strpos(strtolower
     <div class="top-header clear" role="main">
         <div id="map"></div>
 	<link rel="stylesheet" href="<?php print $globalURL; ?>/css/leaflet.css" />
-	<script src="<?php print $globalURL; ?>/js/leaflet.js"></script>
+	<script type="text/javascript" src="<?php print $globalURL; ?>/js/leaflet.js"></script>
 
         <script>
         var map;
