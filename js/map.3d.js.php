@@ -1,6 +1,7 @@
 <?php
 	require_once('../require/settings.php');
 	require_once('../require/class.Language.php'); 
+	header('Content-Type: text/javascript');
 ?>
 /**
  * This javascript is part of FlightAirmap.
@@ -557,7 +558,7 @@ function vrtheworldterrain() {
 }
 function displayMiniMap() {
 	CesiumMiniMap(viewer, {osm: true});
-	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)'));
+	viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('(Minimap: Map data © OpenStreetMap contributors, Open Database Licence)',true));
 }
 
 if (MapTerrain == 'world' || MapTerrain == '') {

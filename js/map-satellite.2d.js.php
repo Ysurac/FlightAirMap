@@ -2,6 +2,7 @@
 require_once('../require/settings.php');
 require_once('../require/class.Language.php'); 
 setcookie("MapFormat",'2d');
+header('Content-Type: text/javascript');
 ?>
 /**
  * This javascript is part of FlightAirmap.

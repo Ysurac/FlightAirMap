@@ -1,6 +1,7 @@
 <?php
 	require_once('../require/settings.php');
 	require_once('../require/class.Language.php'); 
+	header('Content-Type: text/javascript');
 ?>
 /**
  * This javascript is part of FlightAirmap.
