@@ -2687,7 +2687,7 @@ class Spotter{
 
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		$sth->closeCursor();
-		if (count($row) > 0) {
+		if (is_array($row)) {
 			return $row;
 		} else return array();
 	}
