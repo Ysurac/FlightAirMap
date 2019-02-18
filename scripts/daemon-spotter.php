@@ -976,9 +976,13 @@ while ($i > 0) {
 	    		//$data['arrival_airport_time'] = ;
 	    		if ($line[9] != '') {
 	    		    $aircraft_data = explode('/',$line[9]);
-	    		    if (isset($aircraft_data[1])) {
-	    			$data['aircraft_icao'] = $aircraft_data[1];
-	    		    }
+	    		    if (count($aircraft_data) == 2) {
+				//line[9] may equal to something like 'B738/L' in old FSD server's whazzup.txt file
+	    			$data['aircraft_icao'] = $aircraft_data[0];
+	    		    } else if (count($aircraft_data) > 2) {
+				//line[9] may equal to something like 'H/B748/L'
+				$data['aircraft_icao'] = $aircraft_data[1];
+			    }
         		}
 	    		/*
 	    		if ($value === 'whazzup') $data['format_source'] = 'whazzup';
