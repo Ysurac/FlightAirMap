@@ -6,6 +6,7 @@
  * Licensed under AGPL license.
  * For more information see: https://www.flightairmap.com/
 */
+
 require_once(dirname(__FILE__).'/class.Connection.php');
 require_once(dirname(__FILE__).'/class.Spotter.php');
 require_once(dirname(__FILE__).'/class.SpotterImport.php');
@@ -120,9 +121,11 @@ class ACARS {
 		$message = '';
 		$result = array();
 		$n = sscanf($data,'%*[0-9a-z.] %*d %*02d/%*02d/%*04d %*02d:%*02d:%*02d %*d %*[0-9-] %*[A-Z0-9] %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
-		if ($n == 0) $n = sscanf($data,'AC%*c %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
-		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%6[0-9A-Z-],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
-		if ($n == 0) $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%5[0-9A-Z],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		if ($n == 0 || $message == '') $n = sscanf($data,'AC%*c %7s %*c %2[0-9a-zA-Z_] %d %4[0-9A-Z] %6[0-9A-Z] %[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		if ($n == 0 || $message == '') $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%6[0-9A-Z-],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		if ($n == 0 || $message == '') $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%6[0-9A-Z-],,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		if ($n == 0 || $message == '') $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%5[0-9A-Z],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
+		if ($n == 0 || $message == '') $n = sscanf($data,'%*04d-%*02d-%*02d,%*02d:%*02d:%*02d,%*7s,%*c,%6[0-9A-Z-],%*c,%2[0-9a-zA-Z_],%d,%4[0-9A-Z],%6[0-9A-Z],%[^\r\n]',$registration,$label,$block_id,$msg_no,$ident,$message);
 		if ($n != 0 && ($registration != '' || $ident != '' || $label != '' || $block_id != '' || $msg_no != '')) {
 			$registration = str_replace('.','',$registration);
 			$result = array('registration' => $registration, 'ident' => $ident,'label' => $label, 'block_id' => $block_id,'msg_no' => $msg_no,'message' => $message);

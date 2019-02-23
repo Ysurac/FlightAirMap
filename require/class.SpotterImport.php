@@ -722,7 +722,7 @@ class SpotterImport {
 		    //$dataFound = true;
 		}
 
-		if (isset($line['altitude']) && $line['altitude'] != '') {
+		if (isset($line['altitude']) && $line['altitude'] != '' && is_numeric($line['altitude'])) {
 			if (isset($line['altitude_relative']) && isset($GeoidClass) && is_object($GeoidClass)) {
 				if ($line['altitude_relative'] == 'AMSL' || $line['altitude_relative'] == 'MSL') {
 					$geoid = round($GeoidClass->get($this->all_flights[$id]['livedb_latitude'],$this->all_flights[$id]['livedb_longitude'])*3.28084,2);
