@@ -2817,11 +2817,11 @@ class update_db {
 	public static function update_ucsdb() {
 		global $tmp_dir, $globalDebug;
 		if ($globalDebug) echo "Download UCS DB : Download...";
-		update_db::download('https://s3.amazonaws.com/ucs-documents/nuclear-weapons/sat-database/8-10-18-update/UCS_Satellite_Database_officialname_5-1-2018.txt',$tmp_dir.'UCS_Satellite_Database_officialname_9-1-2017.txt');
-		if (file_exists($tmp_dir.'UCS_Satellite_Database_officialname_5-1-2018.txt')) {
+		update_db::download('https://s3.amazonaws.com/ucs-documents/nuclear-weapons/sat-database/5-9-19-update/UCS_Satellite_Database_officialname_4-1-2019.txt',$tmp_dir.'UCS_Satellite_Database_officialname_4-1-2019.txt');
+		if (file_exists($tmp_dir.'UCS_Satellite_Database_officialname_4-1-2019.txt')) {
 			if ($globalDebug) echo "Add to DB...";
-			$error = update_db::satellite_ucsdb($tmp_dir.'UCS_Satellite_Database_officialname_5-1-2018.txt');
-		} else $error = "File ".$tmp_dir.'UCS_Satellite_Database_officialname_5-1-2018.txt'." doesn't exist. Download failed.";
+			$error = update_db::satellite_ucsdb($tmp_dir.'UCS_Satellite_Database_officialname_4-1-2019.txt');
+		} else $error = "File ".$tmp_dir.'UCS_Satellite_Database_officialname_4-1-2019.txt'." doesn't exist. Download failed.";
 		if ($error != '') {
 			echo $error."\n";
 		} elseif ($globalDebug) echo "Done\n";
