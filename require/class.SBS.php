@@ -19,7 +19,12 @@ class SBS {
 		// Not yet finished, no CRC checks
 		$data = array();
 		$typehex = substr($buffer,0,1);
-		if ($typehex == '*' || $typehex == ':') $hex = substr($buffer,1);
+		if ($typehex == '*' || $typehex == ':') {
+			$hex = substr($buffer,1);
+			if(substr($hex,-1,1)==";") {
+				$hex=substr($hex,0,-1);
+			}
+		}
 		//elseif ($typehex == '@' || $typehex == '%') $hex = substr($buffer,13,-13);
 		elseif ($typehex == '@' || $typehex == '%') $hex = substr($buffer,13,-1);
 		else $hex = substr($buffer,1,-1);
