@@ -147,7 +147,8 @@ class Weather {
 	}
 
 	public function oscar_wave() {
-		global $globalWavesPath;
+		global $globalWavesPath, $globalPODACCuser,$globalPODACCpass;
+		if ($globalPODACCuser == '' && $globalPODACCpass == '') return;
 		if (isset($globalWavesPath) && $globalWavesPath != '') {
 			$grib2json = $globalWavesPath['grib2json'];
 			$wavepathsrc = $globalWavesPath['source'];
@@ -160,11 +161,12 @@ class Weather {
 		
 		$url = 'https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-OSCAR-03D01&itemsPerPage=1&sortBy=timeDesc&format=atom&pretty=false';
 		$Common = new Common();
+		$auth = base64_encode("$globalPODACCuser:$globalPODACCpass");
 		$oscarlst = $Common->getData($url);
 		$oscarlst_xml = json_decode(json_encode(simplexml_load_string($oscarlst)),true);
 		foreach ($oscarlst_xml['entry']['link'] as $oscarlnk) {
 			if ($oscarlnk['@attributes']['type'] == 'application/x-netcdf') {
-				$Common->download($oscarlnk['@attributes']['href'],$wavepathsrc.'.gz');
+				$Common->download($oscarlnk['@attributes']['href'],$wavepathsrc.'.gz','',array("Authorization: BASIC $auth"));
 				break;
 			}
 		}

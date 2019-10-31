@@ -1019,6 +1019,18 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</p>
 			</div>
 			<br />
+			<div id="podaac">
+				<p>
+					<label for="podaccuser">PO.DAAC username (used for waves)</label>
+					<input type="text" name="podaccuser" id="podaccuser" value="<?php if (isset($globalPODAACuser)) print $globalPODAACuser; ?>" />
+				</p>
+				<p>
+					<label for="podaccpass">PO.DAAC password</label>
+					<input type="text" name="podaccpass" id="podaccpass" value="<?php if (isset($globalPODAACpass)) print $globalPODAACpass; ?>" />
+				</p>
+				<p class="help-block">Register an account on <a href="https://podaac-tools.jpl.nasa.gov/drive/">https://podaac-tools.jpl.nasa.gov/drive/</a></p>
+			</div>
+			<br />
 			<p>
 				<label for="bitly">Bit.ly access token api (used in search page)</label>
 				<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
@@ -1467,6 +1479,11 @@ if (isset($_POST['dbtype'])) {
 
 	$bitly = filter_input(INPUT_POST,'bitly',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalBitlyAccessToken' => $bitly));
+
+	$podaccuser = filter_input(INPUT_POST,'podaccuser',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalPODACCuser' => $podaccuser));
+	$podaccpass = filter_input(INPUT_POST,'podaccpass',FILTER_SANITIZE_STRING);
+	$settings = array_merge($settings,array('globalPODACCpass' => $podaccpass));
 
 	$customcss = filter_input(INPUT_POST,'customcss',FILTER_SANITIZE_STRING);
 	$settings = array_merge($settings,array('globalCustomCSS' => $customcss));

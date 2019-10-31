@@ -86,6 +86,7 @@ class Common {
 		}
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
+		//var_dump($info);
 		curl_close($ch);
 		if ($info['http_code'] == '503' && strstr($result,'DDoS protection by CloudFlare')) {
 			echo "Cloudflare Detected\n";
@@ -109,18 +110,22 @@ class Common {
 	}
 
 
-	public static function download($url, $file, $referer = '') {
+	public static function download($url, $file, $referer = '', $headers = '') {
 		global $globalDebug, $globalProxy, $globalForceIPv4;
 		$fp = fopen($file, 'w');
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, '');
 		if ($referer != '') curl_setopt($ch, CURLOPT_REFERER, $referer);
 		if (isset($globalForceIPv4) && $globalForceIPv4) {
 			if (defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
+		}
+		if ($headers != '') {
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		}
 		if (isset($globalProxy) && $globalProxy != '') {
 			curl_setopt($ch, CURLOPT_PROXY, $globalProxy);
