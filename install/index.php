@@ -1019,6 +1019,7 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 				</p>
 			</div>
 			<br />
+			<!--
 			<div id="podaac">
 				<p>
 					<label for="podaccuser">PO.DAAC username (used for waves)</label>
@@ -1028,9 +1029,10 @@ if (!isset($_SESSION['install']) && !isset($_POST['dbtype']) && (count($error) =
 					<label for="podaccpass">PO.DAAC password</label>
 					<input type="text" name="podaccpass" id="podaccpass" value="<?php if (isset($globalPODAACpass)) print $globalPODAACpass; ?>" />
 				</p>
-				<p class="help-block">Register an account on <a href="https://podaac-tools.jpl.nasa.gov/drive/">https://podaac-tools.jpl.nasa.gov/drive/</a></p>
+				<p class="help-block">Register an account on <a href="https://podaac-tools.jpl.nasa.gov/drive/">https://podaac-tools.jpl.nasa.gov/drive/</a>, an encoded password is available on this page after registration (not the same as the one used for registration).</p>
 			</div>
 			<br />
+			-->
 			<p>
 				<label for="bitly">Bit.ly access token api (used in search page)</label>
 				<input type="text" name="bitly" id="bitly" value="<?php if (isset($globalBitlyAccessToken)) print $globalBitlyAccessToken; ?>" />
