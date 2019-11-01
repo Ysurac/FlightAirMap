@@ -1000,11 +1000,14 @@ function loadFire(val) {
 		createCookie('weather_fire',val,999);
 	} else {
 		createCookie('weather_fire',val,999);
-		fireLayer = L.tileLayer.wms('https://firms.modaps.eosdis.nasa.gov/wms/viirs', {
+		fireLayer = L.tileLayer.wms('https://firms.modaps.eosdis.nasa.gov/wms/map/', {
 		    layers: 'NASA FIRMS',
 		    format: 'image/png',
 		    opacity: 62,
-		    transparent: true
+		    transparent: true,
+		    time: 24,
+		    instr: 'modis',
+		    sat: 'T'
 		}).addTo(map);
 	}
 }

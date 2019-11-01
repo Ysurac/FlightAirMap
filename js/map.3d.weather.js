@@ -313,11 +313,14 @@ function loadFire(val) {
     } else {
 	createCookie('weather_fire',val,999);
 	var fireProvider = new Cesium.WebMapServiceImageryProvider({
-	    url : corsproxy+'https://firms.modaps.eosdis.nasa.gov/wms/viirs',
+	    url : corsproxy+'https://firms.modaps.eosdis.nasa.gov/wms/map/',
 	    layers : 'NASA FIRMS',
 	    parameters : {
 	    transparent : true,
-	    format : 'image/png'
+	    format : 'image/png',
+	    time: 24,
+	    instr: 'modis',
+	    sat: 'T'
 	    }
 	});
 	fireLayer = new Cesium.ImageryLayer(fireProvider);
