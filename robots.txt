@@ -5,3 +5,4 @@ Disallow: /install
 Disallow: /db
 Disallow: /data
 Disallow: /require
+Disallow: /search

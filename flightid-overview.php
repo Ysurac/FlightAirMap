@@ -7,8 +7,10 @@ if ($id == "")
 
 require_once('require/class.Connection.php');
 require_once('require/class.Spotter.php');
+require_once('require/class.ACARS.php');
 require_once('require/class.Language.php');
 require_once('require/class.SpotterArchive.php');
+$ACARS = new ACARS();
 $Spotter = new Spotter();
 $SpotterArchive = new SpotterArchive();
 $spotter_array = $Spotter->getSpotterDataByID($id);
@@ -603,6 +605,15 @@ if (!empty($spotter_array))
 			print '</div>';
 			print '</div>';
 		}
+		$LatestACARS = $ACARS->getLiveAcarsData($spotter_item['ident']);
+		if ($LatestACARS != '') {
+			print '<div class="detail acars">';
+			print '<div class="title">'._("Latest ACARS message").'</div>';
+			print '<div>';
+			print $LatestACARS;
+			print '</div>';
+			print '</div>';
+		}
 		print '</div>';
 	}
 	print '</div>';
@@ -644,7 +655,7 @@ if (!empty($spotter_array))
 	$title = "ID";
 	require_once('header.php');
 	print '<h1>'._("Error").'</h1>';
-	print '<p>'._("Sorry, this flight is not in the database. :(").'</p>'; 
+	print '<p>'._("Sorry, this flight is not anymore in the database. :(").'</p>'; 
 }
 require_once('footer.php');
 ?>
