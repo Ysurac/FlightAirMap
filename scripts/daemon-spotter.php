@@ -891,6 +891,7 @@ while ($i > 0) {
 	    $sailawayoption = array('key' => $globalSailaway['key']);
 	    if (isset($globalSailaway['usrnr'])) $sailawayoption = array_merge($sailawayoption,array('usrnr' => $globalSailaway['usrnr']));
 	    if (isset($globalSailaway['ubtnr'])) $sailawayoption = array_merge($sailawayoption,array('ubtnr' => $globalSailaway['ubtnr']));
+	    if (isset($globalSailaway['misnr'])) $sailawayoption = array_merge($sailawayoption,array('misnr' => $globalSailaway['misnr']));
 	    $buffer = $Common->getData('http://backend.sailaway.world/cgi-bin/sailaway/TrackAllBoats.pl?'.http_build_query($sailawayoption),'get','','','','',30);
 	    if ($buffer != '') {
 		$data = json_decode($buffer,true);
