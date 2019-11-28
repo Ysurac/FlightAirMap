@@ -51,7 +51,7 @@ require_once('header.php');
 <link href="<?php echo $globalURL; ?>/css/c3.min.css" rel="stylesheet" type="text/css">
 <!--<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>-->
 <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
-<script type="text/javascript" src="<?php echo $globalURL; ?>/js/d3.min.js"></script>-
+<script type="text/javascript" src="<?php echo $globalURL; ?>/js/d3.min.js"></script>
 <script type="text/javascript" src="<?php echo $globalURL; ?>/js/c3.min.js"></script>
 <script type="text/javascript" src="<?php echo $globalURL; ?>/js/d3pie.min.js"></script>
 <script type="text/javascript" src="<?php echo $globalURL; ?>/js/radarChart.js"></script>

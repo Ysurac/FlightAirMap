@@ -71,7 +71,8 @@ class Language {
 				'uk_UA' => array('Українська',		'en',	'ukrainian'), // ua_UA
 				'ja_JP' => array('日本語',		'ja',	'japanese'),
 				'zh_CN' => array('简体中文',		'zh',	'chinese'),
-				'zh_TW' => array('繁體中文',		'zh',	'chinese')
+				'zh_TW' => array('繁體中文',		'zh',	'chinese'),
+				'ko_KR' => array('한글',		'ko',	'korean')
 			);
 
 	/**

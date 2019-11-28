@@ -518,7 +518,7 @@ if ($type == 'aircraft') {
 				<script type="text/javascript">getSelect('arrivalairportnames','<?php if(isset($_GET['arrival_airport_route'])) print $arrival_airport_route; ?>');</script>
 			</fieldset>
 			<fieldset>
-				<legend>Altitude</legend>
+				<legend><?php echo _("Altitude"); ?></legend>
 				<div class="form-group">
 					<label class="control-label col-sm-2"><?php echo _("Lowest Altitude"); ?></label> 
 					<div class="col-sm-10">
