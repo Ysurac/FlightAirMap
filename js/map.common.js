@@ -173,8 +173,8 @@ function alliance(selectObj) {
     var alliance = selectObj.options[idx].value;
     createCookie('filter_alliance',alliance,2);
 }
-function identfilter() {
-    var ident = $("#identfilter").value;
+function fnidentfilter() {
+    var ident = $("#identfilter").val();
     createCookie('filter_ident',ident,2);
 }
 function mmsifilter() {
