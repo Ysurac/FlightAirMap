@@ -333,7 +333,7 @@ class Marine{
 			{
 				return array();
 			} else {
-				$additional_query = " AND marine_output.ident = :ident";
+				$additional_query = " marine_output.ident = :ident";
 				$query_values = array(':ident' => $ident);
 			}
 		}
