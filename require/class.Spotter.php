@@ -9919,7 +9919,7 @@ class Spotter{
 			$query  = "SELECT DATE(CONVERT_TZ(spotter_output.date,'+00:00', :offset)) AS date_name, count(*) as date_count
 								FROM spotter_output".$filter_query." spotter_output.date >= DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 MONTH)";
 			$query .= " GROUP BY date_name 
-								ORDER BY spotter_output.date ASC";
+								ORDER BY date_name ASC";
 			$query_data = array(':offset' => $offset);
 		} else {
 			$query  = "SELECT to_char(spotter_output.date AT TIME ZONE INTERVAL :offset,'YYYY-mm-dd') AS date_name, count(*) as date_count
