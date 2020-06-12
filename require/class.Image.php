@@ -232,7 +232,7 @@ class Image {
 			if ($source == 'wikimedia') $images_array = $this->fromWikimedia('aircraft',$aircraft_registration,$aircraft_name);
 			if ($source == 'jetphotos' && !$globalIVAO && class_exists("DomDocument")) $images_array = $this->fromJetPhotos('aircraft',$aircraft_registration,$aircraft_name);
 			if ($source == 'planepictures' && !$globalIVAO && class_exists("DomDocument")) $images_array = $this->fromPlanePictures('aircraft',$aircraft_registration,$aircraft_name);
-			if ($source == 'airportdata' && !$globalIVAO) $images_array = $this->fromAirportData('aircraft',$aircraft_registration,$aircraft_name);
+			if ($source == 'airportdata' && !$globalIVAO) $images_array = $this->fromAirportData('aircraft',$aircraft_registration,$aircraft_icao,$aircraft_name);
 			if ($source == 'customsources') $images_array = $this->fromCustomSource('aircraft',$aircraft_registration,$aircraft_name);
 			if (isset($images_array) && $images_array['original'] != '') return $images_array;
 		}
@@ -528,13 +528,14 @@ class Image {
 	* Gets the aircraft image from airport-data
 	*
 	* @param String $aircraft_registration the registration of the aircraft
+	* @param String $aircraft_icao the icao code of the aircraft
 	* @param String $aircraft_name type of the aircraft
 	* @return array the aircraft thumbnail, orignal url and copyright
 	*
 	*/
-	public function fromAirportData($type,$aircraft_registration,$aircraft_name='') {
+	public function fromAirportData($type,$aircraft_registration,$aircraft_icao,$aircraft_name='') {
 		$Common = new Common();
-		$url = 'http://www.airport-data.com/api/ac_thumb.json?&n=1&r='.$aircraft_registration;
+		$url = 'http://www.airport-data.com/api/ac_thumb.json?&n=1&r='.$aircraft_registration.'&m='.$aircraft_icao;
 		$data = $Common->getData($url);
 		$result = json_decode($data);
 		if (isset($result->count) && $result->count > 0) {
