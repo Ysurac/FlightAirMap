@@ -107,7 +107,7 @@ class Image {
 		elseif (isset($exif['copyright'])) $copyright = $exif['copyright'];
 		if ($copyright != '') {
 			$copyright = str_replace('Copyright ','',$copyright);
-			$copyright = str_replace('Ă‚Â© ','',$copyright);
+			$copyright = str_replace('© ','',$copyright);
 			$copyright = str_replace('(c) ','',$copyright);
 		}
 		return $copyright;
