@@ -365,32 +365,32 @@ class Image {
 	*/
 	public function fromJetPhotos($type,$aircraft_registration, $aircraft_name='') {
 		$Common = new Common();
-		$url= 'http://jetphotos.net/showphotos.php?displaymode=2&regsearch='.$aircraft_registration;
+		$url= 'https://www.jetphotos.com/photo/keyword/'.$aircraft_registration;
 		$data = $Common->getData($url);
 		$dom = new DOMDocument();
 		@$dom->loadHTML($data);
 		$all_pics = array();
-		foreach($dom->getElementsByTagName('img') as $image) {
-			if ($image->getAttribute('itemprop') == "http://schema.org/image") {
-				$all_pics[] = $image->getAttribute('src');
-			}
-		}
+                foreach($dom->getElementsByTagName('img') as $image) {
+                 $all_pics[] = $image->getAttribute('src');
+                }
 		$all_authors = array();
-		foreach($dom->getElementsByTagName('meta') as $author) {
-			if ($author->getAttribute('itemprop') == "http://schema.org/author") {
-				$all_authors[] = $author->getAttribute('content');
-			}
-		}
+                foreach($dom->getElementsByTagName('span') as $author) {
+                 if (strpos($author->nodeValue, "By: ") !== false) {
+                  $all_authors[] = $author->nodeValue;
+                 }
+                }
 		$all_ref = array();
-		foreach($dom->getElementsByTagName('a') as $link) {
-			$all_ref[] = $link->getAttribute('href');
-		}
-		if (isset($all_pics[0])) {
+                foreach($dom->getElementsByTagName('a') as $link) {
+                 if (strpos($link->getAttribute('href'), "/photo/") !== false) {
+                  $all_ref[] = $link->getAttribute('href');
+                 }
+                }
+		if (isset($all_pics[8])) {
 			$image_url = array();
-			$image_url['thumbnail'] = $all_pics[0];
-			$image_url['original'] = str_replace('_tb','',$all_pics[0]);
-			$image_url['copyright'] = $all_authors[0];
-			$image_url['source_website'] = 'http://jetphotos.net'.$all_ref[8];
+			$image_url['thumbnail'] = 'http:'.$all_pics[3];
+			$image_url['original'] = 'http:'.str_replace('/400/','/full/',$all_pics[3]);
+			$image_url['copyright'] = str_replace('By: ','',$all_authors[0]);
+			$image_url['source_website'] = 'https://jetphotos.net'.$all_ref[0];
 			$image_url['source'] = 'JetPhotos';
 			return $image_url;
 		}
@@ -407,7 +407,7 @@ class Image {
 	*/
 	public function fromPlanePictures($type,$aircraft_registration, $aircraft_name='') {
 		$Common = new Common();
-		$url= 'http://www.planepictures.net/netsearch4.cgi?srch='.$aircraft_registration.'&stype=reg&srng=2';
+		$url= 'https://www.planepictures.net/v3/search_en.php?srch='.$aircraft_registration.'&stype=reg&srng=2';
 		$data = $Common->getData($url);
 		$dom = new DOMDocument();
 		@$dom->loadHTML($data);
@@ -419,12 +419,12 @@ class Image {
 		foreach($dom->getElementsByTagName('a') as $link) {
 			$all_links[] = array('text' => $link->textContent,'href' => $link->getAttribute('href'));
 		}
-		if (isset($all_pics[1]) && !preg_match('/bit.ly/',$all_pics[1]) && !preg_match('/flagge/',$all_pics[1])) {
+		if (isset($all_pics[4])) {
 			$image_url = array();
-			$image_url['thumbnail'] = 'http://www.planepictures.net/'.$all_pics[1];
-			$image_url['original'] = 'http://www.planepictures.net/'.str_replace('_TN','',$all_pics[1]);
-			$image_url['copyright'] = $all_links[6]['text'];
-			$image_url['source_website'] = 'http://www.planepictures.net/'.$all_links[2]['href'];
+			$image_url['thumbnail'] = 'http://www.planepictures.net'.$all_pics[4];
+			$image_url['original'] = 'http://www.planepictures.net'.str_replace('_TN','',$all_pics[4]);
+			$image_url['copyright'] = $all_links[28]['text'];
+			$image_url['source_website'] = 'https://www.planepictures.net'.str_replace('./','/',$all_links[23]['href']);
 			$image_url['source'] = 'PlanePictures';
 			return $image_url;
 		}
