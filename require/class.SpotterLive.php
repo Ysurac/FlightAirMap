@@ -95,7 +95,7 @@ class SpotterLive {
 			}
 		}
 		if (isset($filter['ident']) && !empty($filter['ident'])) {
-			$filter_query_where .= " AND ident = '".$filter['ident']."'";
+			$filter_query_where .= " AND ident LIKE '".$filter['ident']."%'";
 		}
 		if (isset($filter['id']) && !empty($filter['id'])) {
 			$filter_query_where .= " AND flightaware_id = '".$filter['id']."'";

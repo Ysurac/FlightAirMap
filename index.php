@@ -834,7 +834,7 @@ require_once('header.php');
 		    ?>
 		    <li>
 			<?php echo _("Display with ident:"); ?>
-			<input type="text" name="identfilter" onchange="identfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
+			<input type="text" name="identfilter" onchange="fnidentfilter();" id="identfilter" value="<?php if (isset($_COOKIE['filter_ident'])) print $_COOKIE['filter_ident']; ?>" />
 		    </li>
 		</ul>
 	    </form>
@@ -912,7 +912,7 @@ require_once('header.php');
     $("#identfilter").on('input', function() {
 	clearTimeout(typingTimer);
 	if (this.value) {
-	    typingTimer = setTimeout(identfilter,doneTypingInterval);
+	    typingTimer = setTimeout(fnidentfilter,doneTypingInterval);
 	}
     });
 </script>
