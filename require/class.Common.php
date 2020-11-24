@@ -727,8 +727,10 @@ class Common {
 	}
 	
 	public function create_socket($host, $port, &$errno, &$errstr) {
+		global $globalSourcesTimeOut;
 		$ip = gethostbyname($host);
 		$s = socket_create(AF_INET, SOCK_STREAM, 0);
+		socket_set_option($s, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $globalSourcesTimeOut, 'usec' => 0));
 		$r = @socket_connect($s, $ip, $port);
 		if (!socket_set_nonblock($s)) echo "Unable to set nonblock on socket\n";
 		if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
@@ -741,8 +743,10 @@ class Common {
 	}
 
 	public function create_socket_udp($host, $port, &$errno, &$errstr) {
+		global $globalSourcesTimeOut;
 		$ip = gethostbyname($host);
 		$s = socket_create(AF_INET, SOCK_DGRAM, 0);
+		socket_set_option($s, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $globalSourcesTimeOut, 'usec' => 0));
 		$r = @socket_bind($s, $ip, $port);
 		if ($r || socket_last_error() == 114 || socket_last_error() == 115) {
 			return $s;
