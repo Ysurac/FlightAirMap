@@ -1,6 +1,0 @@
-[submodule "require/libs/cloudflare-bypass"]
-	path = require/libs/cloudflare-bypass
-	url = https://github.com/Ysurac/cloudflare-bypass.git
-[submodule "js/Cesium"]
-	path = js/Cesium
-	url = https://github.com/Ysurac/Cesium-minified.git
