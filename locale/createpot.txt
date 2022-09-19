@@ -1,1 +1,0 @@
-xgettext --from-code=UTF-8 -o locale/fam.pot `find . -name "*.php"`
